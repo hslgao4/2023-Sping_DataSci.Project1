@@ -56,11 +56,35 @@ var(Robbery$DISTRICT, na.rm = TRUE)
 
 ```{r}
 ggplot(data=Robbery, aes(Month)) + 
-  geom_histogram(breaks=seq(66, 86, by = 1), 
-                 col="red", 
+  geom_histogram(col="red", 
                  fill="blue", 
-                 alpha = .7) + # opacity
+                 alpha = .7) + 
   labs(x="Month", y="Frequency") +
   labs(title="Monthly crime frequency")
+```
+
+```{r}
+ggplot(data=Robbery, aes(Year)) + 
+  geom_histogram(col="red", 
+                 fill="blue", 
+                 alpha = .7) + 
+  labs(x="Year", y="Frequency") +
+  labs(title="Yearly crime frequency")
+```
+```{r}
+ggplot(data=Robbery, aes(Day_cat)) + 
+  geom_histogram(col="red", 
+                 fill="blue", 
+                 alpha = .7) + 
+  labs(x="Day_cat", y="Frequency") +
+  labs(title="Dayily crime frequency")
+```
+```{r}
+ggplot(data=Robbery, aes(DISTRICT)) + 
+  geom_histogram(col="red", 
+                 fill="blue", 
+                 alpha = .7) + 
+  labs(x="DISTRICT", y="Frequency") +
+  labs(title="Crime frequency in different Districts")
 ```
 
