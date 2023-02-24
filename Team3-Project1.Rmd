@@ -31,6 +31,26 @@ str(Robbery)
 ```
 
 ```{r}
+mean(Robbery$Month,na.rm = TRUE)
+sd(Robbery$Month, na.rm = TRUE)
+var(Robbery$Month, na.rm = TRUE)
+```
 
+```{r}
+mean(Robbery$Date,na.rm = TRUE)
+sd(Robbery$Date, na.rm = TRUE)
+var(Robbery$Date, na.rm = TRUE)
+```
+
+```{r}
+mean(Robbery$Day_cat,na.rm = TRUE)
+sd(Robbery$Day_cat, na.rm = TRUE)
+var(Robbery$Day_cat, na.rm = TRUE)
+```
+
+```{r}
+mean(Robbery$DISTRICT,na.rm = TRUE)
+sd(Robbery$DISTRICT, na.rm = TRUE)
+var(Robbery$DISTRICT, na.rm = TRUE)
 ```
 
