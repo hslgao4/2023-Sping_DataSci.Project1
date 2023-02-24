@@ -54,3 +54,13 @@ sd(Robbery$DISTRICT, na.rm = TRUE)
 var(Robbery$DISTRICT, na.rm = TRUE)
 ```
 
+```{r}
+ggplot(data=Robbery, aes(Month)) + 
+  geom_histogram(breaks=seq(66, 86, by = 1), 
+                 col="red", 
+                 fill="blue", 
+                 alpha = .7) + # opacity
+  labs(x="Month", y="Frequency") +
+  labs(title="Monthly crime frequency")
+```
+
