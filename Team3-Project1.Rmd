@@ -22,3 +22,8 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(warning = F, message = F)
 options(scientific=T, digits = 3) 
 ```
+
+```{r}
+data = hd
+```
+
