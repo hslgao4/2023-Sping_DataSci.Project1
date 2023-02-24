@@ -24,6 +24,8 @@ options(scientific=T, digits = 3)
 ```
 
 ```{r}
-data = hd
+Robbery = read.csv("Robbery_DC_clean.csv")
+head(Robbery,5)
+tail(Robbery,5)
 ```
 
