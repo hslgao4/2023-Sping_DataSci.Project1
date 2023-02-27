@@ -1,5 +1,5 @@
 ---
-title: "Project1-EDA"
+title: "The Impact of COVID-19 Lockdown on Robbery Rates: An Exploratory Data Analysis (EDA) of Criminal Activity in Washington D.C."
 author: "Team3: Muhannad Alwhebie, Liang Gao, Nammin Woo"
 date: "`r Sys.Date()`"
 output:
@@ -31,12 +31,13 @@ library(gridExtra) #graph arrange(positioning)
 ### The Impact of COVID-19 Lockdown on Robbery Rates(in D.C)    
 
 
-  The COVID-19 pandemic has had a profound impact on society, and it is important to
-understand how it has affected crime rates, particularly robbery rates. This EDA aims to examine the impact of the lockdown on robbery rates in Washington DC, analyzing the pre-pandemic, lockdown, and post-pandemic periods(2019-2022) to determine if there have been any significant changes in the number of incidents with roughly 8000 observations. This EDA project will provide a comprehensive examination of the impact of the COVID-19 lockdown on robbery rates in Washington DC.    
+  The COVID-19 pandemic has been one of the most significant global events in recent history, impacting almost every aspect of society. Among its effects, it has created a complex set of circumstances that have the potential to influence crime rates, especially in densely populated urban areas like Washington DC. Therefore, there is a crucial need to analyze the impact of COVID-19 lockdown on robbery rates in the region, which this EDA aims to achieve.
 
+The study will examine the pre-pandemic, lockdown, and post-pandemic periods (2019-2022) to identify any significant changes in the number of robbery incidents. The project will analyze a dataset with approximately 8000 observations, focusing on robbery incidents that occurred during the specified periods. The results of this study will provide valuable insights into the impact of the pandemic on criminal activity in the region.
 
-  This project uses the Crime Incidents dataset from [Metropolitan Police Department ](https://opendata.dc.gov/search?collection=Dataset&q=crime%20indcidents). 
-It is particularly used robbery incidents from 2019 to 2022 and the dataset is *Robbery_DC_clean.csv*.  
+To conduct the study, we will use the Crime Incidents dataset from the Metropolitan Police Department, which contains detailed information on criminal incidents in Washington DC. The dataset is particularly relevant to this study as it provides a wealth of information on robbery incidents in the area. The relevant data will be extracted from the dataset and will be preprocessed and cleaned to ensure the validity and reliability of the results.
+
+This EDA project will provide a comprehensive examination of the impact of the COVID-19 lockdown on robbery rates in Washington DC. The results will be of significant interest to law enforcement agencies, policymakers, and the wider community, helping to inform future policy decisions aimed at preventing criminal activity and promoting public safety in the region. 
 
 
 
