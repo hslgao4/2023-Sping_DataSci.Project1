@@ -55,7 +55,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
 options(scientific=T, digits = 3) 
 ```
 
-## The beginning
+## Methods
 
 ### 1. Data  
 In the opening section of this report, we provide a comprehensive overview of the data used in our analysis. We obtained our data from the Metropolitan Police Department in Washington D.C., and specifically focused on the Crime Incidents dataset.
