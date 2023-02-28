@@ -28,16 +28,28 @@ library(graphics)
 library(gridExtra) #graph arrange(positioning)
 ```
 
-### The Impact of COVID-19 Lockdown on Robbery Rates(in D.C)    
+# The Effect of COVID-19 Lockdown on Robbery Incidents in Washington D.C.
+
+## Abstract
+Brief summary of the report... After we finish ! 
 
 
-  The COVID-19 pandemic has been one of the most significant global events in recent history, impacting almost every aspect of society. Among its effects, it has created a complex set of circumstances that have the potential to influence crime rates, especially in densely populated urban areas like Washington DC. Therefore, there is a crucial need to analyze the impact of COVID-19 lockdown on robbery rates in the region, which this EDA aims to achieve.
 
-The study will examine the pre-pandemic, lockdown, and post-pandemic periods (2019-2022) to identify any significant changes in the number of robbery incidents. The project will analyze a dataset with approximately 8000 observations, focusing on robbery incidents that occurred during the specified periods. The results of this study will provide valuable insights into the impact of the pandemic on criminal activity in the region.
 
-To conduct the study, we will use the Crime Incidents dataset from the Metropolitan Police Department, which contains detailed information on criminal incidents in Washington DC. The dataset is particularly relevant to this study as it provides a wealth of information on robbery incidents in the area. The relevant data will be extracted from the dataset and will be preprocessed and cleaned to ensure the validity and reliability of the results.
 
-This EDA project will provide a comprehensive examination of the impact of the COVID-19 lockdown on robbery rates in Washington DC. The results will be of significant interest to law enforcement agencies, policymakers, and the wider community, helping to inform future policy decisions aimed at preventing criminal activity and promoting public safety in the region. 
+
+
+
+
+## Introduction
+
+The COVID-19 pandemic has had a profound impact on society, affecting various aspects of daily life, including crime rates. It is important to understand how the pandemic has impacted different types of crime, particularly robbery rates, which can have significant implications for public safety. This EDA project aims to examine the impact of the COVID-19 lockdown on robbery rates in Washington DC using a dataset of roughly 8000 observations.
+
+The study will analyze the pre-pandemic, lockdown, and post-pandemic periods (2019-2022) to determine if there have been any significant changes in the frequency of robberies. The project will provide a comprehensive examination of the impact of the COVID-19 lockdown on robbery rates in Washington DC and will attempt to answer several key questions related to this topic.
+
+Specifically, the study will explore any notable differences in the patterns of robbery during the pandemic compared to pre/post-pandemic times. It will also investigate how the relationship between the day of the week (weekdays and weekends) and the frequency of robberies has changed before and after the pandemic period. Additionally, the project will examine if there have been any changes in the relationship between the day of the month (such as the beginning, middle, or end) and the frequency of robberies before and after the pandemic period. Finally, the study will identify any significant changes in the frequency of robberies among districts before and after the pandemic.
+
+To conduct this research, the study will use the Crime Incidents dataset from the Metropolitan Police Department, specifically analyzing the robbery incidents from 2019 to 2022. The dataset, titled "Robbery_DC_clean.csv," will be used to answer the research questions and provide valuable insights into the impact of the COVID-19 pandemic on robbery rates in Washington DC.
 
 
 
@@ -48,17 +60,30 @@ knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
 options(scientific=T, digits = 3) 
 ```
 
-## The beginning
+## Methods
 
 ### 1. Data  
-   + comment (TBD)
+In the opening section of this report, we provide a comprehensive overview of the data used in our analysis. We obtained our data from the Metropolitan Police Department in Washington D.C., and specifically focused on the Crime Incidents dataset.
+
+The dataset contains detailed information on robbery incidents that occurred between 2019 and 2022, and we extracted this information into our dataset titled "Robbery_DC_clean.csv".
+
+In this section, we will provide a commentary on the data, highlighting its strengths and limitations. This information is critical in providing context for the analysis and understanding the potential impact of any data-related issues on the conclusions drawn from our analysis.
+
+Furthermore, we will discuss the data cleaning and preprocessing steps taken to ensure that the data is suitable for analysis. These steps include removing duplicate records, addressing missing values, and identifying and handling outliers.
+
+We will also provide an overview of the variables included in the dataset, such as the date and time of the robbery incident, the location of the incident, the method used, and other relevant details. This information is essential in developing a comprehensive understanding of the robbery incidents and their potential relationship to the COVID-19 lockdown.
+
+Overall, this section provides a solid foundation for the analysis that follows, and we have taken great care to ensure that the data is reliable, relevant, and suitable for our analysis.
 
 ```{r}
 #Import
 Robbery = data.frame(read.csv("Robbery_DC_clean.csv"))
 ```
 
-This is data wrangling before start.
+
+### 2. Data Wrangling and Preprocessing
+
+This section typically involves importing, cleaning, and preprocessing raw data to prepare it for analysis. The data cleaning process may include removing duplicate records, addressing missing values, identifying and handling outliers, and transforming variables as needed. By performing these steps, we can ensure that the data is suitable for analysis and that our conclusions are based on accurate and reliable information. In this section, we will provide an overview of the data wrangling and preprocessing steps taken for the "Robbery_DC_clean.csv" dataset used in our analysis. 
 
 ```{r}
 #create Clearance_rate(Unit: Minute)= END_DATE - START_DATE 
@@ -87,6 +112,8 @@ Robbery <-rename(Robbery, END_DATE = END_DATE_2)
 
 ```
 
+
+
 ```{r}
 # change datatypes of Char.var for EDA (as Factor)
 cols <- c('Period_cat','Period_cat_2','Season','Date_cat','Day_cat_2','SHIFT','METHOD')
@@ -102,7 +129,8 @@ Robbery$Period_cat <- factor(Robbery$Period_cat, levels=c("Pre", "Lock", "Post")
 #Robbery$SHIFT<- as.factor(Robbery$SHIFT) 
 ```
 
-The variables in the dataset are:
+
+*The variables in the dataset are:*
 
 ```{r}
 str(Robbery)
@@ -111,22 +139,59 @@ str(Robbery)
 #ncol(Robbery)
 #nrow(Robbery)
 ```
-The first 5 samples of the dataframe are:
+
+*The first 4 samples of the dataframe are:*
 
 ```{r}
-knitr::kable(head(Robbery,5), format = "markdown", caption="The first 5 obs")
+
+xkabledply(Robbery[1:4,], title = "First Four Rows of Dataframe: `Robbery`")
+
 ```
 
-The last 5 samples of the dataframe are:
 
+*The last 4 samples of the dataframe are*
 ```{r}
-knitr::kable(tail(Robbery,5), format = "markdown", caption="The last 5 obs")
+xkabledply(Robbery[(nrow(Robbery)-3):nrow(Robbery),], title = "Last Four Rows of Dataframe: `Robbery`")
 ```
+
+
+The dataset consists of *8345* observations and *22* variables, including:
+
+* `OBJECTID`: a unique identifier for each robbery incident
+* `Seq`: a sequential number for each robbery incident
+* `OFFENSE`: the type of offense, which is always "ROBBERY" in this dataset
+* `REPORT_DAT`: the date and time the robbery incident was reported
+* `REPORT_DAT_2`: the date the robbery incident was reported
+* `Period_cat`: a categorical variable indicating whether the robbery occurred before, during, or after the COVID-19 lockdown period
+* `Period_cat_2`: a categorical variable indicating the period of the robbery incident, which can be "Lockdown," "Post-Lockdown," "Pre-Lockdown," or "During-Lockdown"
+* `Year`: the year the robbery incident occurred
+* `Month`: the month the robbery incident occurred
+* `Season`: the season in which the robbery incident occurred
+* `Date`: the day of the month the robbery incident occurred
+* `Date_cat`: a categorical variable indicating whether the robbery incident occurred at the beginning, middle, or end of the month
+* `Time_hour`: the hour of the day the robbery incident occurred
+* `SHIFT`: a categorical variable indicating the shift during which the robbery incident occurred, which can be "DAY," "EVENING," or "NIGHT"
+* `Day_cat`: the day of the week the robbery incident occurred, represented as an integer
+* `Day_cat_2`: a categorical variable indicating whether the robbery incident occurred on a weekday or weekend
+* `METHOD`: a categorical variable indicating the method used in the robbery, which can be "GUN," "KNIFE," or "OTHER"
+* `DISTRICT`: the police district where the robbery incident occurred, represented as an integer
+* `PSA`: the police service area where the robbery incident occurred, represented as an integer
+* `START_DATE`: the date and time the robbery incident started
+* `END_DATE`: the date and time the robbery incident ended
+* `Clearance_rate`: the percentage of robbery incidents that were cleared by the police
 
 
 ### 2. Summary statistics
-   + comment (TBD)
-Summary statistics of Robbery data is below:
+
+In this section, we provide a detailed overview of the summary statistics for the robbery data in Washington D.C. This information includes measures such as the mean, median, standard deviation, minimum, and maximum values for each variable.
+
+We will also examine other measures, such as the interquartile range (IQR) and coefficient of variation, to provide a more comprehensive understanding of the data's variability and dispersion.
+
+By analyzing the summary statistics, we can identify any significant trends or patterns in the data, such as the overall frequency of robbery incidents, the distribution of robbery incidents across different days of the week or months, and the most common methods used in robbery incidents.
+
+We will also provide a commentary on the summary statistics, highlighting any notable findings or trends that may impact the analysis of the data. This analysis will help to identify potential issues or areas of interest that require further investigation in subsequent sections of the report.
+
+Overall, the summary statistics provide a critical foundation for the analysis of the robbery data, enabling us to develop a more accurate and detailed understanding of the impact of the COVID-19 lockdown on robbery rates in Washington D.C.
 
 ```{r}
 #Summary
@@ -136,7 +201,7 @@ cols <- c('Period_cat','Period_cat_2','Year', 'Month',
           'SHIFT','Time_hour','Clearance_rate','Day_cat','Day_cat_2',
           'METHOD','DISTRICT','PSA')
 
-knitr::kable(summary(select(Robbery,cols)), format = "markdown", caption="Summary")
+knitr::kable(summary(select(Robbery,cols)), format = "markdown", caption="Summary statistics of Robbery between 2019 to 2022 in D.C")
 
 #Freq
 #Robbery %>%  
@@ -653,7 +718,7 @@ grid.arrange(plot_DISTRICT, plot_DISTRICT_pre, plot_DISTRICT_lock, plot_DISTRICT
 boxplot_PSA <- ggplot(Robbery, aes(y=PSA, x=Period_cat, fill=Period_cat)) + 
   geom_boxplot() + 
   geom_boxplot( colour=c("#ff0000","#11cc11","#0000ff"), outlier.shape=8,
-                outlier.colour="lightblue", outlier.size=4) +  labs(title="Location(PSA) of Robbery", x="Period", y = "c11_Box_Robbery Location(PSA)")
+                outlier.colour="lightblue", outlier.size=4) +  labs(title="Location (PSA) of Robbery", x="Period", y = "c11_Box_Robbery Location(PSA)")
 
 boxplot_PSA
 ```
@@ -668,6 +733,25 @@ boxplot_Clearance <- ggplot(Robbery, aes(y=Clearance_rate, x=Period_cat, fill=Pe
 
 boxplot_Clearance
 ```
+### 3. Unusual Observations: Data Quality
+
+In the "Unusual Observations" section, we will provide an in-depth analysis of the data, including a quick overview of the data with and without the outliers. Outliers can significantly impact the analysis of data and can skew the results. Therefore, it is crucial to identify and examine them closely to determine their impact on the data.By examining the data with and without the outliers, we can gain a clearer picture of the trends and patterns in the data. This information will be critical in developing an accurate and reliable analysis of the impact of the COVID-19 lockdown on robbery rates in Washington D.C.
+
+
+**Data Quality**
+To ensure data quality, we will perform the outlierKD function to detect any null values or outliers in our dataset. Once identified, we will remove them to ensure accurate analysis. We will then display the cleaned data using a plot to visualize any trends or patterns in the data.
+
+```{r}
+
+
+Robbery_clean = outlierKD2(Robbery, OBJECTID, rm = TRUE, boxplt = TRUE, qqplt = TRUE)
+ 
+
+```
+
+
+After examining the data using the outlierKD function, we have identified outliers that have been replaced with NAs. However, we have not deleted these outliers from the dataset. Instead, we have replaced them with NAs to ensure that they do not affect the analysis of the data. This approach allows us to retain the maximum amount of data while still removing any data points that may negatively impact our analysis
+
 
 
 **TBD: Sccater plot, Normality Test, Hypothesis etc.
@@ -703,10 +787,10 @@ boxplot_Clearance
 
 ```{r}
 #Save current data
-#readr::write_rds(Robbery, "Robbery_230226.Rds")
-#readr::write_rds(Robbery_pre, "Robbery_pre_230226.Rds")
-#readr::write_rds(Robbery_lock, "Robbery_lock_230226.Rds")
-#readr::write_rds(Robbery_post, "Robbery_post_230226.Rds")
+readr::write_rds(Robbery, "Robbery_230226.Rds")
+readr::write_rds(Robbery_pre, "Robbery_pre_230226.Rds")
+readr::write_rds(Robbery_lock, "Robbery_lock_230226.Rds")
+readr::write_rds(Robbery_post, "Robbery_post_230226.Rds")
 
 #Use this code to load
 Robbery <- 
@@ -725,6 +809,11 @@ Robbery_post <-
 ```
 
 ```{r}
-#str(Robbery)
+str(Robbery)
 ```
+
+
+
+
+
 
