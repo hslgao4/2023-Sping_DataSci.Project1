@@ -648,23 +648,23 @@ grid.arrange(plot_METHOD, plot_METHOD_pre, plot_METHOD_lock, plot_METHOD_post,
 
 plot_DISTRICT<- ggplot(data=Robbery, aes(x=DISTRICT)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
-geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="DISTRICT") + scale_x_discrete(limits=c("1","2","3","4","5","6","NA")) + 
+geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="DISTRICT") + scale_x_discrete(limits=c("1","2","3","4","5","6","7","NA")) + 
   labs(title="c10.DISTRICT of Robbery")
 
 
 plot_DISTRICT_pre<- ggplot(data=Robbery_pre, aes(x=DISTRICT)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
-geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="DISTRICT") + scale_x_discrete(limits=c("1","2","3","4","5","6","NA")) + 
+geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="DISTRICT") + scale_x_discrete(limits=c("1","2","3","4","5","6","7","NA")) + 
   labs(title="c10_1.DISTRICT (Pre)")
 
 plot_DISTRICT_lock<- ggplot(data=Robbery_lock, aes(x=DISTRICT)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
-geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="DISTRICT") + scale_x_discrete(limits=c("1","2","3","4","5","6","NA")) + 
+geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="DISTRICT") + scale_x_discrete(limits=c("1","2","3","4","5","6","7","NA")) + 
   labs(title="c10_2.DISTRICT (Lock)")
 
 plot_DISTRICT_post<- ggplot(data=Robbery_post, aes(x=DISTRICT)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
-geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="DISTRICT") + scale_x_discrete(limits=c("1","2","3","4","5","6","NA")) + 
+geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="DISTRICT") + scale_x_discrete(limits=c("1","2","3","4","5","6","7","NA")) + 
   labs(title="c10_3.DISTRICT (Post)")
 
 grid.arrange(plot_DISTRICT, plot_DISTRICT_pre, plot_DISTRICT_lock, plot_DISTRICT_post,ncol=2, nrow=2)
@@ -709,6 +709,64 @@ Robbery_clean = outlierKD2(Robbery, OBJECTID, rm = TRUE, boxplt = TRUE, qqplt = 
 
 ```
 
+Continue to perform test for another continuous variables. 
+
+ + Variables that have Fixed interval like `Date`, `Time_hour` don't need test     
+   So Just do that about two variables `Clearance_rate` and `PSA`
+
+`PSA` 
+
+```{r}
+
+Robbery_clean = outlierKD2(Robbery, PSA, rm = TRUE, boxplt = TRUE, qqplt = TRUE)
+
+```   
+
+
+`Clearance_rate` has high spread-wide, so need to consider excluding outliers.
+
+
+```{r}
+Robbery_clean = outlierKD2(Robbery, Clearance_rate, rm = TRUE, boxplt = TRUE, qqplt = TRUE)
+```
+FOr example, looking through the obs that have long clearance rate (over 200 min). Interesting thing is distict 3,7. (let's talk about that at the meeting!)
+
+```{r}
+#Clearance_rate
+
+temp <- subset(Robbery,subset = Robbery$Clearance_rate > 200) 
+str(temp)  #361
+
+```
+```{r}
+temp %>%  #Freq of Char
+  count(Period_cat)
+
+temp %>%  
+  count(Date_cat)
+
+temp %>%  
+  count(Day_cat_2)
+
+temp %>%  
+  count(SHIFT)
+
+temp %>%  
+  count(METHOD)
+
+temp %>%  
+  count(DISTRICT)
+
+temp %>%  
+  count(PSA)
+
+
+```
+
+
+
+
+
 
 After examining the data using the outlierKD function, we have identified outliers that have been replaced with NAs. However, we have not deleted these outliers from the dataset. Instead, we have replaced them with NAs to ensure that they do not affect the analysis of the data. This approach allows us to retain the maximum amount of data while still removing any data points that may negatively impact our analysis
 
@@ -747,11 +805,14 @@ After examining the data using the outlierKD function, we have identified outlie
 
 ```{r}
 #Save current data
-readr::write_rds(Robbery, "Robbery_230226.Rds")
-readr::write_rds(Robbery_pre, "Robbery_pre_230226.Rds")
-readr::write_rds(Robbery_lock, "Robbery_lock_230226.Rds")
-readr::write_rds(Robbery_post, "Robbery_post_230226.Rds")
+#readr::write_rds(Robbery, "Robbery_230226.Rds")
+#readr::write_rds(Robbery_pre, "Robbery_pre_230226.Rds")
+#readr::write_rds(Robbery_lock, "Robbery_lock_230226.Rds")
+#readr::write_rds(Robbery_post, "Robbery_post_230226.Rds")
 
+```
+
+```{r}
 #Use this code to load
 Robbery <- 
   readr::read_rds("Robbery_230226.Rds")
@@ -765,8 +826,8 @@ Robbery_lock <-
 
 Robbery_post <- 
   readr::read_rds("Robbery_post_230226.Rds")
-
 ```
+
 
 ```{r}
 str(Robbery)
