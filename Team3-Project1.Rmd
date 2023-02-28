@@ -28,15 +28,20 @@ library(graphics)
 library(gridExtra) #graph arrange(positioning)
 ```
 
-### The Effect of COVID-19 Lockdown on Robbery Incidents in Washington D.C.
+# The Effect of COVID-19 Lockdown on Robbery Incidents in Washington D.C.
 
-**Abstract**
+## Abstract
 Brief summary of the report... After we finish ! 
 
 
 
 
-**Introduction**
+
+
+
+
+
+## Introduction
 
 The COVID-19 pandemic has had a profound impact on society, affecting various aspects of daily life, including crime rates. It is important to understand how the pandemic has impacted different types of crime, particularly robbery rates, which can have significant implications for public safety. This EDA project aims to examine the impact of the COVID-19 lockdown on robbery rates in Washington DC using a dataset of roughly 8000 observations.
 
@@ -75,7 +80,10 @@ Overall, this section provides a solid foundation for the analysis that follows,
 Robbery = data.frame(read.csv("Robbery_DC_clean.csv"))
 ```
 
-This is data wrangling before start.
+
+### 2. Data Wrangling and Preprocessing
+
+This section typically involves importing, cleaning, and preprocessing raw data to prepare it for analysis. The data cleaning process may include removing duplicate records, addressing missing values, identifying and handling outliers, and transforming variables as needed. By performing these steps, we can ensure that the data is suitable for analysis and that our conclusions are based on accurate and reliable information. In this section, we will provide an overview of the data wrangling and preprocessing steps taken for the "Robbery_DC_clean.csv" dataset used in our analysis. 
 
 ```{r}
 #create Clearance_rate(Unit: Minute)= END_DATE - START_DATE 
@@ -104,6 +112,8 @@ Robbery <-rename(Robbery, END_DATE = END_DATE_2)
 
 ```
 
+
+
 ```{r}
 # change datatypes of Char.var for EDA (as Factor)
 cols <- c('Period_cat','Period_cat_2','Season','Date_cat','Day_cat_2','SHIFT','METHOD')
@@ -119,7 +129,8 @@ Robbery$Period_cat <- factor(Robbery$Period_cat, levels=c("Pre", "Lock", "Post")
 #Robbery$SHIFT<- as.factor(Robbery$SHIFT) 
 ```
 
-The variables in the dataset are:
+
+*The variables in the dataset are:*
 
 ```{r}
 str(Robbery)
@@ -128,17 +139,46 @@ str(Robbery)
 #ncol(Robbery)
 #nrow(Robbery)
 ```
-The first 5 samples of the dataframe are:
+
+*The first 4 samples of the dataframe are:*
 
 ```{r}
-knitr::kable(head(Robbery,5), format = "markdown", caption="The first 5 obs")
+
+xkabledply(Robbery[1:4,], title = "First Four Rows of Dataframe: `Robbery`")
+
 ```
 
-The last 5 samples of the dataframe are:
 
+*The last 4 samples of the dataframe are*
 ```{r}
-knitr::kable(tail(Robbery,5), format = "markdown", caption="The last 5 obs")
+xkabledply(Robbery[(nrow(Robbery)-3):nrow(Robbery),], title = "Last Four Rows of Dataframe: `Robbery`")
 ```
+
+
+The dataset consists of *8345* observations and *22* variables, including:
+
+* `OBJECTID`: a unique identifier for each robbery incident
+* `Seq`: a sequential number for each robbery incident
+* `OFFENSE`: the type of offense, which is always "ROBBERY" in this dataset
+* `REPORT_DAT`: the date and time the robbery incident was reported
+* `REPORT_DAT_2`: the date the robbery incident was reported
+* `Period_cat`: a categorical variable indicating whether the robbery occurred before, during, or after the COVID-19 lockdown period
+* `Period_cat_2`: a categorical variable indicating the period of the robbery incident, which can be "Lockdown," "Post-Lockdown," "Pre-Lockdown," or "During-Lockdown"
+* `Year`: the year the robbery incident occurred
+* `Month`: the month the robbery incident occurred
+* `Season`: the season in which the robbery incident occurred
+* `Date`: the day of the month the robbery incident occurred
+* `Date_cat`: a categorical variable indicating whether the robbery incident occurred at the beginning, middle, or end of the month
+* `Time_hour`: the hour of the day the robbery incident occurred
+* `SHIFT`: a categorical variable indicating the shift during which the robbery incident occurred, which can be "DAY," "EVENING," or "NIGHT"
+* `Day_cat`: the day of the week the robbery incident occurred, represented as an integer
+* `Day_cat_2`: a categorical variable indicating whether the robbery incident occurred on a weekday or weekend
+* `METHOD`: a categorical variable indicating the method used in the robbery, which can be "GUN," "KNIFE," or "OTHER"
+* `DISTRICT`: the police district where the robbery incident occurred, represented as an integer
+* `PSA`: the police service area where the robbery incident occurred, represented as an integer
+* `START_DATE`: the date and time the robbery incident started
+* `END_DATE`: the date and time the robbery incident ended
+* `Clearance_rate`: the percentage of robbery incidents that were cleared by the police
 
 
 ### 2. Summary statistics
