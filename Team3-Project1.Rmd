@@ -344,7 +344,7 @@ plot_Period_mon <- ggplot(data=temp_2, aes(x,y)) +
 
 grid.arrange(plot_year, plot_Month, plot_Period, plot_Period_mon, ncol=2, nrow=2)
 ```
-**2-1. Freq by Month :split by pandemic phrases**
+**2-1.Freq by Month :split by pandemic phrases**
 
 ```{r}
 #1. by pandemic phrases
@@ -573,7 +573,7 @@ grid.arrange(plot_SHIFT, plot_SHIFT_pre, plot_SHIFT_lock, plot_SHIFT_post,
 boxplot_Time_hour <- ggplot(Robbery, aes(y=Time_hour, x=Period_cat, fill=Period_cat)) + 
   geom_boxplot() + 
   geom_boxplot( colour=c("#ff0000","#11cc11","#0000ff"), outlier.shape=8,
-                outlier.colour="lightblue", outlier.size=4) +  labs(title="E.Box Plot of Time_hour of Robbery", x="Period", y = "Robbery Time_hour") + ylim(0,23)
+                outlier.colour="lightblue", outlier.size=4) +  labs(title="D1_4.Box Plot of Time_hour of Robbery", x="Period", y = "Robbery Time_hour") + ylim(0,23)
 
 boxplot_Time_hour
 ```
@@ -589,22 +589,22 @@ boxplot_Time_hour
 plot_Day_cat<- ggplot(data=Robbery, aes(x=Day_cat)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("Sun","Mon","Tue","Wed","Thur","Fri","Sat")) +
-  labs(x="Day") + labs(title="F1.Incident Date of Robbery")
+  labs(x="Day") + labs(title="E1.Incident Date of Robbery")
 
 plot_Day_cat_pre <- ggplot(data=Robbery_pre, aes(Day_cat)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("Mon","Tue","Wed","Thur","Fri","Sat","Sun")) +
-  labs(x="Day") + labs(title="F1_1.Incident Date (Pre)")
+  labs(x="Day") + labs(title="E1_1.Incident Date (Pre)")
 
 plot_Day_cat_lock <- ggplot(data=Robbery_lock, aes(Day_cat)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("Mon","Tue","Wed","Thur","Fri","Sat","Sun")) +
-  labs(x="Day") + labs(title="F1_2.Incident Date (Lock)")
+  labs(x="Day") + labs(title="E1_2.Incident Date (Lock)")
 
 plot_Day_cat_post <- ggplot(data=Robbery_post, aes(Day_cat)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("Mon","Tue","Wed","Thur","Fri","Sat","Sun")) +
-  labs(x="Day") + labs(title="F1_3.Incident Date (Post)")
+  labs(x="Day") + labs(title="E1_3.Incident Date (Post)")
 
 grid.arrange(plot_Day_cat, plot_Day_cat_pre, plot_Day_cat_lock, plot_Day_cat_post,
              ncol=2, nrow=2)
@@ -619,22 +619,22 @@ grid.arrange(plot_Day_cat, plot_Day_cat_pre, plot_Day_cat_lock, plot_Day_cat_pos
 plot_Day_cat_2<- ggplot(data=Robbery, aes(x=Day_cat_2)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="Day") +
-  labs(title="G1.Incident Date_2 of Robbery")
+  labs(title="F1.Incident Date_2 of Robbery")
 
 plot_Day_cat_2_pre <- ggplot(data=Robbery_pre, aes(Day_cat_2)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) +labs(x="Day") +
-  labs(title="G1_1.Incident Date_2 (Pre)")
+  labs(title="F1_1.Incident Date_2 (Pre)")
 
 plot_Day_cat_2_lock <- ggplot(data=Robbery_lock, aes(Day_cat_2)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="Day") +
-  labs(title="G1_2.Incident Date_2 (Lock)")
+  labs(title="F1_2.Incident Date_2 (Lock)")
 
 plot_Day_cat_2_post <- ggplot(data=Robbery_post, aes(Day_cat_2)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="Day") +
-  labs(title="G1_3.Incident Date_2 (Post)")
+  labs(title="F1_3.Incident Date_2 (Post)")
 
 grid.arrange(plot_Day_cat_2, plot_Day_cat_2_pre, plot_Day_cat_2_lock, plot_Day_cat_2_post,
              ncol=2, nrow=2)
@@ -650,22 +650,22 @@ grid.arrange(plot_Day_cat_2, plot_Day_cat_2_pre, plot_Day_cat_2_lock, plot_Day_c
 plot_METHOD<- ggplot(data=Robbery, aes(x=METHOD)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="METHOD") +
-  labs(title="H1.Incident Date_2 of Robbery")
+  labs(title="G1.Incident Date_2 of Robbery")
 
 plot_METHOD_pre <- ggplot(data=Robbery_pre, aes(METHOD)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) +labs(x="METHOD") +
-  labs(title="H1_1.Incident Date_2 (Pre)")
+  labs(title="G1_1.Incident Date_2 (Pre)")
 
 plot_METHOD_lock <- ggplot(data=Robbery_lock, aes(METHOD)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="METHOD") +
-  labs(title="H1_2.Incident Date_2 (Lock)")
+  labs(title="G1_2.Incident Date_2 (Lock)")
 
 plot_METHOD_post <- ggplot(data=Robbery_post, aes(METHOD)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="METHOD") +
-  labs(title="H1_3.Incident Date_2 (Post)")
+  labs(title="G1_3.Incident Date_2 (Post)")
 
 grid.arrange(plot_METHOD, plot_METHOD_pre, plot_METHOD_lock, plot_METHOD_post,
              ncol=2, nrow=2)
@@ -680,23 +680,23 @@ grid.arrange(plot_METHOD, plot_METHOD_pre, plot_METHOD_lock, plot_METHOD_post,
 plot_DISTRICT<- ggplot(data=Robbery, aes(x=DISTRICT)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="DISTRICT") + scale_x_discrete(limits=c("1","2","3","4","5","6","NA")) + 
-  labs(title="I1.Robbery BY DISTRICT")
+  labs(title="H1.Robbery BY DISTRICT")
 
 
 plot_DISTRICT_pre<- ggplot(data=Robbery_pre, aes(x=DISTRICT)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="DISTRICT") + scale_x_discrete(limits=c("1","2","3","4","5","6","NA")) + 
-  labs(title="I1_1.Robbery BY DISTRICT (Pre)")
+  labs(title="H1_1.Robbery BY DISTRICT (Pre)")
 
 plot_DISTRICT_lock<- ggplot(data=Robbery_lock, aes(x=DISTRICT)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="DISTRICT") + scale_x_discrete(limits=c("1","2","3","4","5","6","NA")) + 
-  labs(title="I1_2.Robbery BY DISTRICT (Lock)")
+  labs(title="H1_2.Robbery BY DISTRICT (Lock)")
 
 plot_DISTRICT_post<- ggplot(data=Robbery_post, aes(x=DISTRICT)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="DISTRICT") + scale_x_discrete(limits=c("1","2","3","4","5","6","NA")) + 
-  labs(title="I1_3.DRobbery BY DISTRICT (Post)")
+  labs(title="H1_3.DRobbery BY DISTRICT (Post)")
 
 grid.arrange(plot_DISTRICT, plot_DISTRICT_pre, plot_DISTRICT_lock, plot_DISTRICT_post,ncol=2, nrow=2)
 
@@ -709,7 +709,7 @@ grid.arrange(plot_DISTRICT, plot_DISTRICT_pre, plot_DISTRICT_lock, plot_DISTRICT
 boxplot_PSA <- ggplot(Robbery, aes(y=PSA, x=Period_cat, fill=Period_cat)) + 
   geom_boxplot() + 
   geom_boxplot( colour=c("#ff0000","#11cc11","#0000ff"), outlier.shape=8,
-                outlier.colour="lightblue", outlier.size=4) +  labs(title="J. Box Plot of Robbery by Location(PSA)", x="Period", y = "Location (PSA) of Robbery")
+                outlier.colour="lightblue", outlier.size=4) +  labs(title="I_1. Box Plot of Robbery by Location(PSA)", x="Period", y = "Location (PSA) of Robbery")
 
 boxplot_PSA
 ```
@@ -720,7 +720,7 @@ boxplot_PSA
 boxplot_Clearance <- ggplot(Robbery, aes(y=Clearance_rate, x=Period_cat, fill=Period_cat)) + 
   geom_boxplot() + 
   geom_boxplot( colour=c("#ff0000","#11cc11","#0000ff"), outlier.shape=8,
-                outlier.colour="lightblue", outlier.size=4) +  labs(title="K. Box Plot of Robbery Clearance rate", x="Period", y = "Clearance_rate(Minute)")
+                outlier.colour="lightblue", outlier.size=4) +  labs(title="I_2. Box Plot of Robbery Clearance rate", x="Period", y = "Clearance_rate(Minute)")
 
 boxplot_Clearance
 ```
