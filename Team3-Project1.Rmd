@@ -798,7 +798,6 @@ temp %>%
 
 
 
-
 After examining the data using the outlierKD function, we have identified outliers that have been replaced with NAs. However, we have not deleted these outliers from the dataset. Instead, we have replaced them with NAs to ensure that they do not affect the analysis of the data. This approach allows us to retain the maximum amount of data while still removing any data points that may negatively impact our analysis
 
 
