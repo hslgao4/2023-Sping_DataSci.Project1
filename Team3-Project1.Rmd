@@ -34,13 +34,6 @@ library(gridExtra) #graph arrange(positioning)
 Brief summary of the report... After we finish ! 
 
 
-
-
-
-
-
-
-
 ## Introduction
 
 The COVID-19 pandemic has had a profound impact on society, affecting various aspects of daily life, including crime rates. It is important to understand how the pandemic has impacted different types of crime, particularly robbery rates, which can have significant implications for public safety. This EDA project aims to examine the impact of the COVID-19 lockdown on robbery rates in Washington DC using a dataset of roughly 8000 observations.
@@ -63,9 +56,9 @@ options(scientific=T, digits = 3)
 ## Methods
 
 ### 1. Data  
-In the opening section of this report, we provide a comprehensive overview of the data used in our analysis. We obtained our data from the Metropolitan Police Department in Washington D.C., and specifically focused on the Crime Incidents dataset.
+In the opening section of this report, we provide a comprehensive overview of the data used in our analysis. <<<We obtained our data from the Metropolitan Police Department in Washington D.C., and specifically focused on the Crime Incidents dataset.
 
-The dataset contains detailed information on robbery incidents that occurred between 2019 and 2022, and we extracted this information into our dataset titled "Robbery_DC_clean.csv".
+The dataset contains detailed information on robbery incidents that occurred between 2019 and 2022, and we extracted this information into our dataset titled "Robbery_DC_clean.csv".>>>
 
 In this section, we will provide a commentary on the data, highlighting its strengths and limitations. This information is critical in providing context for the analysis and understanding the potential impact of any data-related issues on the conclusions drawn from our analysis.
 
@@ -75,15 +68,15 @@ We will also provide an overview of the variables included in the dataset, such 
 
 Overall, this section provides a solid foundation for the analysis that follows, and we have taken great care to ensure that the data is reliable, relevant, and suitable for our analysis.
 
+
+### 2. Data Wrangling and Preprocessing
+
 ```{r}
 #Import
 Robbery = data.frame(read.csv("Robbery_DC_clean.csv"))
 ```
 
-
-### 2. Data Wrangling and Preprocessing
-
-This section typically involves importing, cleaning, and preprocessing raw data to prepare it for analysis. The data cleaning process may include removing duplicate records, addressing missing values, identifying and handling outliers, and transforming variables as needed. By performing these steps, we can ensure that the data is suitable for analysis and that our conclusions are based on accurate and reliable information. In this section, we will provide an overview of the data wrangling and preprocessing steps taken for the "Robbery_DC_clean.csv" dataset used in our analysis. 
+This section typically involves importing, cleaning, and pre-processing raw data to prepare it for analysis. The data cleaning process include removing duplicate records, addressing missing values, identifying and handling outliers, and transforming variables as needed. By performing these steps, we can ensure that the data is suitable for analysis and that our conclusions are based on accurate and reliable information. In this section, we will provide an overview of the data wrangling and preprocessing steps taken for the "Robbery_DC_clean.csv" dataset used in our analysis. 
 
 ```{r}
 #create Clearance_rate(Unit: Minute)= END_DATE - START_DATE 
@@ -140,7 +133,7 @@ str(Robbery)
 #nrow(Robbery)
 ```
 
-*The first 4 samples of the dataframe are:*
+*The first 4 rows of the dataframe are:*
 
 ```{r}
 
@@ -149,7 +142,7 @@ xkabledply(Robbery[1:4,], title = "First Four Rows of Dataframe: `Robbery`")
 ```
 
 
-*The last 4 samples of the dataframe are*
+*The last 4 rows of the dataframe are*
 ```{r}
 xkabledply(Robbery[(nrow(Robbery)-3):nrow(Robbery),], title = "Last Four Rows of Dataframe: `Robbery`")
 ```
@@ -183,7 +176,7 @@ The dataset consists of *8345* observations and *22* variables, including:
 
 ### 2. Summary statistics
 
-In this section, we provide a detailed overview of the summary statistics for the robbery data in Washington D.C. This information includes measures such as the mean, median, standard deviation, minimum, and maximum values for each variable.
+In this section, we provide a detailed overview of the summary statistics of some quantitative data in our data set. This information includes measures such as the mean, median, standard deviation, minimum, and maximum values.
 
 We will also examine other measures, such as the interquartile range (IQR) and coefficient of variation, to provide a more comprehensive understanding of the data's variability and dispersion.
 
@@ -201,7 +194,7 @@ cols <- c('Period_cat','Period_cat_2','Year', 'Month',
           'SHIFT','Time_hour','Clearance_rate','Day_cat','Day_cat_2',
           'METHOD','DISTRICT','PSA')
 
-knitr::kable(summary(select(Robbery,cols)), format = "markdown", caption="Summary statistics of Robbery between 2019 to 2022 in D.C")
+knitr::kable(summary(select(Robbery,cols)), format = "markdown", caption="Overall summary statistics of Robbery between 2019 to 2022 in D.C")
 
 #Freq
 #Robbery %>%  
@@ -301,34 +294,33 @@ Post   |   Post-pandemic(17M)   | 2021.7.26~2022.12.31
 
 **1. Basic plots of Robbery data is below:**
 
-
 ```{r}
-# Bar plot 1.: Freq by yeqr (x:discrete, Barchart)+Value=count(freq)
+# Plot 1.: Freq by yeqr (x:discrete, Barchart)+Value=count(freq)
 
 plot_year <- ggplot(data=Robbery, aes(x=Year)) +
-geom_bar(colour="darkgrey", fill="lightgrey",alpha = .7) +
+geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + 
-  labs(x="Year") + labs(title="C1.Yearly Robbery frequency")
-  
-# Bar plot 2.: Freq by Month (x:continuous, Histogram)+Value=count(freq)
+  labs(x="Year") + labs(title="A1.Yearly Robbery Frequency")
+
+# Plot 2.: Freq by Month (x:continuous, Histogram)+Value=count(freq)
 
 plot_Month <- ggplot(data=Robbery, aes(Month)) + 
-  geom_histogram(col="darkgrey", 
-                 fill="lightgrey", 
+  geom_histogram(col="darkblue", 
+                 fill="lightblue", 
                  alpha = .7) + 
-  labs(x="Month", y="Frequency") +
-  labs(title="C2.Monthly Robbery frequency") + scale_x_continuous(breaks=1:12) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
+  labs(x="Month", y="count") +
+  labs(title="A2.Monthly Robbery Frequency") + scale_x_continuous(breaks=1:12) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
 
-# Bar plot 3.: Freq by Period phase(Pre,lockdown,post)+Value=count(freq)
+# Plot 3.: Freq by Period phase(Pre,lockdown,post)+Value=count(freq)
 
 plot_Period <- ggplot(data=Robbery, aes(x=Period_cat)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..), vjust = 1.5) + 
-  labs(x="Period") + labs(title="C3.Robbery by Pandemic phase") 
+  labs(x="Period") + labs(title="A3.Robbery Frequency by Pandemic phase") 
 
 
 ###################################
-# Barplot 4. average Robbery frequency per month [by Period_cat]+Value
+# Plot 4. average Robbery frequency per month [by Period_cat]+Value
 temp <- count(Robbery,Period_cat, sort=TRUE)
 
 #Avg
@@ -336,7 +328,6 @@ temp[1,3] = as.integer(temp[1,2] / 16.84 ) #post: 16M+26d
 temp[2,3] = as.integer(temp[2,2] / 16.42) #pre: 16M+13d  
 temp[3,3] = as.integer(temp[3,2] / 14.39) #pre: 14M+12d  
 
-#bar plot
 x <-  c("Pre","Lock","Post")
 y  <-  c(178, 161, 185 )
 
@@ -348,11 +339,11 @@ plot_Period_mon <- ggplot(data=temp_2, aes(x,y)) +
                  fill="lightblue", 
                  alpha = .7,stat='identity') + 
   labs(x="Period", y="Avg.Robbery") +
-  labs(title="C5.Avg.Robbery(per month)") + scale_x_discrete(limits=c("Pre","Lock","Post")) + geom_text(aes(label=signif(y)),vjust = 1.5)   
+  labs(title="A4.Avg.Robbery(per month)") + scale_x_discrete(limits=c("Pre","Lock","Post")) + geom_text(aes(label=signif(y)),vjust = 1.5)   
 
 grid.arrange(plot_year, plot_Month, plot_Period, plot_Period_mon, ncol=2, nrow=2)
 ```
-**2-1. Freq by Month :split by pandemic phrases**
+**2-1.Freq by Month :split by pandemic phrases**
 
 ```{r}
 #1. by pandemic phrases
@@ -370,14 +361,14 @@ Robbery_2022 <- subset(Robbery,subset = Robbery$Year == 2022)
 
 
 ```{r}
-# Bar plot 2.: Freq by Month :split by pandemic phrase
+# Plot.Freq by Month :split by pandemic phrase
 
 plot_Month <- ggplot(data=Robbery, aes(Month)) + 
   geom_histogram(col="darkblue", 
                  fill="lightblue", 
                  alpha = .7) + 
   labs(x="Month", y="Frequency") +
-  labs(title="C2.Monthly Robbery frequency") + scale_x_continuous(breaks=1:12) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
+  labs(title="A2-1.Monthly Robbery frequency") + scale_x_continuous(breaks=1:12) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
 
 
 plot_Month_pre <- ggplot(data=Robbery_pre, aes(Month)) + 
@@ -385,21 +376,21 @@ plot_Month_pre <- ggplot(data=Robbery_pre, aes(Month)) +
                  fill="lightblue", 
                  alpha = .7) + 
   labs(x="Month", y="Frequency") +
-  labs(title="C2_1.Monthly Robbery (Pre)") + scale_x_continuous(breaks=1:12) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
+  labs(title="A2-2.Monthly Robbery (Pre)") + scale_x_continuous(breaks=1:12) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
 
 plot_Month_lock <- ggplot(data=Robbery_lock, aes(Month)) + 
   geom_histogram(col="darkblue", 
                  fill="lightblue", 
                  alpha = .7) + 
   labs(x="Month", y="Frequency") +
-  labs(title="C2_2.Monthly Robbery (Lock)") + scale_x_continuous(breaks=1:12) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
+  labs(title="A2-3.Monthly Robbery (Lock)") + scale_x_continuous(breaks=1:12) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
 
 plot_Month_post <- ggplot(data=Robbery_post, aes(Month)) + 
   geom_histogram(col="darkblue", 
                  fill="lightblue", 
                  alpha = .7) + 
   labs(x="Month", y="Frequency") +
-  labs(title="C2_3.Monthly Robbery (Post)") + scale_x_continuous(breaks=1:12) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
+  labs(title="A2-4.Monthly Robbery (Post)") + scale_x_continuous(breaks=1:12) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
 
 grid.arrange(plot_Month, plot_Month_pre,plot_Month_lock, plot_Month_post, ncol=2, nrow=2)
 
@@ -408,36 +399,36 @@ grid.arrange(plot_Month, plot_Month_pre,plot_Month_lock, plot_Month_post, ncol=2
 **2-2. Freq by Month :split by Years**
 
 ```{r}
-# Bar plot 2.: Freq by Month :split by pandemic phrase
+# Plot.Freq by Month :split by pandemic phrase
 
 plot_Month_2019 <- ggplot(data=Robbery_2019, aes(Month)) + 
-  geom_histogram(col="darkgrey", 
-                 fill="lightgrey", 
+  geom_histogram(col="darkblue", 
+                 fill="lightblue", 
                  alpha = .7) + 
   labs(x="Month", y="Frequency") +
-  labs(title="C2_4.Monthly Robbery(2019)") + scale_x_continuous(breaks=1:12) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
+  labs(title="A2-5.Monthly Robbery(2019)") + scale_x_continuous(breaks=1:12) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
 
 
 plot_Month_2020 <- ggplot(data=Robbery_2020, aes(Month)) + 
-  geom_histogram(col="darkgrey", 
-                 fill="lightgrey", 
+  geom_histogram(col="darkblue", 
+                 fill="lightblue", 
                  alpha = .7) + 
   labs(x="Month", y="Frequency") +
-  labs(title="C2_5.Monthly Robbery(2020)") + scale_x_continuous(breaks=1:12) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
+  labs(title="A2-6.Monthly Robbery(2020)") + scale_x_continuous(breaks=1:12) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
 
 plot_Month_2021 <- ggplot(data=Robbery_2021, aes(Month)) + 
-  geom_histogram(col="darkgrey", 
-                 fill="lightgrey", 
+  geom_histogram(col="darkblue", 
+                 fill="lightblue", 
                  alpha = .7) + 
   labs(x="Month", y="Frequency") +
-  labs(title="C2_6.Monthly Robbery(2021)") + scale_x_continuous(breaks=1:12) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
+  labs(title="A2-7.Monthly Robbery(2021)") + scale_x_continuous(breaks=1:12) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
 
 plot_Month_2022 <- ggplot(data=Robbery_2022, aes(Month)) + 
-  geom_histogram(col="darkgrey", 
-                 fill="lightgrey", 
+  geom_histogram(col="darkblue", 
+                 fill="lightblue", 
                  alpha = .7) + 
   labs(x="Month", y="Frequency") +
-  labs(title="C2_7.Monthly Robbery(2022)") + scale_x_continuous(breaks=1:12) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
+  labs(title="A2-8.Monthly Robbery(2022)") + scale_x_continuous(breaks=1:12) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
 
 grid.arrange(plot_Month_2019, plot_Month_2020,plot_Month_2021, plot_Month_2022, ncol=2, nrow=2)
 
@@ -449,22 +440,22 @@ grid.arrange(plot_Month_2019, plot_Month_2020,plot_Month_2021, plot_Month_2022, 
 plot_Season <- ggplot(data=Robbery, aes(x=Season)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) +
-  labs(x="Season") + labs(title="C3.Seansonally Robbery frequency")
+  labs(x="Season") + labs(title="B1.Seansonally Robbery frequency")
 
 plot_Season_pre <- ggplot(data=Robbery_pre, aes(Season)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) +
-  labs(x="Season") + labs(title="C3_1.Seasonly Robbery (Pre)")
+  labs(x="Season") + labs(title="B1_1.Seasonly Robbery (Pre)")
 
 plot_Season_lock <- ggplot(data=Robbery_lock, aes(Season)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) +
-  labs(x="Season") + labs(title="C3_2.Seasonly Robbery (Lock)")
+  labs(x="Season") + labs(title="B1_2.Seasonly Robbery (Lock)")
 
 plot_Season_post <- ggplot(data=Robbery_post, aes(Season)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) +
-  labs(x="Season") + labs(title="C3_3.Seasonly Robbery (Post)")
+  labs(x="Season") + labs(title="B1_3.Seasonly Robbery (Post)")
 
 grid.arrange(plot_Season, plot_Season_pre, plot_Season_lock, plot_Season_post,
              ncol=2, nrow=2)
@@ -477,22 +468,22 @@ grid.arrange(plot_Season, plot_Season_pre, plot_Season_lock, plot_Season_post,
 plot_Season_2019 <- ggplot(data=Robbery_2019, aes(x=Season)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) +
-  labs(x="Season") + labs(title="C4_1.Seansonally Robbery (2019)")
+  labs(x="Season") + labs(title="B1_4.Seansonally Robbery (2019)")
 
 plot_Season_2020 <- ggplot(data=Robbery_2020, aes(x=Season)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) +
-  labs(x="Season") + labs(title="C4_2.Seansonally Robbery (2020)")
+  labs(x="Season") + labs(title="B1_5.Seansonally Robbery (2020)")
 
 plot_Season_2021 <- ggplot(data=Robbery_2021, aes(x=Season)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) +
-  labs(x="Season") + labs(title="C4_3.Seansonally Robbery (2021)")
+  labs(x="Season") + labs(title="B1_6.Seansonally Robbery (2021)")
 
 plot_Season_2022 <- ggplot(data=Robbery_2022, aes(x=Season)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) +
-  labs(x="Season") + labs(title="C4_4.Seansonally Robbery (2022)")
+  labs(x="Season") + labs(title="B1_7.Seansonally Robbery (2022)")
 
 
 grid.arrange(plot_Season_2019, plot_Season_2020, plot_Season_2021, plot_Season_2022,
@@ -505,27 +496,26 @@ grid.arrange(plot_Season_2019, plot_Season_2020, plot_Season_2021, plot_Season_2
    
    
 ```{r}
-# Bar plot 
 
 plot_Date_cat <- ggplot(data=Robbery, aes(x=Date_cat)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("Begin","Middle","End")) +
-  labs(x="Date_cat") + labs(title="C5.Incident Date of Robbery")
+  labs(x="Date_cat") + labs(title="C1.Incident Date of Robbery")
 
 plot_Date_cat_pre <- ggplot(data=Robbery_pre, aes(Date_cat)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("Begin","Middle","End")) +
-  labs(x="Date_cat") + labs(title="C5_1.Incident Date (Pre)")
+  labs(x="Date_cat") + labs(title="C1_1.Incident Date (Pre)")
 
 plot_Date_cat_lock <- ggplot(data=Robbery_lock, aes(Date_cat)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("Begin","Middle","End")) +
-  labs(x="Date_cat") + labs(title="C5_2.Incident Date (Lock)")
+  labs(x="Date_cat") + labs(title="C1_2.Incident Date (Lock)")
 
 plot_Date_cat_post <- ggplot(data=Robbery_post, aes(Date_cat)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("Begin","Middle","End")) +
-  labs(x="Date_cat") + labs(title="C5_3.Incident Date (Post)")
+  labs(x="Date_cat") + labs(title="C1_3.Incident Date (Post)")
 
 grid.arrange(plot_Date_cat, plot_Date_cat_pre, plot_Date_cat_lock, plot_Date_cat_post,
              ncol=2, nrow=2)
@@ -538,7 +528,7 @@ grid.arrange(plot_Date_cat, plot_Date_cat_pre, plot_Date_cat_lock, plot_Date_cat
 boxplot_Date <- ggplot(Robbery, aes(y=Date, x=Period_cat, fill=Period_cat)) + 
   geom_boxplot() + 
   geom_boxplot( colour=c("#ff0000","#11cc11","#0000ff"), outlier.shape=8,
-                outlier.colour="lightblue", outlier.size=4) +  labs(title="C5_4.Box_Date of Robbery", x="Period", y = "Robbery date") + ylim(0,32)
+                outlier.colour="lightblue", outlier.size=4) +  labs(title="C1_4.Box Pot of Date of Robbery", x="Period", y = "Robbery date") + ylim(0,32)
 
 boxplot_Date 
 ```
@@ -554,22 +544,22 @@ boxplot_Date
 plot_SHIFT <- ggplot(data=Robbery, aes(x=SHIFT)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("DAY","EVENING","MIDNIGHT")) +
-  labs(x="Timezone") + labs(title="C6.Incident timezone of Robbery")
+  labs(x="Timezone") + labs(title="D1.Incident timezone")
 
 plot_SHIFT_pre <- ggplot(data=Robbery_pre, aes(SHIFT)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("DAY","EVENING","MIDNIGHT")) +
-  labs(x="Timezone") + labs(title="C6_1.Incident timezone (Pre)")
+  labs(x="Timezone") + labs(title="D1_1.Incident timezone (Pre)")
 
 plot_SHIFT_lock <- ggplot(data=Robbery_lock, aes(SHIFT)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("DAY","EVENING","MIDNIGHT")) +
-  labs(x="Timezone") + labs(title="C6_2.Incident timezone (Lock)")
+  labs(x="Timezone") + labs(title="D1_2.Incident timezone (Lock)")
 
 plot_SHIFT_post <- ggplot(data=Robbery_post, aes(SHIFT)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("DAY","EVENING","MIDNIGHT")) +
-  labs(x="Timezone") + labs(title="C6_3.Incident timezone (Post)")
+  labs(x="Timezone") + labs(title="D1_3.Incident timezone (Post)")
 
 grid.arrange(plot_SHIFT, plot_SHIFT_pre, plot_SHIFT_lock, plot_SHIFT_post,
              ncol=2, nrow=2)
@@ -582,7 +572,7 @@ grid.arrange(plot_SHIFT, plot_SHIFT_pre, plot_SHIFT_lock, plot_SHIFT_post,
 boxplot_Time_hour <- ggplot(Robbery, aes(y=Time_hour, x=Period_cat, fill=Period_cat)) + 
   geom_boxplot() + 
   geom_boxplot( colour=c("#ff0000","#11cc11","#0000ff"), outlier.shape=8,
-                outlier.colour="lightblue", outlier.size=4) +  labs(title="C6_4.Box_Time_hour of Robbery", x="Period", y = "Robbery Time_hour") + ylim(0,23)
+                outlier.colour="lightblue", outlier.size=4) +  labs(title="D1_4.Box Plot of Time_hour of Robbery", x="Period", y = "Robbery Time_hour") + ylim(0,23)
 
 boxplot_Time_hour
 ```
@@ -598,22 +588,22 @@ boxplot_Time_hour
 plot_Day_cat<- ggplot(data=Robbery, aes(x=Day_cat)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("Sun","Mon","Tue","Wed","Thur","Fri","Sat")) +
-  labs(x="Day") + labs(title="C7.Incident Date of Robbery")
+  labs(x="Day") + labs(title="E1.Incident Date of Robbery")
 
 plot_Day_cat_pre <- ggplot(data=Robbery_pre, aes(Day_cat)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("Mon","Tue","Wed","Thur","Fri","Sat","Sun")) +
-  labs(x="Day") + labs(title="C7_1.Incident Date (Pre)")
+  labs(x="Day") + labs(title="E1_1.Incident Date (Pre)")
 
 plot_Day_cat_lock <- ggplot(data=Robbery_lock, aes(Day_cat)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("Mon","Tue","Wed","Thur","Fri","Sat","Sun")) +
-  labs(x="Day") + labs(title="C7_2.Incident Date (Lock)")
+  labs(x="Day") + labs(title="E1_2.Incident Date (Lock)")
 
 plot_Day_cat_post <- ggplot(data=Robbery_post, aes(Day_cat)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("Mon","Tue","Wed","Thur","Fri","Sat","Sun")) +
-  labs(x="Day") + labs(title="C7_3.Incident Date (Post)")
+  labs(x="Day") + labs(title="E1_3.Incident Date (Post)")
 
 grid.arrange(plot_Day_cat, plot_Day_cat_pre, plot_Day_cat_lock, plot_Day_cat_post,
              ncol=2, nrow=2)
@@ -628,22 +618,22 @@ grid.arrange(plot_Day_cat, plot_Day_cat_pre, plot_Day_cat_lock, plot_Day_cat_pos
 plot_Day_cat_2<- ggplot(data=Robbery, aes(x=Day_cat_2)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="Day") +
-  labs(title="C8.Incident Date_2 of Robbery")
+  labs(title="F1.Incident Date_2 of Robbery")
 
 plot_Day_cat_2_pre <- ggplot(data=Robbery_pre, aes(Day_cat_2)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) +labs(x="Day") +
-  labs(title="C8_1.Incident Date_2 (Pre)")
+  labs(title="F1_1.Incident Date_2 (Pre)")
 
 plot_Day_cat_2_lock <- ggplot(data=Robbery_lock, aes(Day_cat_2)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="Day") +
-  labs(title="C8_2.Incident Date_2 (Lock)")
+  labs(title="F1_2.Incident Date_2 (Lock)")
 
 plot_Day_cat_2_post <- ggplot(data=Robbery_post, aes(Day_cat_2)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="Day") +
-  labs(title="C8_3.Incident Date_2 (Post)")
+  labs(title="F1_3.Incident Date_2 (Post)")
 
 grid.arrange(plot_Day_cat_2, plot_Day_cat_2_pre, plot_Day_cat_2_lock, plot_Day_cat_2_post,
              ncol=2, nrow=2)
@@ -659,22 +649,22 @@ grid.arrange(plot_Day_cat_2, plot_Day_cat_2_pre, plot_Day_cat_2_lock, plot_Day_c
 plot_METHOD<- ggplot(data=Robbery, aes(x=METHOD)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="METHOD") +
-  labs(title="c9.Incident Date_2 of Robbery")
+  labs(title="G1.Incident Date_2 of Robbery")
 
 plot_METHOD_pre <- ggplot(data=Robbery_pre, aes(METHOD)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) +labs(x="METHOD") +
-  labs(title="c9_1.Incident Date_2 (Pre)")
+  labs(title="G1_1.Incident Date_2 (Pre)")
 
 plot_METHOD_lock <- ggplot(data=Robbery_lock, aes(METHOD)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="METHOD") +
-  labs(title="c9_2.Incident Date_2 (Lock)")
+  labs(title="G1_2.Incident Date_2 (Lock)")
 
 plot_METHOD_post <- ggplot(data=Robbery_post, aes(METHOD)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="METHOD") +
-  labs(title="c9_3.Incident Date_2 (Post)")
+  labs(title="G1_3.Incident Date_2 (Post)")
 
 grid.arrange(plot_METHOD, plot_METHOD_pre, plot_METHOD_lock, plot_METHOD_post,
              ncol=2, nrow=2)
@@ -689,23 +679,23 @@ grid.arrange(plot_METHOD, plot_METHOD_pre, plot_METHOD_lock, plot_METHOD_post,
 plot_DISTRICT<- ggplot(data=Robbery, aes(x=DISTRICT)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="DISTRICT") + scale_x_discrete(limits=c("1","2","3","4","5","6","7","NA")) + 
-  labs(title="c10.DISTRICT of Robbery")
+  labs(title="H1.Robbery BY DISTRICT")
 
 
 plot_DISTRICT_pre<- ggplot(data=Robbery_pre, aes(x=DISTRICT)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="DISTRICT") + scale_x_discrete(limits=c("1","2","3","4","5","6","7","NA")) + 
-  labs(title="c10_1.DISTRICT (Pre)")
+  labs(title="H1_1.Robbery BY DISTRICT (Pre)")
 
 plot_DISTRICT_lock<- ggplot(data=Robbery_lock, aes(x=DISTRICT)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="DISTRICT") + scale_x_discrete(limits=c("1","2","3","4","5","6","7","NA")) + 
-  labs(title="c10_2.DISTRICT (Lock)")
+  labs(title="H1_2.Robbery BY DISTRICT (Lock)")
 
 plot_DISTRICT_post<- ggplot(data=Robbery_post, aes(x=DISTRICT)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="DISTRICT") + scale_x_discrete(limits=c("1","2","3","4","5","6","7","NA")) + 
-  labs(title="c10_3.DISTRICT (Post)")
+  labs(title="H1_3.DRobbery BY DISTRICT (Post)")
 
 grid.arrange(plot_DISTRICT, plot_DISTRICT_pre, plot_DISTRICT_lock, plot_DISTRICT_post,ncol=2, nrow=2)
 
@@ -718,7 +708,7 @@ grid.arrange(plot_DISTRICT, plot_DISTRICT_pre, plot_DISTRICT_lock, plot_DISTRICT
 boxplot_PSA <- ggplot(Robbery, aes(y=PSA, x=Period_cat, fill=Period_cat)) + 
   geom_boxplot() + 
   geom_boxplot( colour=c("#ff0000","#11cc11","#0000ff"), outlier.shape=8,
-                outlier.colour="lightblue", outlier.size=4) +  labs(title="Location (PSA) of Robbery", x="Period", y = "c11_Box_Robbery Location(PSA)")
+                outlier.colour="lightblue", outlier.size=4) +  labs(title="I_1. Box Plot of Robbery by Location(PSA)", x="Period", y = "Location (PSA) of Robbery")
 
 boxplot_PSA
 ```
@@ -729,7 +719,7 @@ boxplot_PSA
 boxplot_Clearance <- ggplot(Robbery, aes(y=Clearance_rate, x=Period_cat, fill=Period_cat)) + 
   geom_boxplot() + 
   geom_boxplot( colour=c("#ff0000","#11cc11","#0000ff"), outlier.shape=8,
-                outlier.colour="lightblue", outlier.size=4) +  labs(title="Box_Clearance rate of Robbery", x="Period", y = "Clearance_rate(Minute)")
+                outlier.colour="lightblue", outlier.size=4) +  labs(title="I_2. Box Plot of Robbery Clearance rate", x="Period", y = "Clearance_rate(Minute)")
 
 boxplot_Clearance
 ```
@@ -873,7 +863,6 @@ Robbery_post <-
 ```{r}
 str(Robbery)
 ```
-
 
 
 
