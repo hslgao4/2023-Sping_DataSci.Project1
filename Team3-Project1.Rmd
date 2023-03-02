@@ -867,6 +867,21 @@ str(Robbery)
 ```
 
 
+### 4. 
+
+```{r}
+model = lm(Month~Date, data=Robbery)
+summary(model)
+```
+```{r}
+model1 = lm(Month~Time_hour, data=Robbery)
+summary(model1)
+```
+
+```{r}
+model1 = lm(Month~DISTRICT, data=Robbery)
+summary(model1)
+```
 
 
 
