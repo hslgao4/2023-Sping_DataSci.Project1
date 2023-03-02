@@ -31,18 +31,21 @@ library(gridExtra) #graph arrange(positioning)
 # The Effect of COVID-19 Lockdown on Robbery Incidents in Washington D.C.
 
 ## Abstract
-Brief summary of the report... After we finish ! 
+A. Briefly introduce the topic and purpose of the study
+B. Summarize the key findings and conclusions of the study
+ 
 
 
 ## Introduction
 
-The COVID-19 pandemic has had a profound impact on society, affecting various aspects of daily life, including crime rates. It is important to understand how the pandemic has impacted different types of crime, particularly robbery rates, which can have significant implications for public safety. This EDA project aims to examine the impact of the COVID-19 lockdown on robbery rates in Washington DC using a dataset of roughly 8000 observations.
+The COVID-19 pandemic has impacted various aspects of daily life, including crime rates. This EDA project examines the impact of the COVID-19 lockdown on robbery rates in Washington D.C using a dataset of roughly 8000 observations. The study analyzes the pre-pandemic, lockdown, and post-pandemic periods (2019-2022) to determine significant changes in robbery frequency. Robbery is defined by the Code of the District of Columbia as taking anything of value from the person or immediate actual possession of another by force or violence, putting in fear, or by sudden or stealthy seizure or snatching. The project explores differences in robbery patterns during the pandemic compared to pre/post-pandemic times. It also investigates changes in the relationship between the day of the week and the frequency of robberies before and after the pandemic period. Additionally, the project examines changes in the relationship between the day of the month and the frequency of robberies before and after the pandemic period. Finally, the study identifies significant changes in the frequency of robberies among districts before and after the pandemic.
 
-The study will analyze the pre-pandemic, lockdown, and post-pandemic periods (2019-2022) to determine if there have been any significant changes in the frequency of robberies. The project will provide a comprehensive examination of the impact of the COVID-19 lockdown on robbery rates in Washington DC and will attempt to answer several key questions related to this topic.
 
-Specifically, the study will explore any notable differences in the patterns of robbery during the pandemic compared to pre/post-pandemic times. It will also investigate how the relationship between the day of the week (weekdays and weekends) and the frequency of robberies has changed before and after the pandemic period. Additionally, the project will examine if there have been any changes in the relationship between the day of the month (such as the beginning, middle, or end) and the frequency of robberies before and after the pandemic period. Finally, the study will identify any significant changes in the frequency of robberies among districts before and after the pandemic.
+The study by Boman and Gallupe (2020), suggests that the COVID-19 pandemic and the associated mandatory stay-at-home orders have had a differential impact on crime rates in the US. While overall crime rates, as measured by calls for service to law enforcement, have decreased compared to the pre-pandemic year of 2019, this drop appears to be driven by decreases in minor offenses that are typically committed in peer groups. In contrast, serious crimes that are generally not committed with co-offenders, such as homicide and intimate partner violence, have either remained constant or increased. The study raises the possibility that mandatory lockdown orders may have displaced minor offenders into situations where there is a greater opportunity for serious crimes, particularly intimate partner violence and homicide.
 
-To conduct this research, the study will use the Crime Incidents dataset from the Metropolitan Police Department, specifically analyzing the robbery incidents from 2019 to 2022. The dataset, titled "Robbery_DC_clean.csv," will be used to answer the research questions and provide valuable insights into the impact of the COVID-19 pandemic on robbery rates in Washington DC.
+
+In order to understand the impact of COVID-19 lockdown on robbery rates in Washington D.C, it is important to first examine the overall crime rates in the area prior to the pandemic. According to the Metropolitan Police Department's crime statistics, the overall crime rate in Washington D.C. has been decreasing in recent years. In 2019, there were 31,700 reported incidents of crime, a decrease from 37,265 in 2016. However, within this overall trend, there have been fluctuations in specific types of crimes, including robbery. Moreover, Robbery has been a persistent problem in Washington D.C., particularly in certain areas of the city. In 2019, there were 2,700 reported incidents of robbery, down from 2,977 in 2015. As such, it is important to examine how the COVID-19 pandemic and associated lockdown measures have impacted robbery rates in the city. This analysis will provide insight into how the pandemic has affected crime patterns in a major urban area and may inform future policy decisions related to crime prevention and public safety.
+
 
 
 
@@ -53,7 +56,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
 options(scientific=T, digits = 3) 
 ```
 
-## Methods
+## Methodology
 
 ### 1. Data  
 In the opening section of this report, we provide a comprehensive overview of the data used in our analysis. <<<We obtained our data from the Metropolitan Police Department in Washington D.C., and specifically focused on the Crime Incidents dataset.
