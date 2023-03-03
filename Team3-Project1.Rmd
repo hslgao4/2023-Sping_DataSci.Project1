@@ -290,9 +290,9 @@ var(Robbery$PSA, na.rm = TRUE)
    
 Period_cat | Define | Description   
 -----|-------|-----------  
- Pre   | Pre-pandemic (15M)   |  2019.1~2020.3.12   
-Lock   | Lockdown(16M)   | 2020.3.13~ 2021. 7.25   
-Post   |   Post-pandemic(17M)   | 2021.7.26~2022.12.31 
+ Pre   | Pre-pandemic (14M)   |  2019.1.1~2020.2.29  
+Lock   | Lockdown(17M)   | 2020.3.1~ 2021. 7.31   
+Post   |   Post-pandemic(17M)   | 2021.8.1~2022.12.31 
 
 
 **1. Basic plots of Robbery data is below:**
@@ -398,6 +398,10 @@ plot_Month_post <- ggplot(data=Robbery_post, aes(Month)) +
 grid.arrange(plot_Month, plot_Month_pre,plot_Month_lock, plot_Month_post, ncol=2, nrow=2)
 
 ```
+
+
+
+
 
 **2-2. Freq by Month :split by Years**
 
@@ -870,18 +874,13 @@ str(Robbery)
 ### 4. 
 
 ```{r}
-model = lm(Month~Date, data=Robbery)
-summary(model)
-```
-```{r}
-model1 = lm(Month~Time_hour, data=Robbery)
-summary(model1)
+table = table(Robbery$SHIFT, Robbery$DISTRICT)
+table
+chitest = chisq.test(table)
+chitest
 ```
 
 ```{r}
-model1 = lm(Month~DISTRICT, data=Robbery)
-summary(model1)
+
 ```
-
-
 
