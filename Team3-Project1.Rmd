@@ -1,6 +1,6 @@
 ---
 title: "The Impact of COVID-19 Lockdown on Robbery Rates: An Exploratory Data Analysis (EDA) of Criminal Activity in Washington D.C."
-author: "Team3: Muhannad Alwhebie, Liang Gao, Nammin Woo"
+author: "Muhannad Alwhebie, Liang Gao, Nammin Woo"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -175,6 +175,11 @@ The dataset consists of *8345* observations and *22* variables, including:
 * `START_DATE`: the date and time the robbery incident started
 * `END_DATE`: the date and time the robbery incident ended
 * `Clearance_rate`: the percentage of robbery incidents that were cleared by the police
+
+
+
+
+## Analysis 
 
 
 ### 2. Summary statistics
@@ -867,21 +872,21 @@ str(Robbery)
 ```
 
 
-### 4. 
+##   Discussion 
 
-```{r}
-model = lm(Month~Date, data=Robbery)
-summary(model)
-```
-```{r}
-model1 = lm(Month~Time_hour, data=Robbery)
-summary(model1)
-```
 
-```{r}
-model1 = lm(Month~DISTRICT, data=Robbery)
-summary(model1)
-```
 
+
+
+
+## Conclusion
+
+
+
+
+
+
+
+## References 
 
 
