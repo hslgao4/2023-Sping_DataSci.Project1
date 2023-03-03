@@ -874,13 +874,43 @@ str(Robbery)
 ### 4. 
 
 ```{r}
-table = table(Robbery$SHIFT, Robbery$DISTRICT)
+table = table(Robbery$SHIFT, Robbery$Period_cat)
 table
 chitest = chisq.test(table)
 chitest
 ```
 
 ```{r}
+table = table(Robbery$Period_cat, Robbery$Season)
+table
+chitest = chisq.test(table)
+chitest
+```
 
+```{r}
+table = table(Robbery$Day_cat_2, Robbery$Period_cat)
+table
+chitest = chisq.test(table)
+chitest
+```
+
+```{r}
+table = table(Robbery$Period_cat, Robbery$METHOD)
+table
+chitest = chisq.test(table)
+chitest
+```
+
+```{r}
+table = table(Robbery$Period_cat, Robbery$Month)
+table
+chitest = chisq.test(table)
+chitest
+```
+```{r}
+table = table(Robbery$Period_cat, Robbery$DISTRICT)
+table
+chitest = chisq.test(table)
+chitest
 ```
 
