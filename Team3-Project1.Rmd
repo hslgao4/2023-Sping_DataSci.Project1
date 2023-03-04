@@ -1430,12 +1430,6 @@ xkabledply(anova_district_clean_rob)
 ```
 
 **Chi-squared Test**
-```{r}
-table1 = table(Robbery$Period_cat, Robbery$SHIFT)
-xkabledply(table1, title="Contingency table 1'")
-chitest1 <- chisq.test(table1)
-chitest1
-```
 
 
 
@@ -1445,15 +1439,15 @@ xkabledply(table2, title="Contingency table 2'")
 chitest2 = chisq.test(table2)
 chitest2
 ```
-
-
+The p-value is significantly less than 0.05, so we can reject the null hypothesis (the season and period_category are independent), we have evidence to support the 
+Alternative hypothesis that they are not independent under the 95% confidence level. 
 ```{r}
 table3 = table(Robbery$Period_cat, Robbery$Day_cat_2)
 xkabledply(table3, title="Contingency table 3'")
 chitest3 = chisq.test(table3)
 chitest3
 ```
-
+The p-value is 0.6, so we fail to reject the null hypothesis (robbery_category and day_category are independent) under the 95% confidence level. 
 
 
 ```{r}
@@ -1462,6 +1456,9 @@ xkabledply(table4, title="Contingency table4'")
 chitest4 = chisq.test(table4)
 chitest4
 ```
+The p-value is significantly less than 0.05, so we can reject the null hypothesis (the method and period_category are independent), we have evidence to support the 
+Alternative hypothesis that they are not independent under the 95% confidence level. 
+
 
 ```{r}
 table5 = table(Robbery$Period_cat, Robbery$Month)
@@ -1469,6 +1466,9 @@ xkabledply(table5, title="Contingency table 5'")
 chitest5 = chisq.test(table5)
 chitest5
 ```
+The p-value is significantly less than 0.05, so we can reject the null hypothesis (the month and period_category are independent), we have evidence to support the 
+Alternative hypothesis that they are not independent under the 95% confidence level. 
+
 
 ```{r}
 table6 = table(Robbery$Period_cat, Robbery$DISTRICT)
@@ -1476,7 +1476,8 @@ xkabledply(table6, title="Contingency table 6'")
 chitest6 = chisq.test(table6)
 chitest6
 ```
-
+The p-value is significantly less than 0.05, so we can reject the null hypothesis (the DISTRICT and period_category are independent), we have evidence to support the 
+Alternative hypothesis that they are not independent under the 95% confidence level. 
 ##   Discussion 
 
 
