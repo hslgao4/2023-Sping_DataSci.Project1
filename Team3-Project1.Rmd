@@ -1216,21 +1216,21 @@ xkabledply(Robbery_clean_district_avg_clr[1:4,], title = "Dataframe: `Robbery_di
 #readr::write_rds(Robbery_clean, "Robbery_clean_230303.Rds")
 
 #Use this code to load
-Robbery <- 
-  readr::read_rds("Robbery_230303.Rds")
+#Robbery <- 
+#  readr::read_rds("Robbery_230303.Rds")
 
-Robbery_clean <- 
-  readr::read_rds("Robbery_clean_230303.Rds")
+#Robbery_clean <- 
+#  readr::read_rds("Robbery_clean_230303.Rds")
 
 #Load subset
-Robbery_pre <- 
-  readr::read_rds("Robbery_pre_230303.Rds")
+#Robbery_pre <- 
+#  readr::read_rds("Robbery_pre_230303.Rds")
 
-Robbery_lock <- 
-  readr::read_rds("Robbery_lock_230303.Rds")
+#Robbery_lock <- 
+#  readr::read_rds("Robbery_lock_230303.Rds")
 
-Robbery_post <- 
-  readr::read_rds("Robbery_post_230303.Rds")
+#Robbery_post <- 
+#  readr::read_rds("Robbery_post_230303.Rds")
 
 ```
 
@@ -1246,6 +1246,109 @@ Verify again before moving on the next step
 #head(Robbery,10)  
 ```
 
+
+**# 2. Save the 5 Summary datasets(Mar 3)/ and Load **
+
+```{r}
+#Save current data
+#readr::write_rds(Robbery_date_sum, "Robbery_date_sum_230303.Rds")
+#readr::write_rds(Robbery_month_sum, "Robbery_month_sum_230303.Rds")
+#readr::write_rds(Robbery_Date_cat_sum, "Robbery_Date_cat_sum_230303.Rds")
+#readr::write_rds(Robbery_district_avg_clr, "Robbery_district_avg_clr_230303.Rds")
+#readr::write_rds(Robbery_clean_district_avg_clr, "Robbery_clean_district_avg_clr_230303.Rds")
+
+#Use this code to load
+#Robbery_date_sum <- 
+#  readr::read_rds("Robbery_date_sum_230303.Rds")
+
+#Robbery_month_sum <- 
+#  readr::read_rds("Robbery_month_sum_230303.Rds")
+
+#Robbery_Date_cat_sum <- 
+#  readr::read_rds("Robbery_Date_cat_sum_230303.Rds")
+
+#Robbery_district_avg_clr <- 
+#  readr::read_rds("Robbery_district_avg_clr_230303.Rds")
+
+#Robbery_clean_district_avg_clr <- 
+#  readr::read_rds("Robbery_clean_district_avg_clr_230303.Rds")
+
+```
+
+
+Verify again before moving on the next step
+
+```{r}
+#str(Robbery_date_sum)
+#str(Robbery_month_sum)
+#str(Robbery_Date_cat_sum)
+#str(Robbery_district_avg_clr)
+#str(Robbery_clean_district_avg_clr)
+
+```
+
+#(Mar 4) Creating variable for hypothesis test (ANd save again)
+  + Period_cat(pre,lock,post) > Period_cat_num(1,2,3)
+  + 5 Main table: Robbery Robbery_clean Robbery_pre Robbery_lock Robbery_post
+  + 5 Summary table
+   - Robbery_date_sum, Robbery_month_sum, Robbery_Date_cat_sum
+   - Robbery_district_avg_clr (origin from both Robbery),
+     Robbery_clean_district_avg_clr (origin from Robbery_clean)
+
+I applied below logic for our 10 tables and finished verifying them.
+So, I will just omit codes of them 
+
+```{r}
+#attach(Robbery)
+#Robbery$Period_cat_num[Period_cat == 'Pre'] <- 1
+#Robbery$Period_cat_num[Period_cat == 'Lock'] <- 2
+#Robbery$Period_cat_num[Period_cat  == 'Post'] <- 3
+#detach(Robbery)
+
+#count(Robbery,Period_cat_num) 
+# correct: pre 2535, lock 2729, post3079
+```
+
+**# (Mar 4) I Saved updated tables(overwrite).**
+    
+   + You can load them for next steps**
+
+```{r}
+#Save current data
+#readr::write_rds(Robbery, "Robbery_230303.Rds")
+#readr::write_rds(Robbery_pre, "Robbery_pre_230303.Rds")
+#readr::write_rds(Robbery_lock, "Robbery_lock_230303.Rds")
+#readr::write_rds(Robbery_post, "Robbery_post_230303.Rds")
+#readr::write_rds(Robbery_clean, "Robbery_clean_230303.Rds")
+
+#Use this code to load
+Robbery <- 
+  readr::read_rds("Robbery_230303.Rds")
+
+Robbery_clean <- 
+  readr::read_rds("Robbery_clean_230303.Rds")
+
+#Load subset
+Robbery_pre <- 
+  readr::read_rds("Robbery_pre_230303.Rds")
+
+Robbery_lock <- 
+  readr::read_rds("Robbery_lock_230303.Rds")
+
+Robbery_post <- 
+  readr::read_rds("Robbery_post_230303.Rds")
+```
+
+Verify again before moving on the next step
+
+```{r}
+#str(Robbery)
+#str(Robbery_pre)
+#str(Robbery_lock)
+#str(Robbery_post)
+#str(Robbery_clean)
+#head(Robbery,10)  
+```
 
 **# 2. Save the 5 Summary datasets(Mar 3)/ and Load **
 
@@ -1275,7 +1378,6 @@ Robbery_clean_district_avg_clr <-
 
 ```
 
-
 Verify again before moving on the next step
 
 ```{r}
@@ -1286,6 +1388,9 @@ Verify again before moving on the next step
 #str(Robbery_clean_district_avg_clr)
 
 ```
+
+
+
 
 #Hypothesis test
 
