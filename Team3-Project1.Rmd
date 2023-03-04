@@ -53,7 +53,9 @@ In order to understand the impact of COVID-19 lockdown on robbery rates in Washi
 ```{r setup, include=FALSE}
 #nammin revise: knitr::opts_chunk$set(echo = TRUE) > combined as following
 knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
-options(scientific=T, digits = 3) 
+options(scipen=9999, digits = 3) 
+#options(scientific=T, digits = 3) 
+#options(scipen = 9999) # suppress scientific notation
 ```
 
 ## Methodology
@@ -81,6 +83,7 @@ Robbery = data.frame(read.csv("Robbery_DC_clean.csv"))
 #Import
 #str(Robbery)  
 ```
+
 
 
 This section typically involves importing, cleaning, and pre-processing raw data to prepare it for analysis. The data cleaning process include removing duplicate records, addressing missing values, identifying and handling outliers, and transforming variables as needed. By performing these steps, we can ensure that the data is suitable for analysis and that our conclusions are based on accurate and reliable information. In this section, we will provide an overview of the data wrangling and preprocessing steps taken for the "Robbery_DC_clean.csv" dataset used in our analysis. 
@@ -119,7 +122,7 @@ Robbery <-rename(Robbery, END_DATE = END_DATE_2)
 
 ```{r}
 # change datatypes of Char.var for EDA (as Factor)
-cols <- c('Period_cat','Period_cat_2','Month_2','Season','Date_cat','Day_cat_2','SHIFT','METHOD')
+cols <- c('Period_cat','Period_cat_2','Month_2','Month_3','Season','Date_cat','Day_cat_2','SHIFT','METHOD')
 
 
 Robbery %<>%
@@ -128,7 +131,8 @@ Robbery %<>%
 #Category var. label order fix
 Robbery$Period_cat <- factor(Robbery$Period_cat, levels=c("Pre", "Lock", "Post"))
 
-
+Robbery$Season <- factor(Robbery$Season, levels=c("SPRING", "SUMMER", "AUTUMN", "WINTER"))
+   
 #Robbery$SHIFT<- as.factor(Robbery$SHIFT) 
 ```
 
@@ -158,7 +162,7 @@ xkabledply(Robbery[(nrow(Robbery)-3):nrow(Robbery),], title = "Last Four Rows of
 ```
 
 
-The dataset consists of *8345* observations and *22* variables, including:
+The dataset consists of *8343* observations and *22* variables, including:
 
 * `OBJECTID`: a unique identifier for each robbery incident
 * `Seq`: a sequential number for each robbery incident
@@ -168,7 +172,7 @@ The dataset consists of *8345* observations and *22* variables, including:
 * `Period_cat`: a categorical variable indicating whether the robbery occurred before, during, or after the COVID-19 lockdown period
 * `Period_cat_2`: a categorical variable indicating the period of the robbery incident, which can be "Lockdown," "Post-Lockdown," "Pre-Lockdown," or "During-Lockdown"
 * `Year`: the year the robbery incident occurred
-* `Month`: the month the robbery incident occurred
+* `Month`: the month the robbery incident occurred (Transformed: Month_2, Month_3)
 * `Season`: the season in which the robbery incident occurred
 * `Date`: the day of the month the robbery incident occurred
 * `Date_cat`: a categorical variable indicating whether the robbery incident occurred at the beginning, middle, or end of the month
@@ -204,7 +208,7 @@ Overall, the summary statistics provide a critical foundation for the analysis o
 ```{r}
 #Summary
 #columns to analyse 
-cols <- c('Period_cat','Period_cat_2','Year', 'Month','Month_2',
+cols <- c('Period_cat','Period_cat_2','Year', 'Month',
           'Season','Date_cat','Date',
           'SHIFT','Time_hour','Clearance_rate','Day_cat','Day_cat_2',
           'METHOD','DISTRICT','PSA')
@@ -221,7 +225,7 @@ knitr::kable(summary(select(Robbery,cols)), format = "markdown", caption="Overal
 
 ```
 
-Key statistics of individual variable are:
+Key statistics of individual Quantitative variable are:
 
    + `Month`: Mean(`r mean(Robbery$Month,na.rm = TRUE)`), Standard deviation(`r sd(Robbery$Month, na.rm = TRUE)`), Variance(`r var(Robbery$Month, na.rm = TRUE)`)
    
@@ -248,34 +252,44 @@ var(Robbery$Day_cat, na.rm = TRUE)
 ```
    + **`Time_hour`**
    1. Mean(`r mean(Robbery$Time_hour,na.rm = TRUE)`), Standard deviation(`r sd(Robbery$Time_hour, na.rm = TRUE)`), Variance(`r var(Robbery$Time_hour, na.rm = TRUE)`)
-  
-   2. PM 12~18: 1114, 18~23:1937, **0~7: 3726**(`r round(3726/8345*100,0)`)%,AM7~12: 1568
-     
    
+   2. AM7~12: 1568, PM 12~18: 1114, 18~23:1937, **0~7: 3724**(`r round(3724/8343*100,0)`)%,
+
+     
 ```{r}
 mean(Robbery$Time_hour,na.rm = TRUE)
 sd(Robbery$Time_hour, na.rm = TRUE)
 var(Robbery$Time_hour, na.rm = TRUE)
 
-# 12~18: 1114, 18~23:1937, 0~7: 3726,7~12: 1568
+```
+
+```{r}
+# 7~12: 1568, 12~18: 1114, 18~24:1937, 0~7: 3724,
 #Robbery |>   
 #  filter(Time_hour>=0,Time_hour<7)  
+
+#Robbery |>   
+# filter(Time_hour>=18,Time_hour<24)  
 ```
+
 
    + **`Clearance_rate`** (Minute, `END_DATE` - `START_DATE`, )
    
    1. Mean(`r mean(Robbery$Clearance_rate,na.rm = TRUE)`), Standard deviation(`r sd(Robbery$Clearance_rate, na.rm = TRUE)`), Variance(`r var(Robbery$Clearance_rate, na.rm = TRUE)`)
    
-   2. Freq: more than 2 hour is **2599**(`r round(2599/8345*100,0)`%) 
+   2. Freq: more than 1 hour is **2599**(`r round(2599/8343*100,0)`%) 
       
 ```{r,}
 mean(Robbery$Clearance_rate,na.rm = TRUE)
 sd(Robbery$Clearance_rate, na.rm = TRUE)
 var(Robbery$Clearance_rate, na.rm = TRUE)
 
-# more that 2 hours: 2,599
+```
+
+```{r}
+# more that 1 hours: 2,599
 #Robbery |>   
-#  filter(Clearance_rate > 120)  
+#  filter(Clearance_rate > 60)  
 ```
 
    + **`DISTRICT`**: Mean(`r mean(Robbery$DISTRICT,na.rm = TRUE)`), Standard deviation(`r sd(Robbery$DISTRICT, na.rm = TRUE)`), Variance(`r var(Robbery$DISTRICT, na.rm = TRUE)`)
@@ -308,7 +322,8 @@ Post   |   Post-pandemic(17M)   | 2021.8.1~2022.12.31
 
 
 **1. Basic plots of Robbery data is below:**
-
+   + Chart A1~A2 describe Total data (4 years,'19~'22)
+   
 
 ```{r}
 # Plot 1.: Freq by yeqr (x:discrete, Barchart)+Value=count(freq)
@@ -316,7 +331,11 @@ Post   |   Post-pandemic(17M)   | 2021.8.1~2022.12.31
 plot_year <- ggplot(data=Robbery, aes(x=Year)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + 
-  labs(x="Year") + labs(title="A1.Yearly Robbery Frequency")
+  labs(x="Year", y="Frequency") + labs(title="A1.Yearly Robbery Frequency")
+
+# Plot 2.: Freq by yeqr (x:discrete, Barchart)+Value=percent of freq
+plot_year_pct <- ggplot(data=Robbery, aes(x=Year, y=..count../sum(..count..)*100)) +
+geom_bar(colour="darkblue", fill="lightblue",alpha = .7) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="Year", y="Percent(%)") + labs(title="A1.Yearly Robbery Frequency(%)")
 
 # Plot 2.: Freq by Month (x:continuous, Histogram)+Value=count(freq)
 
@@ -324,15 +343,40 @@ plot_Month <- ggplot(data=Robbery, aes(Month)) +
   geom_histogram(col="darkblue", 
                  fill="lightblue", 
                  alpha = .7) + 
-  labs(x="Month", y="count") +
+  labs(x="Month", y="Frequency") +
   labs(title="A2.Monthly Robbery Frequency") + scale_x_continuous(breaks=1:12) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
 
+plot_Month_pct <- ggplot(Robbery, aes(x = Month)) +
+  geom_histogram(aes(y = after_stat(count / sum(count))), col="darkblue", 
+                 fill="lightblue", 
+                 alpha = .7) +
+  stat_bin(
+    binwidth = 1,geom = "text", color = "black",
+    aes(y = after_stat(count / sum(count)), 
+        label = scales::percent(after_stat(round(count / sum(count), 2)))),
+    position = position_stack(vjust = 1.1)
+  ) +
+  scale_y_continuous(labels = scales::percent)+ scale_x_continuous(breaks=1:12) + 
+  labs(x="Month", y="Percent(%)","A2.Monthly Robbery Frequency(%)")
+
+  
+grid.arrange(plot_year, plot_Month, plot_year_pct, plot_Month_pct, ncol=2, nrow=2)
+```
+
+
+**2-1.Freq by Month :split by pandemic phrases**
+   + Chart A3~A4 show the Robbery frequency by pandemic phrases 
+   
+     (Pre: 14 Month, Lock-down: 17 Month, Post: 17 Month)
+
+```{r}
 # Plot 3.: Freq by Period phase(Pre,lockdown,post)+Value=count(freq)
 
 plot_Period <- ggplot(data=Robbery, aes(x=Period_cat)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..), vjust = 1.5) + 
-  labs(x="Period") + labs(title="A3.Robbery Frequency by Pandemic phase") 
+  labs(x="Phase", y="Frequency") + labs(title="A3.Robbery by Pandemic phase 
+(Month: Pre=14, Lock=17, Post=17)") 
 
 
 ###################################
@@ -340,12 +384,12 @@ geom_text(stat='count', aes(label=..count..), vjust = 1.5) +
 temp <- count(Robbery,Period_cat, sort=TRUE)
 
 #Avg
-temp[1,3] = as.integer(temp[1,2] / 17 ) #post: 16M  
+temp[1,3] = as.integer(temp[1,2] / 17 ) #post: 17M  
 temp[2,3] = as.integer(temp[2,2] / 17) #lock: 17M  
 temp[3,3] = as.integer(temp[3,2] / 14) #pre: 14M 
 
 x <-  c("Pre","Lock","Post")
-y  <-  c(178, 161, 185 )
+y  <-  c(temp[3,3],temp[2,3],temp[1,3] )
 
 temp_2 <- data.frame(x,y)
 #barplot(y, names.arg = x)
@@ -354,14 +398,12 @@ plot_Period_mon <- ggplot(data=temp_2, aes(x,y)) +
   geom_bar(col="darkblue", 
                  fill="lightblue", 
                  alpha = .7,stat='identity') + 
-  labs(x="Period", y="Avg.Robbery") +
+  labs(x="Phase", y="Avg.Robbery") +
   labs(title="A4.Avg.Robbery(per month)") + scale_x_discrete(limits=c("Pre","Lock","Post")) + geom_text(aes(label=signif(y)),vjust = 1.5)   
 
-grid.arrange(plot_year, plot_Month, plot_Period, plot_Period_mon, ncol=2, nrow=2)
+grid.arrange(plot_Period, plot_Period_mon, ncol=2, nrow=2)
+
 ```
-
-
-**2-1.Freq by Month :split by pandemic phrases**
 
 ```{r}
 #1. by pandemic phrases
@@ -377,45 +419,63 @@ Robbery_2022 <- subset(Robbery,subset = Robbery$Year == 2022)
 
 ```
 
++ Chart A2-2~A2-4 show the Monthly Robbery frequency by pandemic phrases  
+
+  (Total: Chart A2.Monthly Robbery Frequency)
 
 ```{r}
+#Same as Chart A2 (Skip)
 
 #Sum of 4years (2019~2022)
-plot_Month <- ggplot(data=Robbery, aes(Month)) + 
-  geom_histogram(col="darkblue", 
-                 fill="lightblue", 
-                 alpha = .7) + 
-  labs(x="Month", y="Frequency") +
-  labs(title="A2-1.Monthly Robbery frequency") + scale_x_continuous(breaks=1:12) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
+#plot_Month <- ggplot(data=Robbery, aes(Month)) + 
+#  geom_histogram(col="darkblue", 
+#                 fill="lightblue", 
+#                 alpha = .7) + 
+#  labs(x="Month", y="Frequency") +
+#  labs(title="A2-1.Monthly Robbery frequency") + scale_x_continuous(breaks=1:12) + #geom_text(stat='count', aes(label=..count..),vjust = 1.5) 
 
-plot_Month
+#plot_Month
 ```
 
 ```{r}
 # Plot.Freq by Month :split by pandemic phrase
 
 #pre
-plot_Month_pre <- ggplot(data=Robbery_pre, aes(x=Month_2)) +
+plot_Month_pre <- ggplot(data=Robbery_pre, aes(x=Month_3)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
-geom_text(stat='count', aes(label=..count..),vjust = 1.5) + #vjust:lable position
-  labs(x="Month") + labs(title="A2-2.Monthly Robbery (Pre)")
+geom_text(stat='count', aes(label=..count..),vjust = 1.4) + #vjust:lable position
+  labs(x="Month") + labs(title="A2-2.Monthly Robbery (Pre: 14M)")
 
 #lock
-plot_Month_lock <- ggplot(data=Robbery_lock, aes(x=Month_2)) +
+plot_Month_lock <- ggplot(data=Robbery_lock, aes(x=Month_3)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
-geom_text(stat='count', aes(label=..count..),vjust = 1.5) + #vjust:lable position
-  labs(x="Month") + labs(title="A2-3.Monthly Robbery (Lock)")
+geom_text(stat='count', aes(label=..count..),vjust = 1.4) + #vjust:lable position
+  labs(x="Month") + labs(title="A2-3.Monthly Robbery (Lock: 17M)") + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
 #post
-plot_Month_post <- ggplot(data=Robbery_post, aes(x=Month_2)) +
+plot_Month_post <- ggplot(data=Robbery_post, aes(x=Month_3)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
-geom_text(stat='count', aes(label=..count..),vjust = 1.5) + #vjust:lable position
-  labs(x="Month") + labs(title="A2-4.Monthly Robbery (Post)")
+geom_text(stat='count', aes(label=..count..),vjust = 1.4) + #vjust:lable position
+  labs(x="Month") + labs(title="A2-4.Monthly Robbery (Post: 17M)") + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
-plot_Month_pre
-plot_Month_lock
-plot_Month_post
-#grid.arrange(plot_Month, plot_Month_pre,plot_Month_lock, plot_Month_post, ncol=2, nrow=2)
+grid.arrange(plot_Month_pre, plot_Month_lock,plot_Month_post, ncol=1, nrow=3)
+
+```
+
+```{r}
+# Plot.Freq by Month(percent %) :split by pandemic phrase 
+#> Skip(if we need, can add)
+
+#pre
+#plot_Month_pre_pct <- ggplot(data=Robbery_pre, aes(x=Month_3, y=..count../sum(..count..)*100)) + geom_bar(colour="darkblue", fill="lightblue",alpha = .7) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="Month", y="Percent(%)") + labs(title="A2-2.Monthly Robbery (Pre, %)") + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+#lock
+#plot_Month_lock_pct <- ggplot(data=Robbery_lock, aes(x=Month_3, y=..count../sum(..count..)*100)) + geom_bar(colour="darkblue", fill="lightblue",alpha = .7) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="Month", y="Percent(%)") + labs(title="A2-3.Monthly Robbery (lock, %)") + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+
+#plot_Month_post_pct <- ggplot(data=Robbery_post, aes(x=Month_3, y=..count../sum(..count..)*100)) + geom_bar(colour="darkblue", fill="lightblue",alpha = .7) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="Month", y="Percent(%)") + labs(title="A2-4.Monthly Robbery (post, %)") + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+#grid.arrange(plot_Month_pre_pct, plot_Month_lock_pct,plot_Month_post_pct, ncol=1, nrow=3)
 
 ```
 
@@ -458,36 +518,53 @@ grid.arrange(plot_Month_2019, plot_Month_2020,plot_Month_2021, plot_Month_2022, 
 ```
 
 ```{r}
-temp <- count(Robbery,Season, sort=TRUE) 
-temp
+#X-axis order check
+#temp <- count(Robbery,Season, sort=FALSE) 
+#temp
+
+#temp <- count(Robbery_pre,Season, sort=FALSE) #fall, summer, winter, spring
+#temp
+
+#temp <- count(Robbery_lock,Season, sort=FALSE) #fall, summer, winter, spring
+#temp
+
+#temp <- count(Robbery_post,Season, sort=FALSE) #fall, summer, winter, spring
+#temp
+
+
 ```
+
+
+
+**3-1. Freq by Season :split by pandemic phrases (Avg.Robbery(per month)**
+  
+  + Chart B1_2 (lockdown) 
+    
+    At the beginning of lock-down(spring,summer) decreased
+    From AUTUMN, robbery dramatically inceased again 
+    continued to increase after finishing lock-down 
+    Pattern of post pendamic is interesting(Summer, Winter) 
+
 ```{r}
-temp <- count(Robbery_post,Season, sort=TRUE) #fall, summer, winter, spring
-temp
-```
-
-
-
-**3-1. Freq by Season :split by pandemic phrases**
-```{r}
-#     	pre	lock	post  total
-#spring	3	6	3             12
-#sum   	3	5	4             12
-#fall 	3	3	6             12
-#winter	5	3	4             12
-#	     14	17	17         48
+# Number of months per each season of pandemic phrases    
+#      pre	lock	post  total
+#spring	3	   6	  3     12
+#sum   	3	   5	  4     12
+#fall 	3	   3	  6     12
+#winter	5	   3	  4     12
+#	     14	  17	 17     48
 
 #Total
-temp <- count(Robbery,Season, sort=TRUE) #fall, summer, winter, spring
+temp <- count(Robbery,Season, sort=FALSE) #spring, summer,AUTUMN, winter, 
 
 #total_Avg
-temp[1,3] = as.integer(temp[1,2] / 12) #fall 
+temp[1,3] = as.integer(temp[1,2] / 12) #spring 
 temp[2,3] = as.integer(temp[2,2] / 12) #summer
-temp[3,3] = as.integer(temp[3,2] / 12) #winter 
-temp[4,3] = as.integer(temp[4,2] / 12) #spring 
+temp[3,3] = as.integer(temp[3,2] / 12) #AUTUMN 
+temp[4,3] = as.integer(temp[4,2] / 12) #winter 
 
 x <-  c("SPRING","SUMMER","AUTUMN","WINTER")
-y  <-  c(temp[4,3],temp[2,3],temp[1,3],temp[3,3] )
+y  <-  c(temp[1,3],temp[2,3],temp[3,3],temp[4,3] )
 
 temp_2 <- data.frame(x,y)
 #barplot(y, names.arg = x)
@@ -500,16 +577,16 @@ plot_Season <- ggplot(data=temp_2, aes(x,y)) +
   labs(title="B1.Seansonally Robbery frequency") + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) + geom_text(aes(label=signif(y)),vjust = 1.5)   
 
 #########Pre
-temp <- count(Robbery_pre,Season, sort=TRUE) #fall, summer, winter, spring
+temp <- count(Robbery_pre,Season, sort=FALSE) 
 
 #pre-pen
-temp[1,3] = as.integer(temp[1,2] / 5) #winter
-temp[2,3] = as.integer(temp[2,2] / 3) #fall
-temp[3,3] = as.integer(temp[3,2] / 3) #summer
-temp[4,3] = as.integer(temp[4,2] / 3) #spring 
+temp[1,3] = as.integer(temp[1,2] / 3) # spring 
+temp[2,3] = as.integer(temp[2,2] / 3) # summer
+temp[3,3] = as.integer(temp[3,2] / 3) # AUTUMN
+temp[4,3] = as.integer(temp[4,2] / 5) # winter
 
 x <-  c("SPRING","SUMMER","AUTUMN","WINTER")
-y  <-  c(temp[4,3],temp[3,3],temp[2,3],temp[1,3] )
+y  <-  c(temp[1,3],temp[2,3],temp[3,3],temp[4,3] )
 
 temp_2 <- data.frame(x,y)
 #barplot(y, names.arg = x)
@@ -523,16 +600,16 @@ plot_Season_pre <- ggplot(data=temp_2, aes(x,y)) +
 
 
 ######Lock
-temp <- count(Robbery_lock,Season, sort=TRUE) #fall, summer, winter, spring
+temp <- count(Robbery_lock,Season, sort=FALSE) 
 
 #lock-pen
-temp[1,3] = as.integer(temp[1,2] / 5) # summer
-temp[2,3] = as.integer(temp[2,2] / 3) # fall
-temp[3,3] = as.integer(temp[3,2] / 6) # spring
+temp[1,3] = as.integer(temp[1,2] / 6) # spring 
+temp[2,3] = as.integer(temp[2,2] / 5) # summer
+temp[3,3] = as.integer(temp[3,2] / 3) # AUTUMN
 temp[4,3] = as.integer(temp[4,2] / 3) # winter
 
 x <-  c("SPRING","SUMMER","AUTUMN","WINTER")
-y  <-  c(temp[3,3],temp[1,3],temp[2,3],temp[4,3] )
+y  <-  c(temp[1,3],temp[2,3],temp[3,3],temp[4,3] )
 
 temp_2 <- data.frame(x,y)
 #barplot(y, names.arg = x)
@@ -545,16 +622,16 @@ plot_Season_lock <- ggplot(data=temp_2, aes(x,y)) +
   labs(title="B1_2.Seasonly Robbery (Lock)") + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) + geom_text(aes(label=signif(y)),vjust = 1.5)   
 
 #########Post
-temp <- count(Robbery_post,Season, sort=TRUE) #fall, summer, winter, spring
+temp <- count(Robbery_post,Season, sort=FALSE) #fall, summer, winter, spring
 
 #post-pen
-temp[1,3] = as.integer(temp[1,2] / 6) #fall 
-temp[2,3] = as.integer(temp[2,2] / 4) #winter
-temp[3,3] = as.integer(temp[3,2] / 4) #summer
-temp[4,3] = as.integer(temp[4,2] / 3) #spring 
+temp[1,3] = as.integer(temp[1,2] / 3) # spring 
+temp[2,3] = as.integer(temp[2,2] / 4) # summer
+temp[3,3] = as.integer(temp[3,2] / 6) # AUTUMN
+temp[4,3] = as.integer(temp[4,2] / 4) # winter
 
 x <-  c("SPRING","SUMMER","AUTUMN","WINTER")
-y  <-  c(temp[4,3],temp[3,3],temp[1,3],temp[2,3] )
+y  <-  c(temp[1,3],temp[2,3],temp[3,3],temp[4,3] )
 
 temp_2 <- data.frame(x,y)
 #barplot(y, names.arg = x)
@@ -602,7 +679,7 @@ grid.arrange(plot_Season_2019, plot_Season_2020, plot_Season_2021, plot_Season_2
 ```
 
 **4-1. Freq by Date_cat(Begin,Middle,End) :split by pandemic phrases**
-   + (Omit) 4-2. Freq by Date_cat :split by pandemic phrases
+   + 
    
    
 ```{r}
@@ -631,6 +708,34 @@ grid.arrange(plot_Date_cat, plot_Date_cat_pre, plot_Date_cat_lock, plot_Date_cat
              ncol=2, nrow=2)
 
 ```
+[Percent,%] Freq by Date_cat(Begin,Middle,End) :split by pandemic phrases
+
+```{r}
+
+plot_Date_cat <- ggplot(data=Robbery, aes(x=Date_cat,y=..count../sum(..count..)*100)) +
+geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
+scale_x_discrete(limits=c("Begin","Middle","End")) +
+  labs(x="Date_cat", y="Percent(%)") + labs(title="C1.Incident Date of Robbery(%)")
+
+plot_Date_cat_pre <- ggplot(data=Robbery_pre, aes(x=Date_cat,y=..count../sum(..count..)*100)) + 
+geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
+scale_x_discrete(limits=c("Begin","Middle","End")) +
+  labs(x="Date_cat", y="Percent(%)") + labs(title="C1_1.Incident Date (Pre,%)")
+
+plot_Date_cat_lock <- ggplot(data=Robbery_lock, aes(x=Date_cat,y=..count../sum(..count..)*100)) + 
+geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
+scale_x_discrete(limits=c("Begin","Middle","End")) +
+  labs(x="Date_cat", y="Percent(%)") + labs(title="C1_2.Incident Date (Lock,%)")
+
+plot_Date_cat_post <- ggplot(data=Robbery_post, aes(x=Date_cat,y=..count../sum(..count..)*100)) + 
+geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
+scale_x_discrete(limits=c("Begin","Middle","End")) +
+  labs(x="Date_cat", y="Percent(%)") + labs(title="C1_3.Incident Date (Post,%)")
+
+grid.arrange(plot_Date_cat, plot_Date_cat_pre, plot_Date_cat_lock, plot_Date_cat_post,
+             ncol=2, nrow=2)
+
+```
 
 **4-2. Boxplot distribution of date :split by pandemic phrases**
 
@@ -645,9 +750,6 @@ boxplot_Date
 
 **5-1. Freq by SHIFT(DAY,EVENING,MIDNIGHT) :split by pandemic phrases**
  
-  + Portion of MIDNIGHT (Pre: 41.3%, Lockdown: 42.3%, Post: 39.4%)
-
-
 ```{r}
 # Bar plot 
 
@@ -676,7 +778,42 @@ grid.arrange(plot_SHIFT, plot_SHIFT_pre, plot_SHIFT_lock, plot_SHIFT_post,
 
 ```
 
-**5-2. Boxplot distribution of Time_hour(00:00~23:00) :split by pandemic phrases**
+[Percent,%] Freq by SHIFT(DAY,EVENING,MIDNIGHT) :split by pandemic phrases
+
+  + Portion of Day (Pre-Lock-Post): 18.4%	19.9%	21.1%
+  + Portion of EVENING (Pre-Lock-Post): 40.4%	38.6%	39.8%
+  + Portion of MIDNIGHT (Pre-Lock-Post): 41.2%	41.5%	39.1%
+
+```{r}
+# Bar plot 
+
+plot_SHIFT <- ggplot(data=Robbery, aes(x=SHIFT,y=..count../sum(..count..)*100)) +
+geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
+scale_x_discrete(limits=c("DAY","EVENING","MIDNIGHT")) +
+  labs(x="Timezone", y="Percent(%)") + labs(title="D1.Incident timezone(%)")
+
+
+plot_SHIFT_pre <- ggplot(data=Robbery_pre, aes(x=SHIFT,y=..count../sum(..count..)*100)) + geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
+scale_x_discrete(limits=c("DAY","EVENING","MIDNIGHT")) +
+  labs(x="Timezone", y="Percent(%)") + labs(title="D1_1.Incident timezone (Pre,%)")
+
+plot_SHIFT_lock <- ggplot(data=Robbery_lock, aes(x=SHIFT,y=..count../sum(..count..)*100)) + 
+geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
+scale_x_discrete(limits=c("DAY","EVENING","MIDNIGHT")) +
+  labs(x="Timezone", y="Percent(%)") + labs(title="D1_2.Incident timezone (Lock,%)")
+
+plot_SHIFT_post <- ggplot(data=Robbery_post, aes(x=SHIFT,y=..count../sum(..count..)*100)) + 
+geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
+scale_x_discrete(limits=c("DAY","EVENING","MIDNIGHT")) +
+  labs(x="Timezone", y="Percent(%)") + labs(title="D1_3.Incident timezone (Post,%)")
+
+grid.arrange(plot_SHIFT, plot_SHIFT_pre, plot_SHIFT_lock, plot_SHIFT_post,
+             ncol=2, nrow=2)
+
+```
+
+**5-2. Boxplot distribution of Time_hour(00:00~24:00) :split by pandemic phrases**
+
 
 ```{r}
 boxplot_Time_hour <- ggplot(Robbery, aes(y=Time_hour, x=Period_cat, fill=Period_cat)) + 
@@ -722,6 +859,8 @@ grid.arrange(plot_Day_cat, plot_Day_cat_pre, plot_Day_cat_lock, plot_Day_cat_pos
 
 **7-1. Freq by Day_cat_2 (Week,Weekend) :split by pandemic phrases**
 
+  + Portion of Weekend (Pre-Lock-Post): 31.01%	32.25%	31.21%
+
 ```{r}
 # Bar plot 
 
@@ -753,6 +892,9 @@ grid.arrange(plot_Day_cat_2, plot_Day_cat_2_pre, plot_Day_cat_2_lock, plot_Day_c
 
 **8-1. Freq by METHOD :split by pandemic phrases**
 
+  + Portion of Gun (Pre-Lock-Post): 34.24%	51.67%	56.93%
+  + Avg.freq(per month) of Gun robbery(Pre-Lock-Post) :  62  83(+34%) 103(+24%) 
+
 ```{r}
 # Bar plot 
 
@@ -783,6 +925,13 @@ grid.arrange(plot_METHOD, plot_METHOD_pre, plot_METHOD_lock, plot_METHOD_post,
 
 **9-1. Freq by DISTRICT :split by pandemic phrases**
 
+  + During lockdown, robbery of DISTRICT2 and 3 drmatically decreased.
+  + However, robbery of DISTRICT5~7 even increased.
+  + Portion of DISTRICT 5 (Pre-Lock-Post): 14.24%	16.01%	15.33%
+  + Portion of DISTRICT 6 (Pre-Lock-Post): 17.12%	22.13%	20.01%
+  + Portion of DISTRICT 7 (Pre-Lock-Post): 11.99%	15.28%	12.60%
+
+
 ```{r}
 # Bar plot 
 
@@ -805,7 +954,7 @@ geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="DISTRICT") +
 plot_DISTRICT_post<- ggplot(data=Robbery_post, aes(x=DISTRICT)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="DISTRICT") + scale_x_discrete(limits=c("1","2","3","4","5","6","7","NA")) + 
-  labs(title="H1_3.DRobbery BY DISTRICT (Post)")
+  labs(title="H1_3.Robbery BY DISTRICT (Post)")
 
 grid.arrange(plot_DISTRICT, plot_DISTRICT_pre, plot_DISTRICT_lock, plot_DISTRICT_post,ncol=2, nrow=2)
 
@@ -813,6 +962,7 @@ grid.arrange(plot_DISTRICT, plot_DISTRICT_pre, plot_DISTRICT_lock, plot_DISTRICT
 
 **10-1. Boxplot distribution of PSA :split by pandemic phrases**
 
+  + Boxplot also reveals robbery of DISTRICT5~7 steeply increased.
 
 ```{r}
 boxplot_PSA <- ggplot(Robbery, aes(y=PSA, x=Period_cat, fill=Period_cat)) + 
@@ -825,6 +975,10 @@ boxplot_PSA
 
 **10-2. Boxplot distribution of Clearance rate :split by pandemic phrases**
 
+  + During the lock-down, the number of outlier increased.
+  + High Clearance rate(need more time to complete robbery event)
+    implies hard/severe event or inefficiency of police administration
+
 ```{r}
 boxplot_Clearance <- ggplot(Robbery, aes(y=Clearance_rate, x=Period_cat, fill=Period_cat)) + 
   geom_boxplot() + 
@@ -833,6 +987,7 @@ boxplot_Clearance <- ggplot(Robbery, aes(y=Clearance_rate, x=Period_cat, fill=Pe
 
 boxplot_Clearance
 ```
+
 ### 3. Unusual Observations: Data Quality
 
 In the "Unusual Observations" section, we will provide an in-depth analysis of the data, including a quick overview of the data with and without the outliers. Outliers can significantly impact the analysis of data and can skew the results. Therefore, it is crucial to identify and examine them closely to determine their impact on the data.By examining the data with and without the outliers, we can gain a clearer picture of the trends and patterns in the data. This information will be critical in developing an accurate and reliable analysis of the impact of the COVID-19 lockdown on robbery rates in Washington D.C.
@@ -841,12 +996,11 @@ In the "Unusual Observations" section, we will provide an in-depth analysis of t
 **Data Quality**
 To ensure data quality, we will perform the outlierKD function to detect any null values or outliers in our dataset. Once identified, we will remove them to ensure accurate analysis. We will then display the cleaned data using a plot to visualize any trends or patterns in the data.
 
+`OBJECTID` : there is no outlier 
+
 ```{r}
-
-
 Robbery_clean = outlierKD2(Robbery, OBJECTID, rm = TRUE, boxplt = TRUE, qqplt = TRUE)
  
-
 ```
 
 Continue to perform test for another continuous variables. 
@@ -854,21 +1008,26 @@ Continue to perform test for another continuous variables.
  + Variables that have Fixed interval like `Date`, `Time_hour` don't need test     
    So Just do that about two variables `Clearance_rate` and `PSA`
 
-`PSA` 
+`PSA` : there is no outlier
 
 ```{r}
 
 Robbery_clean = outlierKD2(Robbery, PSA, rm = TRUE, boxplt = TRUE, qqplt = TRUE)
 
 ```   
+`Clearance_rate` shows highly spread-wide, so need to consider excluding outliers.
 
-
-`Clearance_rate` has high spread-wide, so need to consider excluding outliers.
-
+ + Outliers that have high clearance_rate was converted to NA (4.8%)    
+ + We will use both data (original and outlier excluded data)
 
 ```{r}
 Robbery_clean = outlierKD2(Robbery, Clearance_rate, rm = TRUE, boxplt = TRUE, qqplt = TRUE)
+#str(Robbery_clean)
 ```
+After examining the data using the outlierKD function, we have identified outliers that have been replaced with NAs. However, we have not deleted these outliers from the dataset. Instead, we have replaced them with NAs to ensure that they do not affect the analysis of the data. This approach allows us to retain the maximum amount of data while still removing any data points that may negatively impact our analysis
+
+### Optional analysis(For subset data have high clearance_rate)
+
 FOr example, looking through the obs that have long clearance rate (over 200 min). Interesting thing is distict 3,7. (let's talk about that at the meeting!)
 
 ```{r}
@@ -899,125 +1058,248 @@ temp %>%
 temp %>%  
   count(DISTRICT)
 
-temp %>%  
-  count(PSA)
+#temp %>%  
+#  count(PSA)
 
 
 ```
 
+# (Dataset) Before moving on to the Hypothesis test
+ 
+ 1. Currently, we have 5 datasets. (2 total, 3 subsets)
+
+  + original: Robbery, pre, lock, post
+  + outlier excluded data: Robbery_clean
+
+ 2. Additionally, we will make 5 summary datasets for advanced analysis like hypothesis test
+ 
+  + (Sum of frequency, origin from Robbery_clean) 
+    Robbery_date_sum, Robbery_month_sum, Robbery_Date_cat_sum
+    
+  + (Average of clearance_rate) 
+    Robbery_district_avg_clr (origin from both Robbery),
+    Robbery_clean_district_avg_clr (origin from Robbery_clean)
 
 
+**# 2. Make the 5 summary datasets and Load **
+
+  + (Summary of frequency, origin for Robbery_clean) 
+    Robbery_date_sum, Robbery_month_sum, Robbery_Date_cat_sum
+
+  + (Summary of clearance_rate, origin for both Robbery and Robbery_clean) 
+    Robbery_district_avg_clr, Robbery_clean_district_avg_clr
 
 
-After examining the data using the outlierKD function, we have identified outliers that have been replaced with NAs. However, we have not deleted these outliers from the dataset. Instead, we have replaced them with NAs to ensure that they do not affect the analysis of the data. This approach allows us to retain the maximum amount of data while still removing any data points that may negatively impact our analysis
+```{r, results='hide'}
+# This block will run/execute but just skip showing result
+
+temp <- select(Robbery_clean,REPORT_DAT_2,Period_cat)
+  
+Robbery_date_sum <- count(temp,REPORT_DAT_2,Period_cat, sort=FALSE)
+#str(Robbery_date_sum)
+arrange(Robbery_date_sum, REPORT_DAT_2)  #Ascending
+#head(Robbery_date_sum,5)  
+```
 
 
-
-**TBD: Sccater plot, Normality Test, Hypothesis etc.
-
+*The first 4 rows of the first summary dataset (Robbery_date_sum) are:*
 
 ```{r}
-#Initial work
-#ggplot(data=Robbery, aes(Year)) + 
-#  geom_histogram(col="red", 
-#                 fill="blue", 
-#                 alpha = .7) + 
-#  labs(x="Year", y="Frequency") +
-#  labs(title="Yearly crime frequency")
 
-#ggplot(data=Robbery, aes(Day_cat)) + 
-#  geom_histogram(col="red", 
-#                 fill="blue", 
-#                 alpha = .7) + 
-#  labs(x="Day_cat", y="Frequency") +
-#  labs(title="Dayily crime frequency")
+xkabledply(Robbery_date_sum[1:4,], title = "First Four Rows of Dataframe: `Robbery_date_sum`")
 
-#ggplot(data=Robbery, aes(DISTRICT)) + 
-#  geom_histogram(col="red", 
-#                 fill="blue", 
-#                 alpha = .7) + 
-#  labs(x="DISTRICT", y="Frequency") +
-#  labs(title="Crime frequency in different Districts")
 ```
 
-**# (To All) Since I added a few things to analyze in the R after loading csv file, I saved the current dataset as "Rdata" as below. **
 
-**# So, You can start by loading current 'Rdata" by below code **
+```{r,results='hide'}
+temp <- select(Robbery_clean,Month_3,Period_cat)
+  
+Robbery_month_sum <- count(temp,Month_3,Period_cat, sort=FALSE)
+#str(Robbery_date_sum)
+arrange(Robbery_month_sum, Month_3)  #Ascending
+#head(Robbery_date_sum,10)  
+```
+
+
+*The first 4 rows of the second summary dataset (Robbery_month_sum) are:*
+
+```{r}
+
+xkabledply(Robbery_month_sum[1:4,], title = "First Four Rows of Dataframe: `Robbery_month_sum`")
+
+```
+
+```{r,results='hide'}
+temp <- select(Robbery_clean,Date_cat,Period_cat)
+  
+Robbery_Date_cat_sum <- count(temp,Date_cat,Period_cat, sort=FALSE)
+#str(Robbery_date_sum)
+arrange(Robbery_Date_cat_sum, Date_cat,Period_cat)  #Ascending
+#head(Robbery_date_sum,10)  
+```
+
+*The third summary dataset (Robbery_Date_cat_sum) are:*
+
+```{r}
+
+xkabledply(Robbery_Date_cat_sum, title = "Dataframe: `Robbery_Date_cat_sum`")
+
+```
+
+
+```{r,results='hide'}
+Robbery_district_avg_clr <-  Robbery %>% group_by(Period_cat, DISTRICT) %>%
+                   summarise(avg_Clearance_rate = mean(Clearance_rate, na.rm = TRUE),.groups = 'drop')
+
+arrange(Robbery_district_avg_clr, Period_cat,DISTRICT) 
+
+Robbery_district_avg_clr <- data.frame(Robbery_district_avg_clr)
+
+```
+
+*The first 4 rows of the fourth summary dataset (Robbery_district_avg_clr) are:*
+  + Robbery_district_avg_clr: origin for **Robbery**
+
+```{r}
+
+xkabledply(Robbery_district_avg_clr[1:4,], title = "Dataframe: `Robbery_district_avg_clr`")
+
+```
+
+
+```{r,results='hide'}
+Robbery_clean_district_avg_clr <-  Robbery_clean %>% group_by(Period_cat, DISTRICT) %>%
+                   summarise(avg_Clearance_rate = mean(Clearance_rate, na.rm = TRUE),.groups = 'drop')
+
+arrange(Robbery_clean_district_avg_clr, Period_cat,DISTRICT) 
+
+Robbery_clean_district_avg_clr <- data.frame(Robbery_clean_district_avg_clr)
+
+```
+
+*The first 4 rows of the fifth summary dataset (Robbery_clean_district_avg_clr) are:*
+  + Robbery_clean_district_avg_clr: origin for **Robbery_clean (outlier excluded)**
+
+```{r}
+
+xkabledply(Robbery_clean_district_avg_clr[1:4,], title = "Dataframe: `Robbery_district_avg_clr`")
+
+```
+#Wrap-up final datasets Save (Begin next step by loading these data)
+
+ 1. Main datasets: 5 (2 total, 3 subsets)
+
+  + original: Robbery, pre, lock, post
+  + outlier excluded data: Robbery_clean
+
+ 2. Summary datasets: 5 
+ 
+  + (Sum of frequency, origin from Robbery_clean) 
+    Robbery_date_sum, Robbery_month_sum, Robbery_Date_cat_sum
+    
+  + (Average of clearance_rate) 
+    Robbery_district_avg_clr (origin from both Robbery),
+    Robbery_clean_district_avg_clr (origin from Robbery_clean)
+
+
+
+**# 1. Save the 5 Main current datasets(Mar 3)/ and Load **
+
 
 ```{r}
 #Save current data
-#readr::write_rds(Robbery, "Robbery_230226.Rds")
-#readr::write_rds(Robbery_pre, "Robbery_pre_230226.Rds")
-#readr::write_rds(Robbery_lock, "Robbery_lock_230226.Rds")
-#readr::write_rds(Robbery_post, "Robbery_post_230226.Rds")
+#readr::write_rds(Robbery, "Robbery_230303.Rds")
+#readr::write_rds(Robbery_pre, "Robbery_pre_230303.Rds")
+#readr::write_rds(Robbery_lock, "Robbery_lock_230303.Rds")
+#readr::write_rds(Robbery_post, "Robbery_post_230303.Rds")
+#readr::write_rds(Robbery_clean, "Robbery_clean_230303.Rds")
 
-```
-
-```{r}
 #Use this code to load
 Robbery <- 
-  readr::read_rds("Robbery_230226.Rds")
+  readr::read_rds("Robbery_230303.Rds")
+
+Robbery_clean <- 
+  readr::read_rds("Robbery_clean_230303.Rds")
 
 #Load subset
 Robbery_pre <- 
-  readr::read_rds("Robbery_pre_230226.Rds")
+  readr::read_rds("Robbery_pre_230303.Rds")
 
 Robbery_lock <- 
-  readr::read_rds("Robbery_lock_230226.Rds")
+  readr::read_rds("Robbery_lock_230303.Rds")
 
 Robbery_post <- 
-  readr::read_rds("Robbery_post_230226.Rds")
+  readr::read_rds("Robbery_post_230303.Rds")
+
 ```
 
+
+Verify again before moving on the next step
+
+```{r}
+#str(Robbery)
+#str(Robbery_pre)
+#str(Robbery_lock)
+#str(Robbery_post)
+#str(Robbery_clean)
+#head(Robbery,10)  
+```
+
+
+**# 2. Save the 5 Summary datasets(Mar 3)/ and Load **
+
+```{r}
+#Save current data
+#readr::write_rds(Robbery_date_sum, "Robbery_date_sum_230303.Rds")
+#readr::write_rds(Robbery_month_sum, "Robbery_month_sum_230303.Rds")
+#readr::write_rds(Robbery_Date_cat_sum, "Robbery_Date_cat_sum_230303.Rds")
+#readr::write_rds(Robbery_district_avg_clr, "Robbery_district_avg_clr_230303.Rds")
+#readr::write_rds(Robbery_clean_district_avg_clr, "Robbery_clean_district_avg_clr_230303.Rds")
+
+#Use this code to load
+Robbery_date_sum <- 
+  readr::read_rds("Robbery_date_sum_230303.Rds")
+
+Robbery_month_sum <- 
+  readr::read_rds("Robbery_month_sum_230303.Rds")
+
+Robbery_Date_cat_sum <- 
+  readr::read_rds("Robbery_Date_cat_sum_230303.Rds")
+
+Robbery_district_avg_clr <- 
+  readr::read_rds("Robbery_district_avg_clr_230303.Rds")
+
+Robbery_clean_district_avg_clr <- 
+  readr::read_rds("Robbery_clean_district_avg_clr_230303.Rds")
+
+```
+
+
+Verify again before moving on the next step
+
+```{r}
+#str(Robbery_date_sum)
+#str(Robbery_month_sum)
+#str(Robbery_Date_cat_sum)
+#str(Robbery_district_avg_clr)
+#str(Robbery_clean_district_avg_clr)
+
+```
+
+#Hypothesis test
+
+**Maybe we additionally need to draw Sccater plot, Normality Test etc.
+
+
+#This is Two Sample T-test (just coducted as pilot in the previous online meeting) 
 
 ```{r}
 str(Robbery)
 ```
-
-
-### 4. Hypothesis Test
-*** 4-1. Chi-squared Test
-
 ```{r}
-table = table(Robbery$Period_cat, Robbery$SHIFT)
-table
-chitest = chisq.test(table)
-chitest
-```
+ttest2sample_Clearance_rate = t.test(Robbery_pre$Clearance_rate,Robbery_lock$Clearance_rate)
 
-```{r}
-table = table(Robbery$Period_cat, Robbery$Season)
-table
-chitest = chisq.test(table)
-chitest
-```
-
-```{r}
-table = table(Robbery$Period_cat, Robbery$Day_cat_2)
-table
-chitest = chisq.test(table)
-chitest
-```
-
-```{r}
-table = table(Robbery$Period_cat, Robbery$METHOD)
-table
-chitest = chisq.test(table)
-chitest
-```
-
-```{r}
-table = table(Robbery$Period_cat, Robbery$Month)
-table
-chitest = chisq.test(table)
-chitest
-```
-
-```{r}
-table = table(Robbery$Period_cat, Robbery$DISTRICT)
-table
-chitest = chisq.test(table)
-chitest
+ttest2sample_Clearance_rate
 ```
 
 
