@@ -1390,6 +1390,9 @@ Verify again before moving on the next step
 ```
 
 
+```{r}
+head(Robbery_clean_district_avg_clr,5)
+```
 
 
 #Hypothesis test
@@ -1399,12 +1402,32 @@ Verify again before moving on the next step
 
 **Anova test**
 
+1. anova test between mean of daily robbery frequency and period (pre, lock, and post)
+```{r}
+anova_dayily_rob = aov(Period_cat_num~n, data = Robbery_date_sum)
+xkabledply(anova_dayily_rob)
+```
+The p-value is 0.857, so we fail to reject the null hypothesis (The Washington DC has same mean of daily robbery frequency in pre-pandemic, lock, and post-pandemic) under the 95% confidence level. 
 
 ```{r}
-anova_robbery_per_day = aov(avg_Clearance_rate~DISTRICT, data = Robbery_district_avg_clr)
-xkabledply(anova_robbery_per_day, title = "anova_gre result summary")
+anova_monthly_rob = aov(Period_cat_num~n, data = Robbery_month_sum)
+xkabledply(anova_monthly_rob)
 ```
 
+```{r}
+anova_Date_cat_rob = aov(Period_cat_num~n, data = Robbery_Date_cat_sum)
+xkabledply(anova_Date_cat_rob)
+```
+
+```{r}
+anova_district_rob = aov(DISTRICT~avg_Clearance_rate, data = Robbery_district_avg_clr)
+xkabledply(anova_district_rob)
+```
+
+```{r}
+anova_district_clean_rob = aov(DISTRICT~avg_Clearance_rate, data = Robbery_clean_district_avg_clr)
+xkabledply(anova_district_clean_rob)
+```
 
 **Chi-squared Test**
 ```{r}
