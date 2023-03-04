@@ -86,7 +86,7 @@ Robbery = data.frame(read.csv("Robbery_DC_clean.csv"))
 
 
 
-This section typically involves importing, cleaning, and pre-processing raw data to prepare it for analysis. The data cleaning process include removing duplicate records, addressing missing values, identifying and handling outliers, and transforming variables as needed. By performing these steps, we can ensure that the data is suitable for analysis and that our conclusions are based on accurate and reliable information. In this section, we will provide an overview of the data wrangling and preprocessing steps taken for the "Robbery_DC_clean.csv" dataset used in our analysis. 
+This section typically involves importing, cleaning, and pre-processing raw data to prepare it for analysis. The data cleaning process include removing duplicate records, addressing missing values, identifying and handling outliers, and transforming variables as needed. By performing these steps, we can ensure that the data is suitable for analysis and that our conclusions are based on accurate and reliable information. In this section, we will provide an overview of the data wrangling and pre-processing steps taken for the "Robbery_DC_clean.csv" dataset used in our analysis. 
 
 
 ```{r}
@@ -195,7 +195,7 @@ The dataset consists of *8343* observations and *22* variables, including:
 
 ### 2. Summary statistics
 
-In this section, we provide a detailed overview of the summary statistics of some quantitative data in our data set. This information includes measures such as the mean, median, standard deviation, minimum, and maximum values.
+In this section, we provide a detailed overview of the summary statistics of some quantitative datas in our data set. This information includes measures such as the mean, median, standard deviation, minimum, and maximum values.
 
 We will also examine other measures, such as the interquartile range (IQR) and coefficient of variation, to provide a more comprehensive understanding of the data's variability and dispersion.
 
@@ -462,6 +462,7 @@ grid.arrange(plot_Month_pre, plot_Month_lock,plot_Month_post, ncol=1, nrow=3)
 
 ```
 
+
 ```{r}
 # Plot.Freq by Month(percent %) :split by pandemic phrase 
 #> Skip(if we need, can add)
@@ -574,7 +575,7 @@ plot_Season <- ggplot(data=temp_2, aes(x,y)) +
                  fill="lightblue", 
                  alpha = .7,stat='identity') + 
   labs(x="Season", y="Avg.Robbery") +
-  labs(title="B1.Seansonally Robbery frequency") + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) + geom_text(aes(label=signif(y)),vjust = 1.5)   
+  labs(title="B1.Seanson_Rob_freq.(Month mean)") + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) + geom_text(aes(label=signif(y)),vjust = 1.5)   
 
 #########Pre
 temp <- count(Robbery_pre,Season, sort=FALSE) 
@@ -596,7 +597,7 @@ plot_Season_pre <- ggplot(data=temp_2, aes(x,y)) +
                  fill="lightblue", 
                  alpha = .7,stat='identity') + 
   labs(x="Season", y="Avg.Robbery") +
-  labs(title="B1_1.Seasonly Robbery (Pre)") + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) + geom_text(aes(label=signif(y)),vjust = 1.5)   
+  labs(title="B1_1.Pre_Season_Rob./M") + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) + geom_text(aes(label=signif(y)),vjust = 1.5)   
 
 
 ######Lock
@@ -619,7 +620,7 @@ plot_Season_lock <- ggplot(data=temp_2, aes(x,y)) +
                  fill="lightblue", 
                  alpha = .7,stat='identity') + 
   labs(x="Season", y="Avg.Robbery") +
-  labs(title="B1_2.Seasonly Robbery (Lock)") + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) + geom_text(aes(label=signif(y)),vjust = 1.5)   
+  labs(title="B1_2.Lock_Season_Rob./M") + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) + geom_text(aes(label=signif(y)),vjust = 1.5)   
 
 #########Post
 temp <- count(Robbery_post,Season, sort=FALSE) #fall, summer, winter, spring
@@ -641,7 +642,7 @@ plot_Season_post <- ggplot(data=temp_2, aes(x,y)) +
                  fill="lightblue", 
                  alpha = .7,stat='identity') + 
   labs(x="Season", y="Avg.Robbery") +
-  labs(title="B1_3.Seasonly Robbery (Post)") + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) + geom_text(aes(label=signif(y)),vjust = 1.5) 
+  labs(title="B1_3.Post_Season_Rob./M") + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) + geom_text(aes(label=signif(y)),vjust = 1.5) 
 
 grid.arrange(plot_Season, plot_Season_pre, plot_Season_lock, plot_Season_post,
              ncol=2, nrow=2)
@@ -655,22 +656,22 @@ grid.arrange(plot_Season, plot_Season_pre, plot_Season_lock, plot_Season_post,
 plot_Season_2019 <- ggplot(data=Robbery_2019, aes(x=Season)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) +
-  labs(x="Season") + labs(title="B1_4.Seansonally Robbery (2019)")
+  labs(x="Season") + labs(title="B1_4.Seanson_obbery (2019)")
 
 plot_Season_2020 <- ggplot(data=Robbery_2020, aes(x=Season)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) +
-  labs(x="Season") + labs(title="B1_5.Seansonally Robbery (2020)")
+  labs(x="Season") + labs(title="B1_5.Seanson_Robbery (2020)")
 
 plot_Season_2021 <- ggplot(data=Robbery_2021, aes(x=Season)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) +
-  labs(x="Season") + labs(title="B1_6.Seansonally Robbery (2021)")
+  labs(x="Season") + labs(title="B1_6.Seanson_Robbery (2021)")
 
 plot_Season_2022 <- ggplot(data=Robbery_2022, aes(x=Season)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) +
-  labs(x="Season") + labs(title="B1_7.Seansonally Robbery (2022)")
+  labs(x="Season") + labs(title="B1_7.Seanson_Robbery (2022)")
 
 
 grid.arrange(plot_Season_2019, plot_Season_2020, plot_Season_2021, plot_Season_2022,
@@ -1291,18 +1292,62 @@ Verify again before moving on the next step
 **Maybe we additionally need to draw Sccater plot, Normality Test etc.
 
 
-#This is Two Sample T-test (just coducted as pilot in the previous online meeting) 
+**Anova test**
+
 
 ```{r}
-str(Robbery)
-```
-```{r}
-ttest2sample_Clearance_rate = t.test(Robbery_pre$Clearance_rate,Robbery_lock$Clearance_rate)
-
-ttest2sample_Clearance_rate
+anova_robbery_per_day = aov(avg_Clearance_rate~DISTRICT, data = Robbery_district_avg_clr)
+xkabledply(anova_robbery_per_day, title = "anova_gre result summary")
 ```
 
 
+**Chi-squared Test**
+```{r}
+table1 = table(Robbery$Period_cat, Robbery$SHIFT)
+xkabledply(table1, title="Contingency table 1'")
+chitest1 <- chisq.test(table1)
+chitest1
+```
+
+
+
+```{r}
+table2 = table(Robbery$Period_cat, Robbery$Season)
+xkabledply(table2, title="Contingency table 2'")
+chitest2 = chisq.test(table2)
+chitest2
+```
+
+
+```{r}
+table3 = table(Robbery$Period_cat, Robbery$Day_cat_2)
+xkabledply(table3, title="Contingency table 3'")
+chitest3 = chisq.test(table3)
+chitest3
+```
+
+
+
+```{r}
+table4 = table(Robbery$Period_cat, Robbery$METHOD)
+xkabledply(table4, title="Contingency table4'")
+chitest4 = chisq.test(table4)
+chitest4
+```
+
+```{r}
+table5 = table(Robbery$Period_cat, Robbery$Month)
+xkabledply(table5, title="Contingency table 5'")
+chitest5 = chisq.test(table5)
+chitest5
+```
+
+```{r}
+table6 = table(Robbery$Period_cat, Robbery$DISTRICT)
+xkabledply(table6, title="Contingency table 6'")
+chitest6 = chisq.test(table6)
+chitest6
+```
 
 ##   Discussion 
 
