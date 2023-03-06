@@ -541,10 +541,12 @@ grid.arrange(plot_Month_2019, plot_Month_2020,plot_Month_2021, plot_Month_2022, 
   
   + Chart B1_2 (lockdown) 
     
-    At the beginning of lock-down(spring,summer) decreased
-    From AUTUMN, robbery dramatically inceased again 
-    continued to increase after finishing lock-down 
-    Pattern of post pendamic is interesting(Summer, Winter) 
+   At the beginning of lock-down(spring,summer) decreased.
+    
+   From AUTUMN, robbery dramatically increased again 
+   and continued to increase after finishing lock-down 
+    
+   Pattern of post pandemic is interesting(Summer, Winter) 
 
 ```{r}
 # Number of months per each season of pandemic phrases    
@@ -656,7 +658,7 @@ grid.arrange(plot_Season, plot_Season_pre, plot_Season_lock, plot_Season_post,
 plot_Season_2019 <- ggplot(data=Robbery_2019, aes(x=Season)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER")) +
-  labs(x="Season") + labs(title="B1_4.Seanson_obbery (2019)")
+  labs(x="Season") + labs(title="B1_4.Seanson_Robbery (2019)")
 
 plot_Season_2020 <- ggplot(data=Robbery_2020, aes(x=Season)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
@@ -1065,14 +1067,16 @@ temp %>%
 
 ```
 
-# (Dataset) Before moving on to the Hypothesis test
+## (Temporary) Organize Datasets before moving on to the Hypothesis test
  
- 1. Currently, we have 5 datasets. (2 total, 3 subsets)
+### Wrap-up final datasets Save (Begin next step by loading these data)
+
+ 1. Main datasets: 5 (2 total, 3 subsets)
 
   + original: Robbery, pre, lock, post
   + outlier excluded data: Robbery_clean
 
- 2. Additionally, we will make 5 summary datasets for advanced analysis like hypothesis test
+ 2. Summary datasets: 5 
  
   + (Sum of frequency, origin from Robbery_clean) 
     Robbery_date_sum, Robbery_month_sum, Robbery_Date_cat_sum
@@ -1080,15 +1084,6 @@ temp %>%
   + (Average of clearance_rate) 
     Robbery_district_avg_clr (origin from both Robbery),
     Robbery_clean_district_avg_clr (origin from Robbery_clean)
-
-
-**# 2. Make the 5 summary datasets and Load **
-
-  + (Summary of frequency, origin for Robbery_clean) 
-    Robbery_date_sum, Robbery_month_sum, Robbery_Date_cat_sum
-
-  + (Summary of clearance_rate, origin for both Robbery and Robbery_clean) 
-    Robbery_district_avg_clr, Robbery_clean_district_avg_clr
 
 
 ```{r, results='hide'}
@@ -1186,25 +1181,9 @@ Robbery_clean_district_avg_clr <- data.frame(Robbery_clean_district_avg_clr)
 xkabledply(Robbery_clean_district_avg_clr[1:4,], title = "Dataframe: `Robbery_district_avg_clr`")
 
 ```
-#Wrap-up final datasets Save (Begin next step by loading these data)
-
- 1. Main datasets: 5 (2 total, 3 subsets)
-
-  + original: Robbery, pre, lock, post
-  + outlier excluded data: Robbery_clean
-
- 2. Summary datasets: 5 
- 
-  + (Sum of frequency, origin from Robbery_clean) 
-    Robbery_date_sum, Robbery_month_sum, Robbery_Date_cat_sum
-    
-  + (Average of clearance_rate) 
-    Robbery_district_avg_clr (origin from both Robbery),
-    Robbery_clean_district_avg_clr (origin from Robbery_clean)
 
 
-
-**# 1. Save the 5 Main current datasets(Mar 3)/ and Load **
+**1. Save the 5 Main current datasets(Mar 3)/ and Load **
 
 
 ```{r}
@@ -1247,7 +1226,7 @@ Verify again before moving on the next step
 ```
 
 
-**# 2. Save the 5 Summary datasets(Mar 3)/ and Load **
+**2.Save the 5 Summary datasets(Mar 3)/ and Load **
 
 ```{r}
 #Save current data
@@ -1287,7 +1266,8 @@ Verify again before moving on the next step
 
 ```
 
-#(Mar 4) Creating variable for hypothesis test (ANd save again)
+### (Mar 4) Creating variable for hypothesis test (ANd save again)
+
   + Period_cat(pre,lock,post) > Period_cat_num(1,2,3)
   + 5 Main table: Robbery Robbery_clean Robbery_pre Robbery_lock Robbery_post
   + 5 Summary table
@@ -1309,9 +1289,7 @@ So, I will just omit codes of them
 # correct: pre 2535, lock 2729, post3079
 ```
 
-**# (Mar 4) I Saved updated tables(overwrite).**
-    
-   + You can load them for next steps**
+**(Mar 4) I Saved updated tables(overwrite).**
 
 ```{r}
 #Save current data
@@ -1350,7 +1328,7 @@ Verify again before moving on the next step
 #head(Robbery,10)  
 ```
 
-**# 2. Save the 5 Summary datasets(Mar 3)/ and Load **
+**# Save the 5 Summary datasets(Mar 4)/ and Load **
 
 ```{r}
 #Save current data
@@ -1390,15 +1368,474 @@ Verify again before moving on the next step
 ```
 
 
+## Hypothesis test 1- Anova test
+
+Hypothesis test aims to Find a statistical evidence if there is significant difference between three phases, in terms of **<u> robbery pattern of pre-pandemic, lock-down, and post-pandemic.</u> **) 
+
+ + ANOVA: compare means among different groups 
+ + Chi square: compare frequencies and proportions among different groups 
+
+By specifying robbery pattern, We set up 5 tests as belows.
+level of significance standard $\alpha$ = 0.05 (The 95% confidence level
+
+### 1. Daily robbery frequency (Quantitative var)
+
+**(A) Anova test**
+
+  +  Null hypothesis: $H_0:$ The Washington DC has same mean of daily robbery frequency in `pre-pandemic`,`lock-down`, and `post-pandemic` phases.
+
+  +  Alternative hypothesis: $H_1:$ The mean daily robbery frequency of three phases are NOT all the same
+  
+```{r,results='hide'}
+str(Robbery_date_sum)
+head(Robbery_date_sum,5)
+count(Robbery_date_sum,Period_cat_num)
+```
+
+Check the boxplot of daily robbery frequency.
+
 ```{r}
-head(Robbery_clean_district_avg_clr,5)
+ggplot(Robbery_date_sum, aes(x=Period_cat, y=n)) + 
+  geom_boxplot( colour=c("#ff0000","#11cc11","#0000ff"), outlier.shape=8, outlier.size=4) + 
+  labs(title="Daily robbery between three pendamic phase groups", x="Phase", y = "Frequecy")
+```
+
+```{r}
+anova_dayily_rob = aov(n~Period_cat, data = Robbery_date_sum)
+
+anova_summary = summary(anova_dayily_rob)
+#anova_summary
+xkabledply(anova_dayily_rob)
+
+#FYI. we can use Period_cat_num after Transforming as factor for analysis
+#Robbery_date_sum$Period_cat_num<- as.factor(Robbery_date_sum$Period_cat_num)
+
+#anova_dayily_rob = aov(n~Period_cat_num, data = Robbery_date_sum)
+#anova_summary = summary(anova_dayily_rob)
+#anova_summary
+
+```
+  + F value of the test is **7.19.**
+  + The p-value is **`r anova_summary[[1]][["Pr(>F)"]][[1]]`**, which is < $\alpha$ (0.05), right-tailed for one-way ANOVA.
+  + **The data present is enough evidence to reject $H_0$ at the set significance level. **
+
+
+**(B) Post-hoc Tukey HSD**
+
+  + we use tukeyHSD to pursue to find out which pairs (of phases) are different.
+  
+
+```{r}
+tukey_anova_dayily_rob <- TukeyHSD(anova_dayily_rob)
+tukey_anova_dayily_rob
+#xkabledply(tukey_anova_dayily_rob)
+```
+  +  `pre-pandemic`and`lock-down` are pairwise considered having different means.
+  
+  + Also, `post-pandemic` and`lock-down` are pairwise considered having different means. 
+  
+  + On the other hand,  `pre-pandemic`and`post-pandemic` are not significant at 0.05 level.
+
+**(C) Exclude outlier**
+
+  + We thought that outliers would affect the result, so decided to test again after excluding outliers. 5.5% of entire data was converted to NA.  
+
+```{r}
+Robbery_date_sum_exc = outlierKD2(Robbery_date_sum, n, rm = TRUE, boxplt = TRUE, qqplt = TRUE)
+```
+```{r}
+anova_dayily_rob_exc = aov(n~Period_cat, data = Robbery_date_sum_exc)
+
+anova_summary_exc = summary(anova_dayily_rob_exc)
+#anova_summary_exc
+xkabledply(anova_summary_exc)
 ```
 
 
-#Hypothesis test
+```{r}
+tukey_anova_dayily_rob_exc <- TukeyHSD(anova_dayily_rob_exc)
+tukey_anova_dayily_rob_exc
+#xkabledply(tukey_anova_dayily_rob_exc)
+```  
 
-**Maybe we additionally need to draw Sccater plot, Normality Test etc.
+  + The test result is same as the previous test(including outliers)
 
+
+### 2. Monthly robbery frequency (Quantitative var)
+
+**(A) Anova test**
+
+  +  Null hypothesis: $H_0:$ The Washington DC has same mean of monthly robbery frequency in `pre-pandemic`,`lock-down`, and `post-pandemic` phases.
+
+  +  Alternative hypothesis: $H_1:$ The mean monthly robbery frequency of three phases are NOT all the same
+  
+```{r,results='hide'}
+str(Robbery_month_sum)
+head(Robbery_month_sum,5)
+count(Robbery_month_sum,Period_cat)
+```
+Check the boxplot of daily robbery frequency.
+
+```{r}
+ggplot(Robbery_month_sum, aes(x=Period_cat, y=n)) + 
+  geom_boxplot( colour=c("#ff0000","#11cc11","#0000ff"), outlier.shape=8, outlier.size=4) + 
+  labs(title="Monthly robbery between three pendamic phase groups", x="Phase", y = "Frequecy")
+```
+
+```{r}
+anova_monthly_rob = aov(n~Period_cat, data = Robbery_month_sum)
+
+anova_summary = summary(anova_monthly_rob)
+#anova_summary
+xkabledply(anova_dayily_rob)
+```
+  + F value of the test is **1.5.**
+  + The p-value is **`r anova_summary[[1]][["Pr(>F)"]][[1]]`**, which is > $\alpha$ (0.05), right-tailed for one-way ANOVA.
+  + **So we fail to reject the null hypothesis $H_0$ at the set significance level. **
+
+ + We thought whether outliers would affect the result, however, result was same.
+
+```{r, results='hide'}
+temp = outlierKD2(Robbery_month_sum, n, rm = TRUE, boxplt = TRUE, qqplt = TRUE)
+temp = aov(n~Period_cat, data = temp)
+temp = summary(temp)
+temp
+```
+
+### 3. Daily robbery average time hour (Quantitative var)
+
+  + Outliers of `Clearance_rate` has been excluded.
+  
+**(A) Anova test**
+
+```{r, results='hide'}
+#make a summary table
+Robbery_avg_time <-  Robbery_clean %>% group_by(Period_cat, REPORT_DAT_2) %>%
+                   summarise(avg_Time_hour = mean(Time_hour, na.rm = TRUE),.groups = 'drop')
+
+arrange(Robbery_avg_time, Period_cat,REPORT_DAT_2) 
+
+Robbery_avg_time <- data.frame(Robbery_avg_time)
+```
+
+Check the boxplot of daily average time hour.
+
+```{r}
+ggplot(Robbery_avg_time, aes(x=Period_cat, y=avg_Time_hour)) + 
+  geom_boxplot( colour=c("#ff0000","#11cc11","#0000ff"), outlier.shape=8, outlier.size=4) + 
+  labs(title="Daily avg.robbery avg_Time_hour between three pendamic phase groups", x="Phase", y = "Time(minute)")
+```
+
+```{r}
+anova_daily_rob = aov(avg_Time_hour~Period_cat, data = Robbery_avg_time)
+
+anova_summary = summary(anova_daily_rob)
+anova_summary
+#xkabledply(anova_daily_rob)
+```
+  + **We fail to reject the null hypothesis $H_0$ at the set significance level. **
+
+
+### 4. Daily robbery average time of clr (Quantitative var)
+
+  + Outliers of `Clearance_rate` has been excluded.
+  
+**(A) Anova test**
+
+```{r, results='hide'}
+#make a summary table
+Robbery_avg_clr <-  Robbery_clean %>% group_by(Period_cat, REPORT_DAT_2) %>%
+                   summarise(avg_Clearance_rate = mean(Clearance_rate, na.rm = TRUE),.groups = 'drop')
+
+arrange(Robbery_avg_clr, Period_cat,REPORT_DAT_2) 
+
+Robbery_avg_clr <- data.frame(Robbery_avg_clr)
+```
+Check the boxplot of daily robbery time of clearance.
+
+```{r}
+ggplot(Robbery_avg_clr, aes(x=Period_cat, y=avg_Clearance_rate)) + 
+  geom_boxplot( colour=c("#ff0000","#11cc11","#0000ff"), outlier.shape=8, outlier.size=4) + 
+  labs(title="Daily avg.robbery time to clear between three pendamic phase groups", x="Phase", y = "Time(minute)")
+```
+
+```{r}
+anova_daily_rob = aov(avg_Clearance_rate~Period_cat, data = Robbery_avg_clr)
+
+anova_summary = summary(anova_daily_rob)
+anova_summary
+#xkabledply(anova_daily_rob)
+```
+  + F value of the test is **7.34.**
+
+  + The p-value is **`r anova_summary[[1]][["Pr(>F)"]][[1]]`**, which is < $\alpha$ (0.05), right-tailed for one-way ANOVA.
+  
+  + **So, The data present is enough evidence to reject $H_0$ at the set significance level. **
+
+**(B) Post-hoc Tukey HSD**
+
+  + we use tukeyHSD to pursue to find out which pairs (of phases) are different.
+  
+
+```{r}
+tukey_anova_dayily_rob <- TukeyHSD(anova_daily_rob)
+tukey_anova_dayily_rob
+#xkabledply(tukey_anova_dayily_rob)
+```
+
+  +  `pre-pandemic`and`lock-down` are pairwise considered having different means.
+  
+  + Also, `post-pandemic` and`lock-down` are pairwise considered having different means. 
+  
+  + On the other hand,  `pre-pandemic`and`post-pandemic` are not significant at 0.05 level.
+
+
+### 5. Daily robbery district (average `PSA`, Quantitative var)
+
+  + Outliers of `Clearance_rate` has been excluded.
+  
+**(A) Anova test**
+
+```{r, results='hide'}
+#make a summary table
+Robbery_avg_psa <-  Robbery_clean %>% group_by(Period_cat, REPORT_DAT_2) %>%
+                   summarise(avg_PSA = mean(PSA, na.rm = TRUE),.groups = 'drop')
+
+arrange(Robbery_avg_psa, Period_cat,REPORT_DAT_2) 
+
+Robbery_avg_psa <- data.frame(Robbery_avg_psa)
+```
+
+Check the boxplot of daily robbery location.
+
+```{r}
+ggplot(Robbery_avg_psa, aes(x=Period_cat, y=avg_PSA)) + 
+  geom_boxplot(colour=c("#ff0000","#11cc11","#0000ff"), outlier.shape=8, outlier.size=4) + 
+  labs(title="Daily avg.robbery time to clear etween three pendamic phase groups", x="Phase", y = "Time(minute)")
+```
+
+```{r}
+anova_daily_rob = aov(avg_PSA~Period_cat, data = Robbery_avg_psa)
+
+anova_summary = summary(anova_daily_rob)
+anova_summary
+#xkabledply(anova_daily_rob)
+```
+  + F value of the test is **22.8.**
+
+  + The p-value is **`r anova_summary[[1]][["Pr(>F)"]][[1]]`**, which is < $\alpha$ (0.05), right-tailed for one-way ANOVA.
+  
+  + **So, The data present is enough evidence to reject $H_0$ at the set significance level. **
+
+
+**(B) Post-hoc Tukey HSD**
+
+  + we use tukeyHSD to pursue to find out which pairs (of phases) are different.
+  
+
+```{r}
+tukey_anova_dayily_rob <- TukeyHSD(anova_daily_rob)
+tukey_anova_dayily_rob
+#xkabledply(tukey_anova_dayily_rob)
+```
+
+  +  `pre-pandemic`and`lock-down` are pairwise considered having different means.
+  
+  + Also, `post-pandemic` and`lock-down` are pairwise considered having different means. 
+  
+  + On the other hand,  `pre-pandemic`and`post-pandemic` are not significant at 0.05 level.
+  
+
+
+## Hypothesis test 2- Chi square test(GOF)
+
+  + Even though frequency of robbery would not same by pandemic phrases, the pattern of incident would be same or not. 
+  
+  + So we conducted Chi square test to compare proportions of a few categorical values among three phrase groups.
+  
+  + Basically, we guess the `pre-pandemic` is the expected frequencies, and conducted test to the `lock-down`, and `post-pandemic` phases.
+
+### 1.Robbery incident pattern by date (Categorical var)**
+
+  +  Null hypothesis: $H_0:$ The robbery distribution of `pre-pandemic` phase  by the beginning, middle, and end of the month matches `lock-down`phases.
+
+  +  Alternative hypothesis: $H_1:$ They do not match
+  
+```{r}
+temp <- count(Robbery_lock,Date_cat)
+value = c(Begin=temp[1,2], End=temp[2,2], Middle=temp[3,2])  
+
+temp <- count(Robbery_pre,Date_cat)
+exp_freq = c(temp[1,2]/2535, temp[2,2]/2535,temp[3,2]/2535) 
+
+# Next perform chi-square test
+chigoodness = chisq.test(value, p = exp_freq) # p stands for proportions
+# look at the result
+chigoodness
+```
+```{r}
+xkabledply( as.table(chigoodness$expected), title = "Expected frequencies", wide = T)
+```
+
+$\chi^2$ value of the test is `r chigoodness$statistic`, and  p-value is `r chigoodness$p.value`. 
+
+  + **So we fail to reject the null hypothesis $H_0$ at the set significance level. **
+
+  + At the test of comparing `pre-pandemic` and `post-pandemic`phase, the result is same.(fail to reject $H_0$)
+
+```{r}
+temp <- count(Robbery_post,Date_cat)
+value = c(Begin=temp[1,2], End=temp[2,2], Middle=temp[3,2])  
+
+temp <- count(Robbery_pre,Date_cat)
+exp_freq = c(temp[1,2]/2535, temp[2,2]/2535,temp[3,2]/2535) 
+
+# Next perform chi-square test
+chigoodness = chisq.test(value, p = exp_freq) # p stands for proportions
+# look at the result
+chigoodness
+```
+
+### 2.Robbery incident pattern by timezone (Categorical var)**
+
+   + **[Lock vs Pre]**
+
+   
+```{r}
+temp <- count(Robbery_lock,SHIFT)
+value = c(DAY=temp[1,2], EVENING=temp[2,2], MIDNIGHT=temp[3,2])  
+
+temp <- count(Robbery_pre,SHIFT)
+exp_freq = c(temp[1,2]/2535, temp[2,2]/2535,temp[3,2]/2535) 
+
+# Next perform chi-square test
+chigoodness = chisq.test(value, p = exp_freq) # p stands for proportions
+# look at the result
+chigoodness
+
+```
+
+   + **[Post vs Pre] The data present is enough evidence to reject $H_0$ at the set significance level. **
+
+```{r}
+temp <- count(Robbery_post,SHIFT)
+value = c(DAY=temp[1,2], EVENING=temp[2,2], MIDNIGHT=temp[3,2])  
+
+temp <- count(Robbery_pre,SHIFT)
+exp_freq = c(temp[1,2]/2535, temp[2,2]/2535,temp[3,2]/2535) 
+
+# Next perform chi-square test
+chigoodness = chisq.test(value, p = exp_freq) # p stands for proportions
+# look at the result
+chigoodness
+
+```
+
+### 3.Robbery incident pattern by robbery methods (Categorical var)**
+
+   + **[Lock vs Pre] The data present is enough evidence to reject $H_0$ at the set significance level.**
+   
+```{r}
+temp <- count(Robbery_lock,METHOD)
+value = c(GUN=temp[1,2], KNIFE=temp[2,2], OTHERS=temp[3,2])  
+
+temp <- count(Robbery_pre,METHOD)
+exp_freq = c(temp[1,2]/2535, temp[2,2]/2535,temp[3,2]/2535) 
+
+# Next perform chi-square test
+chigoodness = chisq.test(value, p = exp_freq) # p stands for proportions
+# look at the result
+chigoodness
+
+```
+   + **[Post vs Pre] The data present is enough evidence to reject $H_0$ at the set significance level. **
+   
+
+```{r}
+temp <- count(Robbery_post,METHOD)
+value = c(GUN=temp[1,2], KNIFE=temp[2,2], OTHERS=temp[3,2])  
+
+temp <- count(Robbery_pre,METHOD)
+exp_freq = c(temp[1,2]/2535, temp[2,2]/2535,temp[3,2]/2535) 
+
+# Next perform chi-square test
+chigoodness = chisq.test(value, p = exp_freq) # p stands for proportions
+# look at the result
+chigoodness
+
+```
+
+   + **[Post vs Lock] The data present is enough evidence to reject $H_0$ at the set significance level. **
+
+```{r}
+temp <- count(Robbery_post,METHOD)
+value = c(GUN=temp[1,2], KNIFE=temp[2,2], OTHERS=temp[3,2])  
+
+temp <- count(Robbery_lock,METHOD)
+exp_freq = c(temp[1,2]/2729, temp[2,2]/2729,temp[3,2]/2729) 
+
+# Next perform chi-square test
+chigoodness = chisq.test(value, p = exp_freq) # p stands for proportions
+# look at the result
+chigoodness
+
+```
+
+### 4.Robbery incident pattern by robbery districts (Categorical var)**
+
+   + **[Lock vs Pre] The data present is enough evidence to reject $H_0$ at the set significance level.**
+   
+```{r}
+#A~G: dist 1~7, h:NA)
+temp <- count(Robbery_lock,DISTRICT)
+value = c(a=temp[1,2], b=temp[2,2], c=temp[3,2],d=temp[4,2], e=temp[5,2], f=temp[6,2],g=temp[7,2],h=temp[8,2])  
+
+temp <- count(Robbery_pre,DISTRICT)
+exp_freq = c(temp[1,2]/2535,temp[2,2]/2535,temp[3,2]/2535,temp[4,2]/2535,temp[5,2]/2535,temp[6,2]/2535,temp[7,2]/2535,temp[8,2]/2535) 
+
+# Next perform chi-square test
+chigoodness = chisq.test(value, p = exp_freq) # p stands for proportions
+# look at the result
+chigoodness
+
+```
+
+   + **[Post vs Pre] The data present is enough evidence to reject $H_0$ at the set significance level.**
+   
+```{r}
+#A~G: dist 1~7, h:NA)
+temp <- count(Robbery_post,DISTRICT)
+value = c(a=temp[1,2], b=temp[2,2], c=temp[3,2],d=temp[4,2], e=temp[5,2], f=temp[6,2],g=temp[7,2],h=temp[8,2])  
+
+temp <- count(Robbery_pre,DISTRICT)
+exp_freq = c(temp[1,2]/2535,temp[2,2]/2535,temp[3,2]/2535,temp[4,2]/2535,temp[5,2]/2535,temp[6,2]/2535,temp[7,2]/2535,temp[8,2]/2535) 
+
+# Next perform chi-square test
+chigoodness = chisq.test(value, p = exp_freq) # p stands for proportions
+# look at the result
+chigoodness
+
+```
+
+   + **[Post vs Lock] The data present is enough evidence to reject $H_0$ at the set significance level.**
+   
+```{r}
+#A~G: dist 1~7, h:NA)
+temp <- count(Robbery_post,DISTRICT)
+value = c(a=temp[1,2], b=temp[2,2], c=temp[3,2],d=temp[4,2], e=temp[5,2], f=temp[6,2],g=temp[7,2],h=temp[8,2])  
+
+temp <- count(Robbery_lock,DISTRICT)
+exp_freq = c(temp[1,2]/2729,temp[2,2]/2729,temp[3,2]/2729,temp[4,2]/2729,
+             temp[5,2]/2729,temp[6,2]/2729,temp[7,2]/2729,temp[8,2]/2729) 
+
+# Next perform chi-square test
+chigoodness = chisq.test(value, p = exp_freq) # p stands for proportions
+# look at the result
+chigoodness
+
+```
+
+## Hypothesis test (Initial version)
 
 **Anova test**
 
@@ -1478,6 +1915,11 @@ chitest6
 ```
 The p-value is significantly less than 0.05, so we can reject the null hypothesis (the DISTRICT and period_category are independent), we have evidence to support the 
 Alternative hypothesis that they are not independent under the 95% confidence level. 
+
+
+
+
+
 ##   Discussion 
 
 
