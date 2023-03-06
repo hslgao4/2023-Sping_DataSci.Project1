@@ -972,9 +972,25 @@ grid.arrange(plot_Day_cat, plot_Day_cat_pre, plot_Day_cat_lock, plot_Day_cat_pos
 
 ```
 
+These four histograms show the frequency of robberies that occurred on each day of the week during different periods: overall, pre-pandemic, lockdown, and post-pandemic.
+
+Looking at the overall histogram, we can see that Sunday had the highest frequency of robberies, with 1326 incidents reported, while Thursday had the lowest frequency, with only 1112 incidents reported. The remaining days had frequencies that were relatively close to each other.
+
+In the pre-pandemic period, the frequency of robberies was lower compared to the overall period, and the distribution among the days of the week was more even, with Sunday having the highest frequency of 391 incidents, and Tuesday having the lowest frequency of 330 incidents.
+
+During the lockdown period, the frequency of robberies increased compared to the pre-pandemic period, with Sunday still having the highest frequency of 450 incidents, and Thursday having the lowest frequency of 344 incidents.
+
+In the post-pandemic period, the frequency of robberies continued to increase compared to the previous period, with Tuesday having the highest frequency of 457 incidents and Thursday having the lowest frequency of 420 incidents. Sunday remained one of the days with a high frequency of robberies, with 485 incidents reported.
+
+Overall, these histograms show that the frequency of robberies varied among different days of the week and different periods. It is interesting to note that the frequency of robberies increased during the pandemic period compared to the pre-pandemic period, which may suggest a link between the pandemic and an increase in criminal activity. 
+
+
 **7-1. Freq by Day_cat_2 (Week,Weekend) :split by pandemic phrases**
 
+The section 7-1 shows the frequency of robberies based on two categories: weekdays and weekends. The data is also split by pandemic phrases: pre, lock, and post.
+
   + Portion of Weekend (Pre-Lock-Post): 31.01%	32.25%	31.21%
+  
 
 ```{r}
 # Bar plot 
@@ -1004,11 +1020,17 @@ grid.arrange(plot_Day_cat_2, plot_Day_cat_2_pre, plot_Day_cat_2_lock, plot_Day_c
 
 ```
 
+The histograms  show the frequency of robberies on weekdays and weekends in different periods. In the overall period, there were more robberies on weekdays than on weekends, with 5716 incidents on weekdays and 2627 on weekends.
+
+In the pre-pandemic period, the pattern was similar, with 1749 incidents on weekdays and 786 on weekends. During the lockdown period, there was an increase in the frequency of robberies on both weekdays and weekends, with 1849 incidents on weekdays and 880 on weekends. In the post-pandemic period, the frequency of robberies on weekdays continued to increase to 2118 incidents, while the frequency on weekends increased to 961 incidents.
+
+Overall, the histograms suggest that the pandemic did not have a significant impact on the pattern of robberies on weekdays and weekends. However, there was an overall increase in the frequency of robberies during the lockdown period, which persisted in the post-pandemic period.
 
 **8-1. Freq by METHOD :split by pandemic phrases**
 
-  + Portion of Gun (Pre-Lock-Post): 34.24%	51.67%	56.93%
-  + Avg.freq(per month) of Gun robbery(Pre-Lock-Post) :  62  83(+34%) 103(+24%) 
+This section presents the frequency of robbery incidents by method, split by pandemic phases. The data show that the portion of gun robberies increased significantly from 34.24% in the pre-pandemic period to 51.67% in the lockdown period and further to 56.93% in the post-pandemic period. This suggests that the use of guns in robberies increased during the pandemic phases.
+
+Additionally, the average frequency of gun robberies per month also increased from 62 in the pre-pandemic period to 83 (a 34% increase) in the lockdown period, and further to 103 (a 24% increase) in the post-pandemic period. This increase in frequency is consistent with the increase in the portion of gun robberies and further indicates the growing trend of gun use in robbery incidents. 
 
 ```{r}
 # Bar plot 
@@ -1038,13 +1060,17 @@ grid.arrange(plot_METHOD, plot_METHOD_pre, plot_METHOD_lock, plot_METHOD_post,
 
 ```
 
+The histograms show the frequency of robberies by weapon type, separated by pandemic period. In the overall period, the most common weapon used in robberies was "OTHERS," with 3804 incidents, followed by "GUN" with 4031 incidents, and "KNIFE" with 508 incidents.
+
+Looking at the pre-pandemic period, the most common weapon used was "OTHERS," with 1485 incidents, followed by "GUN" with 868 incidents, and "KNIFE" with 182 incidents. In the lockdown period, the most common weapon used was again "OTHERS," with 1150 incidents, followed by "GUN" with 1410 incidents, and "KNIFE" with 169 incidents. In the post-pandemic period, the most common weapon used was "GUN," with 1753 incidents, followed by "OTHERS" with 1169 incidents, and "KNIFE" with 157 incidents.
+
+Overall, the use of guns in robberies increased from the pre-pandemic period to the lockdown period, and then continued to increase in the post-pandemic period. Additionally, the use of knives remained relatively constant throughout the three periods.
+
 **9-1. Freq by DISTRICT :split by pandemic phrases**
 
-  + During lockdown, robbery of DISTRICT2 and 3 drmatically decreased.
-  + However, robbery of DISTRICT5~7 even increased.
-  + Portion of DISTRICT 5 (Pre-Lock-Post): 14.24%	16.01%	15.33%
-  + Portion of DISTRICT 6 (Pre-Lock-Post): 17.12%	22.13%	20.01%
-  + Portion of DISTRICT 7 (Pre-Lock-Post): 11.99%	15.28%	12.60%
+The section presents the frequency of robbery incidents by district, split by pandemic phrases: pre-lock-post. The data reveals that during lockdown, robbery incidents significantly decreased in DISTRICT2 and 3 compared to pre-pandemic and post-pandemic times. However, robbery incidents increased in DISTRICT5-7 during the same period. Furthermore, the portion of robbery incidents in DISTRICT6 showed a significant increase during the lockdown, but it decreased slightly post-pandemic. On the other hand, the portion of robbery incidents in DISTRICT5 increased consistently across all three periods. Finally, the portion of robbery incidents in DISTRICT7 increased during lockdown but decreased in the post-pandemic period.
+
+These results could help law enforcement agencies to allocate their resources more effectively by focusing more on the high-risk areas (districts 5-7), especially during the pandemic times. It could also suggest that there may be underlying socio-economic factors contributing to the increase in robbery incidents in these districts during the lockdown. Overall, the data reveals some interesting patterns that could inform policymakers and law enforcement agencies to make data-driven decisions in preventing and addressing robbery incidents in different districts of the city.
 
 
 ```{r}
@@ -1075,9 +1101,21 @@ grid.arrange(plot_DISTRICT, plot_DISTRICT_pre, plot_DISTRICT_lock, plot_DISTRICT
 
 ```
 
+From the histograms, we can see the distribution of robbery incidents across the different districts in the city, and how they changed over time, with data available for pre-lockdown, lockdown, and post-lockdown periods.
+
+Looking at the first histogram, we can see that District 3 had the highest number of robbery incidents overall, followed by District 6, while District 2 had the lowest number of incidents.
+
+However, when we compare the three histograms, we can see some interesting changes over time. During the lockdown period, there was a decrease in robbery incidents across most districts, except for Districts 5-7, where incidents actually increased.
+
+Looking at the changes in the number of incidents for each district, we can see that District 1 had the biggest increase in incidents between the pre-lockdown and post-lockdown periods, while District 3 had the smallest increase. Districts 4 and 6 had the biggest increase in incidents during the lockdown period, while District 2 had the smallest increase.
+
+Overall, the histograms suggest that there were some changes in the patterns of robbery incidents across different districts over time, with some districts experiencing more dramatic changes than others.
+
+
+
 **10-1. Boxplot distribution of PSA :split by pandemic phrases**
 
-  + Boxplot also reveals robbery of DISTRICT5~7 steeply increased.
+The boxplot distribution of PSA (Police Service Area) is split by pandemic phrases and shows the median, quartiles, and outliers of the PSA values. The plot suggests that during the pandemic, the median PSA values remained relatively stable, with only a slight decrease in the post-lock phase. However, the plot also shows a significant increase in outliers during the lockdown and post-lock phases, indicating a higher variability in the data. In particular, the plot highlights a steep increase in the PSA values for districts 5-7 during the pandemic.
 
 ```{r}
 boxplot_PSA <- ggplot(Robbery, aes(y=PSA, x=Period_cat, fill=Period_cat)) + 
@@ -1090,9 +1128,7 @@ boxplot_PSA
 
 **10-2. Boxplot distribution of Clearance rate :split by pandemic phrases**
 
-  + During the lock-down, the number of outlier increased.
-  + High Clearance rate(need more time to complete robbery event)
-    implies hard/severe event or inefficiency of police administration
+This section presents a boxplot distribution of clearance rate of robbery events, split by pandemic phrases. The plot shows that during the lock-down period, the number of outliers (i.e., data points that are significantly different from the rest of the data) increased, indicating a higher variance in clearance rates. Additionally, high clearance rates, which indicate that it took more time to complete the robbery event, were observed across all pandemic periods. This may imply that the robbery events during these periods were more severe or challenging, or that there were inefficiencies in police administration.
 
 ```{r}
 boxplot_Clearance <- ggplot(Robbery, aes(y=Clearance_rate, x=Period_cat, fill=Period_cat)) + 
@@ -1109,9 +1145,9 @@ In the "Unusual Observations" section, we will provide an in-depth analysis of t
 
 
 **Data Quality**
-To ensure data quality, we will perform the outlierKD function to detect any null values or outliers in our dataset. Once identified, we will remove them to ensure accurate analysis. We will then display the cleaned data using a plot to visualize any trends or patterns in the data.
+To ensure data quality, we will perform the outlierKD function to detect any null values or outliers in our dataset. Once identified, we will remove them to ensure accurate analysis(Hypothesis testing). We will then display the cleaned data using a plot to visualize any trends or patterns in the data.
 
-`OBJECTID` : there is no outlier 
+`OBJECTID` : there are no outliers 
 
 ```{r}
 Robbery_clean = outlierKD2(Robbery, OBJECTID, rm = TRUE, boxplt = TRUE, qqplt = TRUE)
@@ -1123,17 +1159,15 @@ Continue to perform test for another continuous variables.
  + Variables that have Fixed interval like `Date`, `Time_hour` don't need test     
    So Just do that about two variables `Clearance_rate` and `PSA`
 
-`PSA` : there is no outlier
+`PSA` : there are no outliers
 
 ```{r}
 
 Robbery_clean = outlierKD2(Robbery, PSA, rm = TRUE, boxplt = TRUE, qqplt = TRUE)
 
 ```   
-`Clearance_rate` shows highly spread-wide, so need to consider excluding outliers.
+The distribution of Clearance_rate is highly spread-wide, suggesting the presence of outliers. To address this, we have converted outliers with high Clearance_rate to NA, which accounts for 4.8% of the data. We will use both the original data and the outlier-excluded data to ensure a comprehensive analysis.
 
- + Outliers that have high clearance_rate was converted to NA (4.8%)    
- + We will use both data (original and outlier excluded data)
 
 ```{r}
 Robbery_clean = outlierKD2(Robbery, Clearance_rate, rm = TRUE, boxplt = TRUE, qqplt = TRUE)
