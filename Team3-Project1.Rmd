@@ -63,7 +63,7 @@ options(scipen=9999, digits = 3)
 ### 1. Data  
 In the opening section of this report, we provide a comprehensive overview of the data used in our analysis. <<<We obtained our data from the Metropolitan Police Department in Washington D.C., and specifically focused on the Crime Incidents dataset.
 
-The dataset contains detailed information on robbery incidents that occurred between 2019 and 2022, and we extracted this information into our dataset titled "Robbery_DC_clean.csv".>>>
+The dataset contains detailed information on robbery incidents that occurred between 2019 and 2022, and we extracted this information into our dataset titled "Robbery_DC_clean.csv".
 
 In this section, we will provide a commentary on the data, highlighting its strengths and limitations. This information is critical in providing context for the analysis and understanding the potential impact of any data-related issues on the conclusions drawn from our analysis.
 
@@ -193,7 +193,7 @@ The dataset consists of *8343* observations and *22* variables, including:
 ## Analysis 
 
 
-### 2. Summary statistics
+### 1. Summary statistics
 
 In this section, we provide a detailed overview of the summary statistics of some quantitative datas in our data set. This information includes measures such as the mean, median, standard deviation, minimum, and maximum values.
 
@@ -309,21 +309,42 @@ mean(Robbery$PSA,na.rm = TRUE)
 sd(Robbery$PSA, na.rm = TRUE)
 var(Robbery$PSA, na.rm = TRUE)
 ```
-  
+Based on the summary statistics of the robbery data between 2019 to 2022 in D.C., we can observe the following:
 
-### 3. Plots(draft)
-   + comment (TBD)
-   
+There were a total of 8,343 robbery incidents during the period, with 2,535 incidents recorded in the pre-lockdown period and 3,079 incidents in the post-lockdown period.
+The robbery incidents were evenly distributed across different seasons, with the highest number of incidents recorded in the spring (1,585) and the lowest in winter (2,073).
+The majority of robbery incidents occurred during the evening shift (3,305) and midnight shift (3,381), with very few incidents during the day shift (1,657).
+The most common method used in robbery incidents was with a gun (4,031 incidents), followed by other methods (3,804 incidents) and with a knife (508 incidents).
+The districts with the highest number of robbery incidents were 4 (1,379 incidents), 7 (1,224 incidents), and 6 (1,163 incidents), while the PSA with the highest number of incidents was PSA 708 (599 incidents).
+The mean clearance rate for robbery incidents was 9.73%, which indicates that only a small percentage of cases resulted in an arrest or closure.
+There were some missing values in the data set, with 1701 instances of "NA" recorded in the "Day_cat" column, and 21 and 22 instances of "NA" recorded in the "METHOD" and "PSA" columns, respectively.
+Overall, the summary statistics provide a helpful overview of the robbery data, highlighting the key trends and patterns that can inform subsequent analysis.
+
+### 2. : Exploratory plots of robbery incidents in D.C. before and during the COVID-19 lockdown
+
+ This section presents a set of draft plots that visually illustrate the trends and patterns of robbery incidents in Washington D.C. before and during the COVID-19 lockdown. The plots include histograms, scattorplots, and boxplots that display the frequency of robbery incidents across different time periods, days of the week, and locations in the city. The plots also highlight any significant changes or fluctuations in the robbery rates during the lockdown period compared to the pre-lockdown period.
+ 
 Period_cat | Define | Description   
 -----|-------|-----------  
  Pre   | Pre-pandemic (14M)   |  2019.1.1 ~2020.2.29   
 Lock   | Lockdown(17M)   | 2020.3.1~ 2021. 7.31    
 Post   |   Post-pandemic(17M)   | 2021.8.1~2022.12.31 
 
+The table above shows a categorization of time periods based on the events related to the COVID-19 pandemic. The periods are defined as Pre, Lock, and Post.
+
+The first period, Pre, refers to the time before the pandemic had a significant impact on society, ranging from January 1st, 2019 to February 29th, 2020. During this time, people were living their lives as usual, with no significant disruptions caused by the pandemic.
+
+The second period, Lock, refers to the time when During the lockdown period in the District of Columbia (Lock period), the government implemented several measures to curb the spread of the virus, including banning gatherings of 50 or more people, cutting restaurant dining room capacity in half, disallowing bar and standing service for social distancing, and closing nightclubs. This period lasted from March 1st, 2020 to July 31st, 2021, lasting for 17 months. During this time, people were confined to their homes, and many businesses were closed, resulting in a significant impact on daily life.
+
+The third period, Post, refers to the time after the lockdown measures were lifted, from August 1st, 2021 to December 31st, 2022, lasting for 17 months. During this period, people were slowly returning to their daily routines, with businesses reopening, and social interactions resuming to some degree. However, there was still a need to take precautions, such as wearing masks, and social distancing, due to the continued threat of the pandemic.
+
+Overall, this categorization of time periods based on the COVID-19 pandemic highlights the significant impact the pandemic has had on daily life, and how the world has adapted to cope with the challenges posed by the virus.
 
 **1. Basic plots of Robbery data is below:**
    + Chart A1~A2 describe Total data (4 years,'19~'22)
-   
+
+Charts A1 and A2 show the total number of robberies per month over a four-year period from 2019 to 2022. The x-axis represents the months and years, while the y-axis represents the number of robberies. Each point on the line represents the total number of robberies in a given month and year.
+
 
 ```{r}
 # Plot 1.: Freq by yeqr (x:discrete, Barchart)+Value=count(freq)
@@ -361,7 +382,19 @@ plot_Month_pct <- ggplot(Robbery, aes(x = Month)) +
 
   
 grid.arrange(plot_year, plot_Month, plot_year_pct, plot_Month_pct, ncol=2, nrow=2)
+
+
+
+
 ```
+
+The histograms A1~A2 shows the distribution of data over four years (2019-2022) and 12 months within each year. The vertical axis represents the count of data points while the horizontal axis represents the years and months.
+
+Overall, the data seems to show an increasing trend over the years, with the highest count in 2022. Within each year, there are variations in the count of data points, with the highest count in October and the lowest count in March for each year.
+
+The percent column shows the percentage of data points for each month in relation to the total count of data points. The highest percentage of data points is in October with 11%, followed by September and July with 10% each. The lowest percentage of data points is in March with 6%, followed by February and April with 7% each.
+
+This histogram could be used to identify trends and patterns in the data, as well as to determine which months have the most and least data points.
 
 
 **2-1.Freq by Month :split by pandemic phrases**
@@ -404,6 +437,15 @@ plot_Period_mon <- ggplot(data=temp_2, aes(x,y)) +
 grid.arrange(plot_Period, plot_Period_mon, ncol=2, nrow=2)
 
 ```
+
+Based on the provided data, A3 and A4 show the frequency of robbery incidents split by pandemic phases. The pandemic phases are divided into three categories, which are pre-pandemic, lock-down, and post-pandemic.
+
+A3 shows the number of robbery incidents that occurred during each of the pandemic phases. The pre-pandemic phase had 2535 robbery incidents, the lock-down phase had 2729 robbery incidents, and the post-pandemic phase had 3079 robbery incidents.
+
+A4 shows the average number of robbery incidents per month during each pandemic phase. The pre-pandemic phase had an average of 181 robbery incidents per month, the lock-down phase had an average of 160 robbery incidents per month, and the post-pandemic phase had an average of 181 robbery incidents per month.
+
+Overall, the data shows that there was an increase in the number of robbery incidents during the lock-down phase compared to the pre-pandemic phase. However, the number of robbery incidents during the post-pandemic phase was higher than both the pre-pandemic and lock-down phases. The average number of robbery incidents per month remained relatively stable during the pre-pandemic and post-pandemic phases, but decreased during the lock-down phase.
+
 
 ```{r}
 #1. by pandemic phrases
@@ -462,6 +504,12 @@ grid.arrange(plot_Month_pre, plot_Month_lock,plot_Month_post, ncol=1, nrow=3)
 
 ```
 
+This histograms shows the monthly robbery frequency during three different periods: pre-pandemic (A2-2), lockdown (A2-3), and post-pandemic (A2-4). The pre-pandemic period covers 14 months from January 2019 to February 2020. The lockdown period covers 17 months from March 2020 to July 2021. The post-pandemic period covers 17 months from August 2021 to December 2022.
+
+Looking at the histograms, the monthly robbery frequency during the pre-pandemic period ranged from 126 to 230 incidents, with an average of 181 incidents per month. During the lockdown period, the monthly robbery frequency ranged from 87 to 258 incidents, with an average of 160 incidents per month. Finally, during the post-pandemic period, the monthly robbery frequency ranged from 131 to 260 incidents, with an average of 181 incidents per month.
+
+
+
 
 ```{r}
 # Plot.Freq by Month(percent %) :split by pandemic phrase 
@@ -518,6 +566,16 @@ grid.arrange(plot_Month_2019, plot_Month_2020,plot_Month_2021, plot_Month_2022, 
 
 ```
 
+The bar charts (A2-5, A2-6, A2-7, A2-8) display the number of robberies per month and year, with the x-axis representing the months  and the y-axis representing the frequency of robberies. These charts provide valuable insights into the trends and patterns in robbery incidents over a four-year period.
+
+In 2019, the number of robberies increased from January to October, with the highest number of robberies occurring in October at 230. The number of robberies then decreased in the following months of the year. In 2020, the number of robberies remained relatively stable until August, after which it began to increase, peaking in October at 258. In 2021, the number of robberies continued to rise from August to October, with the highest number of robberies occurring in October at 220. The number of robberies decreased in November and December of the same year.
+
+Overall, the bar charts reveal an increasing trend in the number of robberies from 2019 to 2020, with October being the peak month for both years. Although the number of robberies decreased in 2021, it still remained relatively high compared to the beginning of the time period. These bar charts are useful for identifying patterns and making comparisons between different months and years, which can help in understanding the overall trend in robbery incidents.
+
+
+
+
+
 ```{r}
 #X-axis order check
 #temp <- count(Robbery,Season, sort=FALSE) 
@@ -539,6 +597,10 @@ grid.arrange(plot_Month_2019, plot_Month_2020,plot_Month_2021, plot_Month_2022, 
 
 **3-1. Freq by Season :split by pandemic phrases (Avg.Robbery(per month)**
   
+The data is split into four categories based on the season: Spring, Summer, Autumn, and Winter. The average number of robberies per month is calculated for each season.
+
+The data is then split into three categories based on pandemic phrases: Pre-pandemic, Lockdown, and Post-pandemic. The average number of robberies per month is calculated for each pandemic phase.
+
   + Chart B1_2 (lockdown) 
     
    At the beginning of lock-down(spring,summer) decreased.
@@ -651,6 +713,15 @@ grid.arrange(plot_Season, plot_Season_pre, plot_Season_lock, plot_Season_post,
 
 ```
 
+Based on the provided data, Chart B1 shows the average number of robberies per month in each season. Spring and winter have the lowest average number of robberies, with 132 and 172 respectively, while summer and autumn have the highest averages, with 186 and 2054 respectively.
+
+Chart B1_1 shows the average number of robberies per month in each season before the pandemic. The pattern is similar to Chart B1, with summer and autumn having the highest averages, but with slightly higher numbers overall. Spring and winter also have slightly higher averages, with 156 and 154 respectively.
+
+Chart B1_2 shows the average number of robberies per month in each season during the lockdown period. Interestingly, the number of robberies decreased significantly in spring and summer, with averages of 110 and 183 respectively. However, the number of robberies dramatically increased again in autumn, with an average of 221, and remained high in winter with an average of 160.
+
+Chart B1_3 shows the average number of robberies per month in each season after the lockdown period. The number of robberies in summer decreased slightly to an average of 168, while the number of robberies in autumn remained high at an average of 189. The number of robberies in spring increased to an average of 150, while the number of robberies in winter increased significantly to an average of 205.
+
+Overall, the data suggests that the pandemic had a significant impact on the number of robberies, with a decrease during the lockdown period and a subsequent increase afterward. The patterns of each season are generally consistent throughout the time period, with summer and autumn having the highest averages.
 
 **3-2. Freq by Season :split by Years**
 
@@ -680,9 +751,18 @@ grid.arrange(plot_Season_2019, plot_Season_2020, plot_Season_2021, plot_Season_2
              ncol=2, nrow=2)
 
 ```
+Based on the provided data, we can see that the average number of robberies per month varied by season and was affected by the pandemic. In chart B1_2, which represents the lockdown period, the number of robberies decreased in the beginning of the lockdown during spring and summer but dramatically increased again from autumn and continued to increase after the lockdown was lifted. The pattern of post-pandemic (summer and winter) is also interesting.
+
+Looking at the data in more detail, we see that the average number of robberies per month was highest in autumn across all years (2019-2022), with an average of 2054 in chart B1. In chart B1_1, which represents the pre-pandemic period, the average number of robberies per month was highest in autumn with an average of 216. In chart B1_3, which represents the post-pandemic period, the average number of robberies per month was highest in winter with an average of 205.
+
+Furthermore, we can see that there were fluctuations in the average number of robberies per month across the different seasons and years. For example, in chart B1_5, which represents the 2019 data, the average number of robberies per month was highest in summer with a total of 645, while in chart B1_6, which represents the 2020 data, the average number of robberies per month was highest in autumn with a total of 665. In chart B1_7, which represents the 2021 data, the average number of robberies per month was highest in summer with a total of 572, while in chart B1_8, which represents the 2022 data, the average number of robberies per month was highest in winter with a total of 639.
+
+Overall, the data suggests that the pandemic had a significant impact on the average number of robberies per month, particularly during the lockdown period. However, it's important to note that there were also fluctuations in the data across different seasons and years, indicating that other factors may also be contributing to the frequency of robberies.
+
 
 **4-1. Freq by Date_cat(Begin,Middle,End) :split by pandemic phrases**
-   + 
+
+In this analysis, the number of robberies is split by date categories: begin, middle, and end of each month. The data is also split by pandemic phrases, to examine any potential impact of the pandemic on robbery frequency.
    
    
 ```{r}
@@ -711,6 +791,14 @@ grid.arrange(plot_Date_cat, plot_Date_cat_pre, plot_Date_cat_lock, plot_Date_cat
              ncol=2, nrow=2)
 
 ```
+The chart C1 shows the number of robbery incidents based on the date category. The data is split into three categories: Begin, Middle, and End.
+
+From the chart, we can see that the highest number of robbery incidents occurred during the End category, followed by the Middle category and the Begin category.
+
+The data is further split into three pandemic phases: Pre-pandemic, Lockdown, and Post-pandemic. Interestingly, the number of robbery incidents decreased during the Pre-pandemic phase in all three date categories. During the Lockdown phase, the number of robbery incidents increased compared to the Pre-pandemic phase, but it remained relatively stable during the Post-pandemic phase.
+
+Overall, it seems that the pandemic did have an impact on robbery incidents, with a decrease during the Pre-pandemic phase and an increase during the Lockdown phase. However, it is also important to note that robbery incidents increased again during the Post-pandemic phase, indicating that the impact of the pandemic may not be permanent.
+
 [Percent,%] Freq by Date_cat(Begin,Middle,End) :split by pandemic phrases
 
 ```{r}
@@ -751,7 +839,18 @@ boxplot_Date <- ggplot(Robbery, aes(y=Date, x=Period_cat, fill=Period_cat)) +
 boxplot_Date 
 ```
 
+The boxplot shows the distribution of robbery incidents across three different time periods: pre-pandemic, lockdown, and post-pandemic. The median robbery date for each period is represented by the horizontal line within each box, while the lower and upper boundaries of the box represent the 25th and 75th percentiles, respectively.
+
+Looking at the plot, we can see that the distribution of robbery incidents is relatively similar across the different periods. The boxes for each period have similar widths and heights, indicating similar variability and spread of the data within each period.
+
+However, there are some differences in the medians and lower/upper boundaries for each period. For example, the median robbery date for the pre-pandemic period (around June 15th) appears to be slightly earlier than that for the lockdown period (around June 20th), and both of these are earlier than the median date for the post-pandemic period (around June 23rd).
+
+Additionally, the range of robbery dates appears to be slightly wider for the post-pandemic period, with more outliers falling outside the upper boundary of the box compared to the other periods. This suggests that there may have been more variability in the timing of robbery incidents during the post-pandemic period compared to the pre-pandemic and lockdown periodsx-axis represents the different periods.
+
+
 **5-1. Freq by SHIFT(DAY,EVENING,MIDNIGHT) :split by pandemic phrases**
+
+This section examines the frequency of robberies during different shifts of the day: Day, Evening, and Midnight. The data is categorized based on three pandemic phases: Pre-pandemic, Lockdown, and Post-pandemic. The analysis is based on the count of robberies, rather than the average number of robberies per month. This analysis provides insight into the impact of pandemic phases on the occurrence of robberies at various times of the day.
  
 ```{r}
 # Bar plot 
@@ -780,6 +879,13 @@ grid.arrange(plot_SHIFT, plot_SHIFT_pre, plot_SHIFT_lock, plot_SHIFT_post,
              ncol=2, nrow=2)
 
 ```
+
+This charts shows (D1) the distribution of robbery incidents based on the time of day they occurred, separated by pandemic phases. The three time categories are Day, Evening, and Midnight. The highest number of robberies occurred during the Midnight shift, with 1173 incidents reported at the end of the robbery, followed by 1027 incidents in the Middle and 879 in the Begin.
+
+Overall, the number of robberies was highest during the Midnight shift, with 3381 incidents reported, followed by 3305 in the Evening and 1657 during the Day shift. During the Pre-pandemic phase, the highest number of robberies occurred during the Midnight shift, with 1044 incidents, while in the Lockdown phase, the Evening shift had the highest number of robberies, with 1054 incidents. In the Post-pandemic phase, the Evening shift had the highest number of robberies, with 1226 incidents reported.
+
+This analysis can help in identifying the high-risk periods for robbery and can assist law enforcement agencies in allocating resources to ensure public safety. It can also help in understanding the impact of pandemic phases on the incidence of robbery at different times of the day.
+
 
 [Percent,%] Freq by SHIFT(DAY,EVENING,MIDNIGHT) :split by pandemic phrases
 
@@ -815,8 +921,14 @@ grid.arrange(plot_SHIFT, plot_SHIFT_pre, plot_SHIFT_lock, plot_SHIFT_post,
 
 ```
 
+The analysis of the data shows that during the day time, the percentage of robberies was consistent at around 20% across all three periods: pre-pandemic, lockdown, and post-pandemic. However, in the evening and midnight time periods, the percentage of robberies was consistently higher, at almost 40% for each period.
+
+Looking at the pre-pandemic period specifically, the percentage of robberies that occurred in the evening time period was approximately 38%, which increased slightly to 40% in the post-pandemic period. The percentage of robberies that occurred in the midnight time period remained relatively constant, at approximately 42% in the pre-pandemic and lockdown periods, but decreased to 38% in the post-pandemic period.
+
+
 **5-2. Boxplot distribution of Time_hour(00:00~24:00) :split by pandemic phrases**
 
+The boxplot distribution of time_hour split by pandemic phases provides an insight into the distribution of the time of the day when the robbery incidents occurred in different pandemic periods.
 
 ```{r}
 boxplot_Time_hour <- ggplot(Robbery, aes(y=Time_hour, x=Period_cat, fill=Period_cat)) + 
@@ -830,7 +942,7 @@ boxplot_Time_hour
 
 **6-1. Freq by Day_cat (Sun~Sat) :split by pandemic phrases**
  
-  + TBD
+This section presents a frequency analysis of robbery incidents by day of the week, split by pandemic phases. The days of the week are categorized as Sunday to Saturday. The purpose of this analysis is to determine if there were any changes in the frequency of robbery incidents on specific days of the week during the pandemic phases.
 
 ```{r}
 # Bar plot 
