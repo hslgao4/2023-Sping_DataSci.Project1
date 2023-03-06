@@ -1388,17 +1388,9 @@ level of significance standard $\alpha$ = 0.05 (The 95% confidence level
   
 ```{r,results='hide'}
 str(Robbery_date_sum)
-head(Robbery_date_sum,5)
 count(Robbery_date_sum,Period_cat_num)
 ```
 
-Check the boxplot of daily robbery frequency.
-
-```{r}
-ggplot(Robbery_date_sum, aes(x=Period_cat, y=n)) + 
-  geom_boxplot( colour=c("#ff0000","#11cc11","#0000ff"), outlier.shape=8, outlier.size=4) + 
-  labs(title="Daily robbery between three pendamic phase groups", x="Phase", y = "Frequecy")
-```
 
 ```{r}
 anova_dayily_rob = aov(n~Period_cat, data = Robbery_date_sum)
@@ -1451,7 +1443,6 @@ anova_summary_exc = summary(anova_dayily_rob_exc)
 xkabledply(anova_summary_exc)
 ```
 
-
 ```{r}
 tukey_anova_dayily_rob_exc <- TukeyHSD(anova_dayily_rob_exc)
 tukey_anova_dayily_rob_exc
@@ -1471,20 +1462,12 @@ tukey_anova_dayily_rob_exc
   
 ```{r,results='hide'}
 str(Robbery_month_sum)
-head(Robbery_month_sum,5)
 count(Robbery_month_sum,Period_cat)
 ```
-Check the boxplot of daily robbery frequency.
 
-```{r}
-ggplot(Robbery_month_sum, aes(x=Period_cat, y=n)) + 
-  geom_boxplot( colour=c("#ff0000","#11cc11","#0000ff"), outlier.shape=8, outlier.size=4) + 
-  labs(title="Monthly robbery between three pendamic phase groups", x="Phase", y = "Frequecy")
-```
 
 ```{r}
 anova_monthly_rob = aov(n~Period_cat, data = Robbery_month_sum)
-
 anova_summary = summary(anova_monthly_rob)
 #anova_summary
 xkabledply(anova_dayily_rob)
@@ -1518,17 +1501,8 @@ arrange(Robbery_avg_time, Period_cat,REPORT_DAT_2)
 Robbery_avg_time <- data.frame(Robbery_avg_time)
 ```
 
-Check the boxplot of daily average time hour.
-
-```{r}
-ggplot(Robbery_avg_time, aes(x=Period_cat, y=avg_Time_hour)) + 
-  geom_boxplot( colour=c("#ff0000","#11cc11","#0000ff"), outlier.shape=8, outlier.size=4) + 
-  labs(title="Daily avg.robbery avg_Time_hour between three pendamic phase groups", x="Phase", y = "Time(minute)")
-```
-
 ```{r}
 anova_daily_rob = aov(avg_Time_hour~Period_cat, data = Robbery_avg_time)
-
 anova_summary = summary(anova_daily_rob)
 anova_summary
 #xkabledply(anova_daily_rob)
@@ -1551,13 +1525,7 @@ arrange(Robbery_avg_clr, Period_cat,REPORT_DAT_2)
 
 Robbery_avg_clr <- data.frame(Robbery_avg_clr)
 ```
-Check the boxplot of daily robbery time of clearance.
 
-```{r}
-ggplot(Robbery_avg_clr, aes(x=Period_cat, y=avg_Clearance_rate)) + 
-  geom_boxplot( colour=c("#ff0000","#11cc11","#0000ff"), outlier.shape=8, outlier.size=4) + 
-  labs(title="Daily avg.robbery time to clear between three pendamic phase groups", x="Phase", y = "Time(minute)")
-```
 
 ```{r}
 anova_daily_rob = aov(avg_Clearance_rate~Period_cat, data = Robbery_avg_clr)
@@ -1588,63 +1556,6 @@ tukey_anova_dayily_rob
   + Also, `post-pandemic` and`lock-down` are pairwise considered having different means. 
   
   + On the other hand,  `pre-pandemic`and`post-pandemic` are not significant at 0.05 level.
-
-
-### 5. Daily robbery district (average `PSA`, Quantitative var)
-
-  + Outliers of `Clearance_rate` has been excluded.
-  
-**(A) Anova test**
-
-```{r, results='hide'}
-#make a summary table
-Robbery_avg_psa <-  Robbery_clean %>% group_by(Period_cat, REPORT_DAT_2) %>%
-                   summarise(avg_PSA = mean(PSA, na.rm = TRUE),.groups = 'drop')
-
-arrange(Robbery_avg_psa, Period_cat,REPORT_DAT_2) 
-
-Robbery_avg_psa <- data.frame(Robbery_avg_psa)
-```
-
-Check the boxplot of daily robbery location.
-
-```{r}
-ggplot(Robbery_avg_psa, aes(x=Period_cat, y=avg_PSA)) + 
-  geom_boxplot(colour=c("#ff0000","#11cc11","#0000ff"), outlier.shape=8, outlier.size=4) + 
-  labs(title="Daily avg.robbery time to clear etween three pendamic phase groups", x="Phase", y = "Time(minute)")
-```
-
-```{r}
-anova_daily_rob = aov(avg_PSA~Period_cat, data = Robbery_avg_psa)
-
-anova_summary = summary(anova_daily_rob)
-anova_summary
-#xkabledply(anova_daily_rob)
-```
-  + F value of the test is **22.8.**
-
-  + The p-value is **`r anova_summary[[1]][["Pr(>F)"]][[1]]`**, which is < $\alpha$ (0.05), right-tailed for one-way ANOVA.
-  
-  + **So, The data present is enough evidence to reject $H_0$ at the set significance level. **
-
-
-**(B) Post-hoc Tukey HSD**
-
-  + we use tukeyHSD to pursue to find out which pairs (of phases) are different.
-  
-
-```{r}
-tukey_anova_dayily_rob <- TukeyHSD(anova_daily_rob)
-tukey_anova_dayily_rob
-#xkabledply(tukey_anova_dayily_rob)
-```
-
-  +  `pre-pandemic`and`lock-down` are pairwise considered having different means.
-  
-  + Also, `post-pandemic` and`lock-down` are pairwise considered having different means. 
-  
-  + On the other hand,  `pre-pandemic`and`post-pandemic` are not significant at 0.05 level.
-  
 
 
 ## Hypothesis test 2- Chi square test(GOF)
@@ -1700,7 +1611,6 @@ chigoodness
 
    + **[Lock vs Pre]**
 
-   
 ```{r}
 temp <- count(Robbery_lock,SHIFT)
 value = c(DAY=temp[1,2], EVENING=temp[2,2], MIDNIGHT=temp[3,2])  
@@ -1835,41 +1745,8 @@ chigoodness
 
 ```
 
-## Hypothesis test (Initial version)
 
-**Anova test**
-
-1. anova test between mean of daily robbery frequency and period (pre, lock, and post)
-```{r}
-anova_dayily_rob = aov(Period_cat_num~n, data = Robbery_date_sum)
-xkabledply(anova_dayily_rob)
-```
-The p-value is 0.857, so we fail to reject the null hypothesis (The Washington DC has same mean of daily robbery frequency in pre-pandemic, lock, and post-pandemic) under the 95% confidence level. 
-
-```{r}
-anova_monthly_rob = aov(Period_cat_num~n, data = Robbery_month_sum)
-xkabledply(anova_monthly_rob)
-```
-
-```{r}
-anova_Date_cat_rob = aov(Period_cat_num~n, data = Robbery_Date_cat_sum)
-xkabledply(anova_Date_cat_rob)
-```
-
-```{r}
-anova_district_rob = aov(DISTRICT~avg_Clearance_rate, data = Robbery_district_avg_clr)
-xkabledply(anova_district_rob)
-```
-
-```{r}
-anova_district_clean_rob = aov(DISTRICT~avg_Clearance_rate, data = Robbery_clean_district_avg_clr)
-xkabledply(anova_district_clean_rob)
-```
-
-**Chi-squared Test**
-
-
-
+**Chi-squared Test (the draft, ignore ignore ignore, need more work with this !!!!!!!!!!!!!!!!!**
 ```{r}
 table2 = table(Robbery$Period_cat, Robbery$Season)
 xkabledply(table2, title="Contingency table 2'")
