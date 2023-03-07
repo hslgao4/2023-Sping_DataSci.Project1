@@ -355,8 +355,8 @@ geom_text(stat='count', aes(label=..count..),vjust = 1.5) +
   labs(x="Year", y="Frequency") + labs(title="A1.Yearly Robbery Frequency")
 
 # Plot 2.: Freq by yeqr (x:discrete, Barchart)+Value=percent of freq
-plot_year_pct <- ggplot(data=Robbery, aes(x=Year, y=..count../sum(..count..)*100)) +
-geom_bar(colour="darkblue", fill="lightblue",alpha = .7) + geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="Year", y="Percent(%)") + labs(title="A1.Yearly Robbery Frequency(%)")
+#plot_year_pct <- ggplot(data=Robbery, aes(x=Year, #y=..count../sum(..count..)*100)) +
+#geom_bar(colour="darkblue", fill="lightblue",alpha = .7) + #geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="Year", #y="Percent(%)") + labs(title="A1.Yearly Robbery Frequency(%)")
 
 # Plot 2.: Freq by Month (x:continuous, Histogram)+Value=count(freq)
 
@@ -381,9 +381,7 @@ plot_Month_pct <- ggplot(Robbery, aes(x = Month)) +
   labs(x="Month", y="Percent(%)","A2.Monthly Robbery Frequency(%)")
 
   
-grid.arrange(plot_year, plot_Month, plot_year_pct, plot_Month_pct, ncol=2, nrow=2)
-
-
+grid.arrange(plot_year, plot_Month, plot_Month_pct, ncol=2, nrow=2)
 
 
 ```
@@ -437,6 +435,9 @@ plot_Period_mon <- ggplot(data=temp_2, aes(x,y)) +
 grid.arrange(plot_Period, plot_Period_mon, ncol=2, nrow=2)
 
 ```
+
+
+
 
 Based on the provided data, A3 and A4 show the frequency of robbery incidents split by pandemic phases. The pandemic phases are divided into three categories, which are pre-pandemic, lock-down, and post-pandemic.
 
@@ -504,6 +505,7 @@ grid.arrange(plot_Month_pre, plot_Month_lock,plot_Month_post, ncol=1, nrow=3)
 
 ```
 
+
 This histograms shows the monthly robbery frequency during three different periods: pre-pandemic (A2-2), lockdown (A2-3), and post-pandemic (A2-4). The pre-pandemic period covers 14 months from January 2019 to February 2020. The lockdown period covers 17 months from March 2020 to July 2021. The post-pandemic period covers 17 months from August 2021 to December 2022.
 
 Looking at the histograms, the monthly robbery frequency during the pre-pandemic period ranged from 126 to 230 incidents, with an average of 181 incidents per month. During the lockdown period, the monthly robbery frequency ranged from 87 to 258 incidents, with an average of 160 incidents per month. Finally, during the post-pandemic period, the monthly robbery frequency ranged from 131 to 260 incidents, with an average of 181 incidents per month.
@@ -565,6 +567,7 @@ plot_Month_2022 <- ggplot(data=Robbery_2022, aes(Month)) +
 grid.arrange(plot_Month_2019, plot_Month_2020,plot_Month_2021, plot_Month_2022, ncol=2, nrow=2)
 
 ```
+
 
 The bar charts (A2-5, A2-6, A2-7, A2-8) display the number of robberies per month and year, with the x-axis representing the months  and the y-axis representing the frequency of robberies. These charts provide valuable insights into the trends and patterns in robbery incidents over a four-year period.
 
@@ -751,6 +754,9 @@ grid.arrange(plot_Season_2019, plot_Season_2020, plot_Season_2021, plot_Season_2
              ncol=2, nrow=2)
 
 ```
+
+
+
 Based on the provided data, we can see that the average number of robberies per month varied by season and was affected by the pandemic. In chart B1_2, which represents the lockdown period, the number of robberies decreased in the beginning of the lockdown during spring and summer but dramatically increased again from autumn and continued to increase after the lockdown was lifted. The pattern of post-pandemic (summer and winter) is also interesting.
 
 Looking at the data in more detail, we see that the average number of robberies per month was highest in autumn across all years (2019-2022), with an average of 2054 in chart B1. In chart B1_1, which represents the pre-pandemic period, the average number of robberies per month was highest in autumn with an average of 216. In chart B1_3, which represents the post-pandemic period, the average number of robberies per month was highest in winter with an average of 205.
@@ -791,6 +797,7 @@ grid.arrange(plot_Date_cat, plot_Date_cat_pre, plot_Date_cat_lock, plot_Date_cat
              ncol=2, nrow=2)
 
 ```
+
 The chart C1 shows the number of robbery incidents based on the date category. The data is split into three categories: Begin, Middle, and End.
 
 From the chart, we can see that the highest number of robbery incidents occurred during the End category, followed by the Middle category and the Begin category.
@@ -803,27 +810,27 @@ Overall, it seems that the pandemic did have an impact on robbery incidents, wit
 
 ```{r}
 
-plot_Date_cat <- ggplot(data=Robbery, aes(x=Date_cat,y=..count../sum(..count..)*100)) +
+plot_Date_cat_pct <- ggplot(data=Robbery, aes(x=Date_cat,y=..count../sum(..count..)*100)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 scale_x_discrete(limits=c("Begin","Middle","End")) +
   labs(x="Date_cat", y="Percent(%)") + labs(title="C1.Incident Date of Robbery(%)")
 
-plot_Date_cat_pre <- ggplot(data=Robbery_pre, aes(x=Date_cat,y=..count../sum(..count..)*100)) + 
+plot_Date_cat_pre_pct <- ggplot(data=Robbery_pre, aes(x=Date_cat,y=..count../sum(..count..)*100)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 scale_x_discrete(limits=c("Begin","Middle","End")) +
   labs(x="Date_cat", y="Percent(%)") + labs(title="C1_1.Incident Date (Pre,%)")
 
-plot_Date_cat_lock <- ggplot(data=Robbery_lock, aes(x=Date_cat,y=..count../sum(..count..)*100)) + 
+plot_Date_cat_lock_pct <- ggplot(data=Robbery_lock, aes(x=Date_cat,y=..count../sum(..count..)*100)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 scale_x_discrete(limits=c("Begin","Middle","End")) +
   labs(x="Date_cat", y="Percent(%)") + labs(title="C1_2.Incident Date (Lock,%)")
 
-plot_Date_cat_post <- ggplot(data=Robbery_post, aes(x=Date_cat,y=..count../sum(..count..)*100)) + 
+plot_Date_cat_post_pct <- ggplot(data=Robbery_post, aes(x=Date_cat,y=..count../sum(..count..)*100)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 scale_x_discrete(limits=c("Begin","Middle","End")) +
   labs(x="Date_cat", y="Percent(%)") + labs(title="C1_3.Incident Date (Post,%)")
 
-grid.arrange(plot_Date_cat, plot_Date_cat_pre, plot_Date_cat_lock, plot_Date_cat_post,
+grid.arrange(plot_Date_cat_pct, plot_Date_cat_pre_pct, plot_Date_cat_lock_pct, plot_Date_cat_post_pct,
              ncol=2, nrow=2)
 
 ```
@@ -838,6 +845,7 @@ boxplot_Date <- ggplot(Robbery, aes(y=Date, x=Period_cat, fill=Period_cat)) +
 
 boxplot_Date 
 ```
+
 
 The boxplot shows the distribution of robbery incidents across three different time periods: pre-pandemic, lockdown, and post-pandemic. The median robbery date for each period is represented by the horizontal line within each box, while the lower and upper boundaries of the box represent the 25th and 75th percentiles, respectively.
 
@@ -880,6 +888,8 @@ grid.arrange(plot_SHIFT, plot_SHIFT_pre, plot_SHIFT_lock, plot_SHIFT_post,
 
 ```
 
+
+
 This charts shows (D1) the distribution of robbery incidents based on the time of day they occurred, separated by pandemic phases. The three time categories are Day, Evening, and Midnight. The highest number of robberies occurred during the Midnight shift, with 1173 incidents reported at the end of the robbery, followed by 1027 incidents in the Middle and 879 in the Begin.
 
 Overall, the number of robberies was highest during the Midnight shift, with 3381 incidents reported, followed by 3305 in the Evening and 1657 during the Day shift. During the Pre-pandemic phase, the highest number of robberies occurred during the Midnight shift, with 1044 incidents, while in the Lockdown phase, the Evening shift had the highest number of robberies, with 1054 incidents. In the Post-pandemic phase, the Evening shift had the highest number of robberies, with 1226 incidents reported.
@@ -896,30 +906,31 @@ This analysis can help in identifying the high-risk periods for robbery and can 
 ```{r}
 # Bar plot 
 
-plot_SHIFT <- ggplot(data=Robbery, aes(x=SHIFT,y=..count../sum(..count..)*100)) +
+plot_SHIFT_pct <- ggplot(data=Robbery, aes(x=SHIFT,y=..count../sum(..count..)*100)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 scale_x_discrete(limits=c("DAY","EVENING","MIDNIGHT")) +
   labs(x="Timezone", y="Percent(%)") + labs(title="D1.Incident timezone(%)")
 
 
-plot_SHIFT_pre <- ggplot(data=Robbery_pre, aes(x=SHIFT,y=..count../sum(..count..)*100)) + geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
+plot_SHIFT_pre_pct <- ggplot(data=Robbery_pre, aes(x=SHIFT,y=..count../sum(..count..)*100)) + geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 scale_x_discrete(limits=c("DAY","EVENING","MIDNIGHT")) +
   labs(x="Timezone", y="Percent(%)") + labs(title="D1_1.Incident timezone (Pre,%)")
 
-plot_SHIFT_lock <- ggplot(data=Robbery_lock, aes(x=SHIFT,y=..count../sum(..count..)*100)) + 
+plot_SHIFT_lock_pct <- ggplot(data=Robbery_lock, aes(x=SHIFT,y=..count../sum(..count..)*100)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 scale_x_discrete(limits=c("DAY","EVENING","MIDNIGHT")) +
   labs(x="Timezone", y="Percent(%)") + labs(title="D1_2.Incident timezone (Lock,%)")
 
-plot_SHIFT_post <- ggplot(data=Robbery_post, aes(x=SHIFT,y=..count../sum(..count..)*100)) + 
+plot_SHIFT_post_pct <- ggplot(data=Robbery_post, aes(x=SHIFT,y=..count../sum(..count..)*100)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 scale_x_discrete(limits=c("DAY","EVENING","MIDNIGHT")) +
   labs(x="Timezone", y="Percent(%)") + labs(title="D1_3.Incident timezone (Post,%)")
 
-grid.arrange(plot_SHIFT, plot_SHIFT_pre, plot_SHIFT_lock, plot_SHIFT_post,
+grid.arrange(plot_SHIFT_pct, plot_SHIFT_pre_pct, plot_SHIFT_lock_pct, plot_SHIFT_post_pct,
              ncol=2, nrow=2)
 
 ```
+
 
 The analysis of the data shows that during the day time, the percentage of robberies was consistent at around 20% across all three periods: pre-pandemic, lockdown, and post-pandemic. However, in the evening and midnight time periods, the percentage of robberies was consistently higher, at almost 40% for each period.
 
@@ -972,6 +983,7 @@ grid.arrange(plot_Day_cat, plot_Day_cat_pre, plot_Day_cat_lock, plot_Day_cat_pos
 
 ```
 
+
 These four histograms show the frequency of robberies that occurred on each day of the week during different periods: overall, pre-pandemic, lockdown, and post-pandemic.
 
 Looking at the overall histogram, we can see that Sunday had the highest frequency of robberies, with 1326 incidents reported, while Thursday had the lowest frequency, with only 1112 incidents reported. The remaining days had frequencies that were relatively close to each other.
@@ -1020,6 +1032,7 @@ grid.arrange(plot_Day_cat_2, plot_Day_cat_2_pre, plot_Day_cat_2_lock, plot_Day_c
 
 ```
 
+
 The histograms  show the frequency of robberies on weekdays and weekends in different periods. In the overall period, there were more robberies on weekdays than on weekends, with 5716 incidents on weekdays and 2627 on weekends.
 
 In the pre-pandemic period, the pattern was similar, with 1749 incidents on weekdays and 786 on weekends. During the lockdown period, there was an increase in the frequency of robberies on both weekdays and weekends, with 1849 incidents on weekdays and 880 on weekends. In the post-pandemic period, the frequency of robberies on weekdays continued to increase to 2118 incidents, while the frequency on weekends increased to 961 incidents.
@@ -1038,27 +1051,29 @@ Additionally, the average frequency of gun robberies per month also increased fr
 plot_METHOD<- ggplot(data=Robbery, aes(x=METHOD)) +
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="METHOD") +
-  labs(title="G1.Incident Date_2 of Robbery")
+  labs(title="G1.Method of Robbery")
 
 plot_METHOD_pre <- ggplot(data=Robbery_pre, aes(METHOD)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) +labs(x="METHOD") +
-  labs(title="G1_1.Incident Date_2 (Pre)")
+  labs(title="G1_1.Method of Robbery(Pre)")
 
 plot_METHOD_lock <- ggplot(data=Robbery_lock, aes(METHOD)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="METHOD") +
-  labs(title="G1_2.Incident Date_2 (Lock)")
+  labs(title="G1_2.Method of Robbery (Lock)")
 
 plot_METHOD_post <- ggplot(data=Robbery_post, aes(METHOD)) + 
 geom_bar(colour="darkblue", fill="lightblue",alpha = .7) +
 geom_text(stat='count', aes(label=..count..),vjust = 1.5) + labs(x="METHOD") +
-  labs(title="G1_3.Incident Date_2 (Post)")
+  labs(title="G1_3.Method of Robbery (Post)")
 
 grid.arrange(plot_METHOD, plot_METHOD_pre, plot_METHOD_lock, plot_METHOD_post,
              ncol=2, nrow=2)
 
 ```
+
+
 
 The histograms show the frequency of robberies by weapon type, separated by pandemic period. In the overall period, the most common weapon used in robberies was "OTHERS," with 3804 incidents, followed by "GUN" with 4031 incidents, and "KNIFE" with 508 incidents.
 
@@ -1101,6 +1116,8 @@ grid.arrange(plot_DISTRICT, plot_DISTRICT_pre, plot_DISTRICT_lock, plot_DISTRICT
 
 ```
 
+
+
 From the histograms, we can see the distribution of robbery incidents across the different districts in the city, and how they changed over time, with data available for pre-lockdown, lockdown, and post-lockdown periods.
 
 Looking at the first histogram, we can see that District 3 had the highest number of robbery incidents overall, followed by District 6, while District 2 had the lowest number of incidents.
@@ -1139,6 +1156,7 @@ boxplot_Clearance <- ggplot(Robbery, aes(y=Clearance_rate, x=Period_cat, fill=Pe
 boxplot_Clearance
 ```
 
+
 ### 3. Unusual Observations: Data Quality
 
 In the "Unusual Observations" section, we will provide an in-depth analysis of the data, including a quick overview of the data with and without the outliers. Outliers can significantly impact the analysis of data and can skew the results. Therefore, it is crucial to identify and examine them closely to determine their impact on the data.By examining the data with and without the outliers, we can gain a clearer picture of the trends and patterns in the data. This information will be critical in developing an accurate and reliable analysis of the impact of the COVID-19 lockdown on robbery rates in Washington D.C.
@@ -1174,6 +1192,7 @@ Robbery_clean = outlierKD2(Robbery, Clearance_rate, rm = TRUE, boxplt = TRUE, qq
 #str(Robbery_clean)
 ```
 After examining the data using the outlierKD function, we have identified outliers that have been replaced with NAs. However, we have not deleted these outliers from the dataset. Instead, we have replaced them with NAs to ensure that they do not affect the analysis of the data. This approach allows us to retain the maximum amount of data while still removing any data points that may negatively impact our analysis
+
 
 ### Optional analysis(For subset data have high clearance_rate)
 
@@ -1212,6 +1231,108 @@ temp %>%
 
 
 ```
+
+### Final Add-on for EDA (Mar 6)
+
+**1. [Add-on] DISTRICT**    
+
+**A. Robbery amount ** 
+
+```{r}
+prop.1 <- with(Robbery_clean, table(Period_cat, DISTRICT)) %>% 
+          prop.table(margin = 1)
+
+xkabledply(prop.1*100, title = "Robbery propotion by District(%)")
+
+#contable = table(Robbery_clean$Period_cat, Robbery_clean$DISTRICT)
+```
+
+**B. Robbery quality ** 
+
+```{r, results='hide'}
+#make a summary table
+Robbery_avg_clr <-  Robbery_clean %>% group_by(Period_cat,DISTRICT) %>%
+                   summarise(avg_Clearance_rate = mean(Clearance_rate, na.rm = TRUE),.groups = 'drop')
+
+arrange(Robbery_avg_clr, Period_cat,DISTRICT) 
+
+Robbery_avg_clr <- data.frame(Robbery_avg_clr)
+```
+```{r}
+plot_DISTRICT_add <- ggplot(Robbery_avg_clr, aes(DISTRICT, avg_Clearance_rate, colour = Period_cat)) + geom_line() + labs(x="district", y="Avg.clearance(minute)") +
+  labs(title="Avg.clearance by district") + scale_x_discrete(limits=c("1","2","3","4","5","6","7")) + geom_point()
+
+plot_DISTRICT_add
+
+#ggplot(data=Robbery_clean)+
+#  geom_point(mapping = aes(x=DISTRICT, y=METHOD, color=Period_cat))+
+#  ggtitle("Scatterplot of DISTRICT vs Clearance_rate for pendamic phrases")+
+#  labs(x="DISTRICT", y = "Clearance_rate(minute)")
+
+```
+
+**2. [Add-on] METHOD** 
+
+**A. Robbery amount ** 
+
+```{r}
+prop.1 <- with(Robbery_clean, table(Period_cat, METHOD)) %>% 
+          prop.table(margin = 1)
+
+xkabledply(prop.1*100, title = "Robbery propotion by METHOD(%)")
+
+```
+
+**B. Robbery quality ** 
+
+```{r, results='hide'}
+#make a summary table
+Robbery_avg_clr <-  Robbery_clean %>% group_by(METHOD,Period_cat) %>%
+                   summarise(avg_Clearance_rate = mean(Clearance_rate, na.rm = TRUE),.groups = 'drop')
+
+arrange(Robbery_avg_clr, METHOD, Period_cat) 
+
+Robbery_avg_clr <- data.frame(Robbery_avg_clr)
+```
+
+```{r}
+plot_METHOD_add <- ggplot(Robbery_avg_clr, aes(Period_cat, avg_Clearance_rate, group = METHOD, ,colour = METHOD)) + geom_line() + labs(x="METHOD", y="Avg.clearance(minute)") + geom_point() + labs(title="Avg.clearance by METHOD")
+
+plot_METHOD_add
+```
+
+
+**3. [Add-on] shift** 
+
+**A. Robbery amount ** 
+
+```{r}
+prop.1 <- with(Robbery_clean, table(Period_cat, SHIFT)) %>% 
+          prop.table(margin = 1)
+
+xkabledply(prop.1*100, title = "Robbery propotion by SHIFT(%)")
+
+```
+
+**C. Robbery quality ** 
+
+```{r, results='hide'}
+#make a summary table
+Robbery_avg_clr <-  Robbery_clean %>% group_by(SHIFT,Period_cat) %>%
+                   summarise(avg_Clearance_rate = mean(Clearance_rate, na.rm = TRUE),.groups = 'drop')
+
+arrange(Robbery_avg_clr, SHIFT, Period_cat) 
+
+Robbery_avg_clr <- data.frame(Robbery_avg_clr)
+```
+
+```{r}
+plot_SHIFT_add <- ggplot(Robbery_avg_clr, aes(Period_cat, avg_Clearance_rate, group = SHIFT, ,colour = SHIFT)) + geom_line() + labs(x="SHIFT", y="Avg.clearance(minute)") + geom_point() + labs(title="Avg.clearance by SHIFT")
+
+plot_SHIFT_add
+```
+
+#####################3
 
 ## (Temporary) Organize Datasets before moving on to the Hypothesis test
  
