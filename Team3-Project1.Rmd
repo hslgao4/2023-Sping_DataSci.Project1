@@ -193,7 +193,7 @@ The dataset consists of *8343* observations and *22* variables, including:
 ## Analysis 
 
 
-### 1. Summary statistics
+### 1. Summary statistics of robbery incidents in D.C. before, during the COVID-19 lockdown and post
 
 In this section, we provide a detailed overview of the summary statistics of some quantitative datas in our data set. This information includes measures such as the mean, median, standard deviation, minimum, and maximum values.
 
@@ -320,7 +320,7 @@ The mean clearance rate for robbery incidents was 9.73%, which indicates that on
 There were some missing values in the data set, with 1701 instances of "NA" recorded in the "Day_cat" column, and 21 and 22 instances of "NA" recorded in the "METHOD" and "PSA" columns, respectively.
 Overall, the summary statistics provide a helpful overview of the robbery data, highlighting the key trends and patterns that can inform subsequent analysis.
 
-### 2. : Exploratory plots of robbery incidents in D.C. before and during the COVID-19 lockdown
+### 2. : Exploratory plots of robbery incidents in D.C. before, during the COVID-19 lockdown and post
 
  This section presents a set of draft plots that visually illustrate the trends and patterns of robbery incidents in Washington D.C. before and during the COVID-19 lockdown. The plots include histograms, scattorplots, and boxplots that display the frequency of robbery incidents across different time periods, days of the week, and locations in the city. The plots also highlight any significant changes or fluctuations in the robbery rates during the lockdown period compared to the pre-lockdown period.
  
@@ -751,11 +751,9 @@ grid.arrange(plot_Season_2019, plot_Season_2020, plot_Season_2021, plot_Season_2
              ncol=2, nrow=2)
 
 ```
-Based on the provided data, we can see that the average number of robberies per month varied by season and was affected by the pandemic. In chart B1_2, which represents the lockdown period, the number of robberies decreased in the beginning of the lockdown during spring and summer but dramatically increased again from autumn and continued to increase after the lockdown was lifted. The pattern of post-pandemic (summer and winter) is also interesting.
+The four charts, B1_4 to B1_7, display the average number of robberies per month in each season for the years 2019 to 2022. Chart B1_4, which represents 2019, shows that the highest average number of robberies per month was in autumn, with a total of 649 robberies. In contrast, Chart B1_5, which represents 2020, shows that the highest average number of robberies per month was in autumn again, but with a higher total of 665 robberies. Chart B1_6, which represents 2021, shows that the highest average number of robberies per month was in autumn once more, but with a slightly lower total of 628 robberies. Finally, Chart B1_7, which represents 2022, shows that the highest average number of robberies per month was in winter, with a total of 639 robberies.
 
-Looking at the data in more detail, we see that the average number of robberies per month was highest in autumn across all years (2019-2022), with an average of 2054 in chart B1. In chart B1_1, which represents the pre-pandemic period, the average number of robberies per month was highest in autumn with an average of 216. In chart B1_3, which represents the post-pandemic period, the average number of robberies per month was highest in winter with an average of 205.
-
-Furthermore, we can see that there were fluctuations in the average number of robberies per month across the different seasons and years. For example, in chart B1_5, which represents the 2019 data, the average number of robberies per month was highest in summer with a total of 645, while in chart B1_6, which represents the 2020 data, the average number of robberies per month was highest in autumn with a total of 665. In chart B1_7, which represents the 2021 data, the average number of robberies per month was highest in summer with a total of 572, while in chart B1_8, which represents the 2022 data, the average number of robberies per month was highest in winter with a total of 639.
+These charts reveal that the average number of robberies per month varied across different years and seasons. The highest averages were not consistently in the same season or year.
 
 Overall, the data suggests that the pandemic had a significant impact on the average number of robberies per month, particularly during the lockdown period. However, it's important to note that there were also fluctuations in the data across different seasons and years, indicating that other factors may also be contributing to the frequency of robberies.
 
@@ -797,7 +795,7 @@ From the chart, we can see that the highest number of robbery incidents occurred
 
 The data is further split into three pandemic phases: Pre-pandemic, Lockdown, and Post-pandemic. Interestingly, the number of robbery incidents decreased during the Pre-pandemic phase in all three date categories. During the Lockdown phase, the number of robbery incidents increased compared to the Pre-pandemic phase, but it remained relatively stable during the Post-pandemic phase.
 
-Overall, it seems that the pandemic did have an impact on robbery incidents, with a decrease during the Pre-pandemic phase and an increase during the Lockdown phase. However, it is also important to note that robbery incidents increased again during the Post-pandemic phase, indicating that the impact of the pandemic may not be permanent.
+Overall, it seems that the pandemic did not have an impact on robbery incidents, with a decrease during the Pre-pandemic phase and an increase during the Lockdown phase. However, it is also important to note that robbery incidents increased again during the Post-pandemic phase.
 
 [Percent,%] Freq by Date_cat(Begin,Middle,End) :split by pandemic phrases
 
@@ -882,7 +880,7 @@ grid.arrange(plot_SHIFT, plot_SHIFT_pre, plot_SHIFT_lock, plot_SHIFT_post,
 
 This charts shows (D1) the distribution of robbery incidents based on the time of day they occurred, separated by pandemic phases. The three time categories are Day, Evening, and Midnight. The highest number of robberies occurred during the Midnight shift, with 1173 incidents reported at the end of the robbery, followed by 1027 incidents in the Middle and 879 in the Begin.
 
-Overall, the number of robberies was highest during the Midnight shift, with 3381 incidents reported, followed by 3305 in the Evening and 1657 during the Day shift. During the Pre-pandemic phase, the highest number of robberies occurred during the Midnight shift, with 1044 incidents, while in the Lockdown phase, the Evening shift had the highest number of robberies, with 1054 incidents. In the Post-pandemic phase, the Evening shift had the highest number of robberies, with 1226 incidents reported.
+Overall, the number of robberies was highest during the Midnight shift, with 3381 incidents reported, followed by 3305 in the Evening and 1657 during the Day shift. During the Pre-pandemic phase, the highest number of robberies occurred during the Midnight shift, with 1044 incidents, while in the Lockdown phase, the Midnight shift had the highest number of robberies, with 1133 incidents. In the Post-pandemic phase, the Evening shift had the highest number of robberies, with 1226 incidents reported with a decrease in Midnight shift.
 
 This analysis can help in identifying the high-risk periods for robbery and can assist law enforcement agencies in allocating resources to ensure public safety. It can also help in understanding the impact of pandemic phases on the incidence of robbery at different times of the day.
 
@@ -976,11 +974,11 @@ These four histograms show the frequency of robberies that occurred on each day 
 
 Looking at the overall histogram, we can see that Sunday had the highest frequency of robberies, with 1326 incidents reported, while Thursday had the lowest frequency, with only 1112 incidents reported. The remaining days had frequencies that were relatively close to each other.
 
-In the pre-pandemic period, the frequency of robberies was lower compared to the overall period, and the distribution among the days of the week was more even, with Sunday having the highest frequency of 391 incidents, and Tuesday having the lowest frequency of 330 incidents.
+In the pre-pandemic period, the frequency of robberies was lower compared to the overall period, and the distribution among the days of the week was more even, with Sunday having the highest frequency of 395 incidents, and Wednesday having the lowest frequency of 330 incidents.
 
-During the lockdown period, the frequency of robberies increased compared to the pre-pandemic period, with Sunday still having the highest frequency of 450 incidents, and Thursday having the lowest frequency of 344 incidents.
+During the lockdown period, the frequency of robberies increased compared to the pre-pandemic period, with Monday having the highest frequency of 450 incidents, and Friday having the lowest frequency of 344 incidents.
 
-In the post-pandemic period, the frequency of robberies continued to increase compared to the previous period, with Tuesday having the highest frequency of 457 incidents and Thursday having the lowest frequency of 420 incidents. Sunday remained one of the days with a high frequency of robberies, with 485 incidents reported.
+In the post-pandemic period, the frequency of robberies continued to increase compared to the previous period, with Monday having the highest frequency of 485 incidents and Tusday having the lowest frequency of 411 incidents. Monday and Sunday remained two of the days with a high frequency of robberies, with 485 and 476 incidents reported.
 
 Overall, these histograms show that the frequency of robberies varied among different days of the week and different periods. It is interesting to note that the frequency of robberies increased during the pandemic period compared to the pre-pandemic period, which may suggest a link between the pandemic and an increase in criminal activity. 
 
@@ -1103,11 +1101,11 @@ grid.arrange(plot_DISTRICT, plot_DISTRICT_pre, plot_DISTRICT_lock, plot_DISTRICT
 
 From the histograms, we can see the distribution of robbery incidents across the different districts in the city, and how they changed over time, with data available for pre-lockdown, lockdown, and post-lockdown periods.
 
-Looking at the first histogram, we can see that District 3 had the highest number of robbery incidents overall, followed by District 6, while District 2 had the lowest number of incidents.
+Looking at the first histogram, we can see that District 6 had the highest number of robbery incidents overall, followed by District 3, while District 2 had the lowest number of incidents.
 
 However, when we compare the three histograms, we can see some interesting changes over time. During the lockdown period, there was a decrease in robbery incidents across most districts, except for Districts 5-7, where incidents actually increased.
 
-Looking at the changes in the number of incidents for each district, we can see that District 1 had the biggest increase in incidents between the pre-lockdown and post-lockdown periods, while District 3 had the smallest increase. Districts 4 and 6 had the biggest increase in incidents during the lockdown period, while District 2 had the smallest increase.
+Looking at the changes in the number of incidents for each district, we can see that District 1 had the biggest increase in incidents between the pre-lockdown and post-lockdown periods, while District 3 had the smallest increase. Districts 6 had the biggest increase in incidents during the lockdown period.
 
 Overall, the histograms suggest that there were some changes in the patterns of robbery incidents across different districts over time, with some districts experiencing more dramatic changes than others.
 
