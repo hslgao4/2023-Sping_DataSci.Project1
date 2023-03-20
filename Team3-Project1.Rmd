@@ -50,6 +50,7 @@ In order to understand the impact of COVID-19 lockdown on robbery rates in Washi
 
 
 
+
 ```{r setup, include=FALSE}
 #nammin revise: knitr::opts_chunk$set(echo = TRUE) > combined as following
 knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
@@ -61,9 +62,9 @@ options(scipen=9999, digits = 3)
 ## Methodology
 
 ### 1. Data  
-In the opening section of this report, we provide a comprehensive overview of the data used in our analysis. <<<We obtained our data from the Metropolitan Police Department in Washington D.C., and specifically focused on the Crime Incidents dataset.
+In the opening section of this report, we provide a comprehensive overview of the data used in our analysis. We obtained our data from the Metropolitan Police Department in Washington D.C. and specifically focused on the Crime Incidents dataset.
 
-The dataset contains detailed information on robbery incidents that occurred between 2019 and 2022, and we extracted this information into our dataset titled "Robbery_DC_clean.csv".
+The dataset contains detailed information on robbery incidents that occurred between 2019 and 2022, and we extracted this information into our dataset titled "Robbery_DC_clean.csv."
 
 In this section, we will provide a commentary on the data, highlighting its strengths and limitations. This information is critical in providing context for the analysis and understanding the potential impact of any data-related issues on the conclusions drawn from our analysis.
 
@@ -88,6 +89,12 @@ Robbery = data.frame(read.csv("Robbery_DC_clean.csv"))
 
 This section typically involves importing, cleaning, and pre-processing raw data to prepare it for analysis. The data cleaning process include removing duplicate records, addressing missing values, identifying and handling outliers, and transforming variables as needed. By performing these steps, we can ensure that the data is suitable for analysis and that our conclusions are based on accurate and reliable information. In this section, we will provide an overview of the data wrangling and pre-processing steps taken for the "Robbery_DC_clean.csv" dataset used in our analysis. 
 
+
+**Create Clarence_Rate* 
+
+In order to gain a deeper understanding of the robbery incidents in our analysis, we have created a new column called "Clearance Rate." This column takes into account the time between the start and end dates of each robbery incident and indicates whether the crime was cleared by the police during that time period. This allows us to measure both the difficulty of the crime and the performance of the police in solving these crimes. By examining the clearance rate of robbery incidents, we can gain insight into how effective law enforcement is at addressing and preventing robbery in the area of study. Additionally, this information can be used to identify trends and patterns in the clearance rate over time and potentially inform policy decisions related to crime prevention and law enforcement strategies.
+
+*Clearance_rate(Unit: Minute)= END_DATE - START_DATE*
 
 ```{r}
 #create Clearance_rate(Unit: Minute)= END_DATE - START_DATE 
@@ -1815,6 +1822,6 @@ chitest5
  + Boman, J. H., Gallupe, O. (2020). Has COVID-19 Changed Crime? Crime Rates in the United States during the Pandemic. American Journal of Criminal Justice, 45(4), 525–547. https://doi.org/10.1007/s12103-020-09551-3
 
  + Metropolitan Police Department. (2022). Crime statistics. Retrieved from https://mpdc.dc.gov/page/crime-statistics
-§ 22–2801. Robbery. (NA). Council of the District of Columbia. Retrieved from https://code.dccouncil.gov/us/dc/council/code/sections/22-2801
+§ 22–2801. Robbery. (NA). Council of the District of Columbia. Retrieved from https://code.dccouncil.gov/us/dc/council/code/sections/22-2801
 
 
