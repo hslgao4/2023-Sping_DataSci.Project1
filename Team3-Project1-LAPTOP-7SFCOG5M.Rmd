@@ -31,10 +31,8 @@ library(gridExtra) #graph arrange(positioning)
 # The Effect of COVID-19 Lockdown on Robbery Incidents in Washington D.C.
 
 ## Abstract
-A. Briefly introduce the topic and purpose of the study
-B. Summarize the key findings and conclusions of the study
- 
 
+This abstract summarizes an exploratory data analysis (EDA) project that examines the impact of the COVID-19 lockdown on robbery rates in Washington D.C using a dataset of roughly 8000 observations. The study analyzes the pre-pandemic, lockdown, and post-pandemic periods to determine significant changes in robbery frequency. The project explores differences in robbery patterns during the pandemic compared to pre/post-pandemic times, investigates changes in the relationship between the day of the week and the frequency of robberies before and after the pandemic period, examines changes in the relationship between the day of the month and the frequency of robberies before and after the pandemic period, and identifies significant changes in the frequency of robberies among districts before and after the pandemic. The study supports the findings of the Boman and Gallupe (2020) study that violent crime increased during the lockdown period. Furthermore, the EDA found that robbery frequency changed throughout the pandemic, and there may be underlying socio-economic factors contributing to the change in robbery patterns. Additionally, the number of robberies in Autumn dramatically increased during the lockdown period. Overall, the analysis provides insight into how the COVID-19 pandemic has affected crime patterns in Washington D.C and may inform future policy decisions related to crime prevention and public safety.
 
 ## Introduction
 
@@ -42,10 +40,10 @@ The COVID-19 pandemic has impacted various aspects of daily life, including crim
 
 **SMART questions**
 
- + The project explores **differences in robbery patterns during the pandemic compared to pre/post-pandemic times**. 
- + It also investigates **changes in the relationship between the day of the week and the frequency of robberies** before and after the pandemic period. 
- + Additionally, the project examines **changes in the relationship between the day of the month and the frequency of robberies** before and after the pandemic period. 
- + Finally, the study identifies **significant changes in the frequency of robberies among districts** before and after the pandemic.
+ + The project explores differences in robbery patterns during the pandemic compared to pre/post-pandemic times. 
+ + It also investigates changes in the relationship between the day of the week and the frequency of robberies before and after the pandemic period. 
+ + Additionally, the project examines changes in the relationship between the day of the month and the frequency of robberies before and after the pandemic period. 
+ + Finally, the study identifies significant changes in the frequency of robberies among districts before and after the pandemic.
 
 The study by Boman and Gallupe (2020), suggests that the COVID-19 pandemic and the associated mandatory stay-at-home orders have had a differential impact on crime rates in the US. While overall crime rates, as measured by calls for service to law enforcement, have decreased compared to the pre-pandemic year of 2019, this drop appears to be driven by decreases in minor offenses that are typically committed in peer groups. In contrast, serious crimes that are generally not committed with co-offenders, such as homicide and intimate partner violence, have either remained constant or increased. The study raises the possibility that mandatory lockdown orders may have displaced minor offenders into situations where there is a greater opportunity for serious crimes, particularly intimate partner violence and homicide.
 
@@ -1891,25 +1889,30 @@ chitest5
 
 ## Conclusion
 
- + Our analysis **supports the findings of the Boman and Gallupe (2020) study that violent crime increased during the lockdown period** though average frequency of Robbery per month decreased. 
+ + Our analysis supports the findings of the Boman and Gallupe (2020) study that violent crime increased during the lockdown period though average frequency of Robbery per month decreased. 
 
- + In addition, we found that **robbery frequency changed throughout the pandemic**, which relates to our ANOVA test of Daily Robbery Frequency ~ Period_cat (pre, lockdown, post) with a p-value of 0.0008.
+ + In addition, we found that robbery frequency changed throughout the pandemic, which relates to our ANOVA test of Daily Robbery Frequency ~ Period_cat (pre, lockdown, post) with a p-value of 0.0008.
  
- + By EDA, we found there may be **underlying socio-economic factors contributing to change** in robbery patterns.
+ + By EDA, we found there may be underlying socio-economic factors contributing to change in robbery patterns.
 
- + Our EDA showed that **the number of robberies in Autumn dramatically increased** in the lockdown period.
+ + Our EDA showed that the number of robberies in Autumn dramatically increased in the lockdown period.
  
- + It showed that significant changes **in the relationship between districts and the frequency and difficulty of robberies** before and after the pandemic period. For instance, the robbery incidents in districts 5-7 showed a dramatic increase during lockdown not only in the number but also in the difficulty.
+ + It showed that significant changes in the relationship between districts and the frequency and difficulty of robberies before and after the pandemic period. For instance, the robbery incidents in districts 5-7 showed a dramatic increase during lockdown not only in the number but also in the difficulty.
 
- + It also showed that **guns were increasingly used as a method of robbery**, which also relates to our Chi-square test (Period_cat ~ Method).
+ + It also showed that guns were increasingly used as a method of robbery, which also relates to our Chi-square test (Period_cat ~ Method).
 
- + Our tests showed that there is no change in robbery patterns (beginning, middle, and end of the month), however, there is a change **in robbery patterns during different times of the day (daytime, evening, and midnight)**.
+ + Our tests showed that there is no change in robbery patterns (beginning, middle, and end of the month), however, there is a change in robbery patterns during different times of the day (daytime, evening, and midnight).
 
 
 ## References 
+
+
  + Boman, J. H., Gallupe, O. (2020). Has COVID-19 Changed Crime? Crime Rates in the United States during the Pandemic. American Journal of Criminal Justice, 45(4), 525–547. https://doi.org/10.1007/s12103-020-09551-3
 
- + Metropolitan Police Department. (2022). Crime statistics. Retrieved from https://mpdc.dc.gov/page/crime-statistics
-§ 22–2801. Robbery. (NA). Council of the District of Columbia. Retrieved from https://code.dccouncil.gov/us/dc/council/code/sections/22-2801
+
+ +  Council of the District of Columbia (NA).. Retrieved from https://code.dccouncil.gov/us/dc/council/code/sections/22-2801
+
+
+ +  Metropolitan Police Department. (2022). Crime statistics. Retrieved from https://mpdc.dc.gov/page/crime-statistics§ 22–2801. Robbery. 
 
 
