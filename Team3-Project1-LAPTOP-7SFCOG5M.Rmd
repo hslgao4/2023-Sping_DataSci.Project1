@@ -36,7 +36,7 @@ This abstract summarizes an exploratory data analysis (EDA) project that examine
 
 ## Introduction
 
-The COVID-19 pandemic has impacted various aspects of daily life, including crime rates. This EDA project examines the impact of the COVID-19 lockdown on robbery rates in Washington D.C using a dataset of roughly 8000 observations. The study analyzes the pre-pandemic, lockdown, and post-pandemic periods (2019-2022) to determine significant changes in robbery frequency. Robbery is defined by the Code of the District of Columbia as taking anything of value from the person or immediate actual possession of another by force or violence, putting in fear, or by sudden or stealthy seizure or snatching. 
+The COVID-19 pandemic has impacted various aspects of daily life, including crime rates. This EDA project examines the impact of the COVID-19 lockdown on robbery rates in Washington D.C. The study analyzes the pre-pandemic, lockdown, and post-pandemic periods (2019-2022) to determine significant changes in robbery frequency. Robbery is defined by the Code of the District of Columbia as taking anything of value from the person or immediate actual possession of another by force or violence, putting in fear, or by sudden or stealthy seizure or snatching. 
 
 **SMART questions**
 
@@ -48,10 +48,7 @@ The COVID-19 pandemic has impacted various aspects of daily life, including crim
 The study by Boman and Gallupe (2020), suggests that the COVID-19 pandemic and the associated mandatory stay-at-home orders have had a differential impact on crime rates in the US. While overall crime rates, as measured by calls for service to law enforcement, have decreased compared to the pre-pandemic year of 2019, this drop appears to be driven by decreases in minor offenses that are typically committed in peer groups. In contrast, serious crimes that are generally not committed with co-offenders, such as homicide and intimate partner violence, have either remained constant or increased. The study raises the possibility that mandatory lockdown orders may have displaced minor offenders into situations where there is a greater opportunity for serious crimes, particularly intimate partner violence and homicide.
 
 
-In order to understand the impact of COVID-19 lockdown on robbery rates in Washington D.C, it is important to first examine the overall crime rates in the area prior to the pandemic. According to the Metropolitan Police Department's crime statistics, the overall crime rate in Washington D.C. has been decreasing in recent years. In 2019, there were 31,700 reported incidents of crime, a decrease from 37,265 in 2016. However, within this overall trend, there have been fluctuations in specific types of crimes, including robbery. Moreover, Robbery has been a persistent problem in Washington D.C., particularly in certain areas of the city. In 2019, there were 2,700 reported incidents of robbery, down from 2,977 in 2015. As such, it is important to examine how the COVID-19 pandemic and associated lockdown measures have impacted robbery rates in the city. This analysis will provide insight into how the pandemic has affected crime patterns in a major urban area and may inform future policy decisions related to crime prevention and public safety.
-
-
-
+Prior to the pandemic. According to the Metropolitan Police Department's crime statistics, the overall crime rate in Washington D.C. has been decreasing in recent years. In 2019, there were 31,700 reported incidents of crime, a decrease from 37,265 in 2016. However, within this overall trend, there have been fluctuations in specific types of crimes, including robbery. Moreover, Robbery has been a persistent problem in Washington D.C., particularly in certain areas of the city. In 2019, there were 2,700 reported incidents of robbery, down from 2,977 in 2015. As such, it is important to examine how the COVID-19 pandemic and associated lockdown measures have impacted robbery rates in the city. This analysis will provide insight into how the pandemic has affected crime patterns in a major urban area and may inform future policy decisions related to crime prevention and public safety.
 
 
 
@@ -66,17 +63,7 @@ options(scipen=9999, digits = 3)
 ## Methodology
 
 ### 1. Data  
-In the opening section of this report, we provide a comprehensive overview of the data used in our analysis. We obtained our data from the Metropolitan Police Department in Washington D.C. and specifically focused on the Crime Incidents dataset.
-
-The dataset contains detailed information on robbery incidents that occurred between 2019 and 2022, and we extracted this information into our dataset titled "Robbery_DC_clean.csv."
-
-In this section, we will provide a commentary on the data, highlighting its strengths and limitations. This information is critical in providing context for the analysis and understanding the potential impact of any data-related issues on the conclusions drawn from our analysis.
-
-Furthermore, we will discuss the data cleaning and preprocessing steps taken to ensure that the data is suitable for analysis. These steps include removing duplicate records, addressing missing values, and identifying and handling outliers.
-
-We will also provide an overview of the variables included in the dataset, such as the date and time of the robbery incident, the location of the incident, the method used, and other relevant details. This information is essential in developing a comprehensive understanding of the robbery incidents and their potential relationship to the COVID-19 lockdown.
-
-Overall, this section provides a solid foundation for the analysis that follows, and we have taken great care to ensure that the data is reliable, relevant, and suitable for our analysis.
+The dataset we used contains detailed information on robbery incidents that occurred between 2019 and 2022 ("Robbery_DC_clean.csv)."
 
 
 ### 2. Data Wrangling and Preprocessing
@@ -90,13 +77,9 @@ Robbery = data.frame(read.csv("Robbery_DC_clean.csv"))
 ```
 
 
-
-This section typically involves importing, cleaning, and pre-processing raw data to prepare it for analysis. The data cleaning process include removing duplicate records, addressing missing values, identifying and handling outliers, and transforming variables as needed. By performing these steps, we can ensure that the data is suitable for analysis and that our conclusions are based on accurate and reliable information. In this section, we will provide an overview of the data wrangling and pre-processing steps taken for the "Robbery_DC_clean.csv" dataset used in our analysis. 
-
-
 *Create Clarence_Rate* 
 
-In order to gain a deeper understanding of the robbery incidents in our analysis, we have created a new column called "Clearance Rate." This column takes into account the time between the start and end dates of each robbery incident and indicates whether the crime was cleared by the police during that time period. This allows us to measure both the difficulty of the crime and the performance of the police in solving these crimes. By examining the clearance rate of robbery incidents, we can gain insight into how effective law enforcement is at addressing and preventing robbery in the area of study. Additionally, this information can be used to identify trends and patterns in the clearance rate over time and potentially inform policy decisions related to crime prevention and law enforcement strategies.
+We created a new column called "Clearance Rate." This column takes into account the time between the start and end dates of each robbery incident and indicates whether the crime was cleared by the police during that time period. This allows us to measure both the difficulty of the crime and the performance of the police in solving these crimes. By examining the clearance rate of robbery incidents, we can gain insight into how effective law enforcement is at addressing and preventing robbery in the area of study. Additionally, this information can be used to identify trends and patterns in the clearance rate over time and potentially inform policy decisions related to crime prevention and law enforcement strategies.
 
 *Clearance_rate(Unit: Minute)= END_DATE - START_DATE*
 
@@ -205,16 +188,6 @@ The dataset consists of *8343* observations and *22* variables, including:
 
 
 ### 1. Summary statistics of robbery incidents in D.C. before, during the COVID-19 lockdown and post
-
-In this section, we provide a detailed overview of the summary statistics of some quantitative datas in our data set. This information includes measures such as the mean, median, standard deviation, minimum, and maximum values.
-
-We will also examine other measures, such as the interquartile range (IQR) and coefficient of variation, to provide a more comprehensive understanding of the data's variability and dispersion.
-
-By analyzing the summary statistics, we can identify any significant trends or patterns in the data, such as the overall frequency of robbery incidents, the distribution of robbery incidents across different days of the week or months, and the most common methods used in robbery incidents.
-
-We will also provide a commentary on the summary statistics, highlighting any notable findings or trends that may impact the analysis of the data. This analysis will help to identify potential issues or areas of interest that require further investigation in subsequent sections of the report.
-
-Overall, the summary statistics provide a critical foundation for the analysis of the robbery data, enabling us to develop a more accurate and detailed understanding of the impact of the COVID-19 lockdown on robbery rates in Washington D.C.
 
 ```{r}
 #Summary
@@ -326,27 +299,21 @@ The most common method used in robbery incidents was with a gun (4,031 incidents
 The districts with the highest number of robbery incidents were 4 (1,379 incidents), 7 (1,224 incidents), and 6 (1,163 incidents), while the PSA with the highest number of incidents was PSA 708 (599 incidents).
 The mean clearance rate for robbery incidents was 215 minutes, which indicates that it took about 3 hours to clear the incidents (an arrest or closure).
 There were some missing values in the data set, with 1701 instances of "NA" recorded in the "Clearance_rate" column, which means the proportion uncleared robbery incidents that have no value of clearance rate is about 21%. And 21 and 22 instances of "NA" recorded in the "DISTRICT" and "PSA" columns, respectively.
-Overall, the summary statistics provide a helpful overview of the robbery data, highlighting the key trends and patterns that can inform subsequent analysis.
 
 ### 2. Exploratory plots of robbery incidents in D.C. before, during the COVID-19 lockdown and post
 
- This section presents a set of draft plots that visually illustrate the trends and patterns of robbery incidents in Washington D.C. before and during the COVID-19 lockdown. The plots include histograms, scattorplots, and boxplots that display the frequency of robbery incidents across different time periods, days of the week, and locations in the city. The plots also highlight any significant changes or fluctuations in the robbery rates during the lockdown period compared to the pre-lockdown period.
- 
 Period_cat | Define | Description   
 -----|-------|-----------  
  Pre   | Pre-pandemic (14M)   |  2019.1.1 ~2020.2.29   
 Lock   | Lockdown(17M)   | 2020.3.1~ 2021. 7.31    
 Post   |   Post-pandemic(17M)   | 2021.8.1~2022.12.31 
 
-The table above shows a categorization of time periods based on the events related to the COVID-19 pandemic. The periods are defined as Pre, Lock, and Post.
+During pre-pandemic period, people were living their lives as usual, with no significant disruptions caused by the pandemic.
 
-The first period, Pre, refers to the time before the pandemic had a significant impact on society, ranging from January 1st, 2019 to February 29th, 2020. During this time, people were living their lives as usual, with no significant disruptions caused by the pandemic.
+During the lockdown, the government implemented several measures to curb the spread of the virus, including banning gatherings of 50 or more people, cutting restaurant dining room capacity in half, disallowing bar and standing service for social distancing, and closing nightclubs.During this time, people were confined to their homes, and many businesses were closed, resulting in a significant impact on daily life.
 
-The second period, Lock, refers to the time when During the lockdown period in the District of Columbia (Lock period), the government implemented several measures to curb the spread of the virus, including banning gatherings of 50 or more people, cutting restaurant dining room capacity in half, disallowing bar and standing service for social distancing, and closing nightclubs. This period lasted from March 1st, 2020 to July 31st, 2021, lasting for 17 months. During this time, people were confined to their homes, and many businesses were closed, resulting in a significant impact on daily life.
+During the post-pandemic, people were slowly returning to their daily routines, with businesses reopening, and social interactions resuming to some degree. However, there was still a need to take precautions, such as wearing masks, and social distancing, due to the continued threat of the pandemic.
 
-The third period, Post, refers to the time after the lockdown measures were lifted, from August 1st, 2021 to December 31st, 2022, lasting for 17 months. During this period, people were slowly returning to their daily routines, with businesses reopening, and social interactions resuming to some degree. However, there was still a need to take precautions, such as wearing masks, and social distancing, due to the continued threat of the pandemic.
-
-Overall, this categorization of time periods based on the COVID-19 pandemic highlights the significant impact the pandemic has had on daily life, and how the world has adapted to cope with the challenges posed by the virus.
 
 **1. Basic plots of Robbery data is below:**
 
@@ -423,13 +390,9 @@ grid.arrange(plot_year,plot_Month,plot_Period,plot_Period_mon, ncol=2, nrow=2)
 
 Overall, the data seems to show an increasing trend over the years, with the highest count in 2022. Within each year, there are variations in the count of data points, with the highest count in October and the lowest count in March for each year.
 
-This histogram could be used to identify trends and patterns in the data, as well as to determine which months have the most and least data points.
+A3 shows the number of robbery incidents that occurred during each of the pandemic phases.
 
-Based on the provided data, A3 and A4 show the frequency of robbery incidents split by pandemic phases. The pandemic phases are divided into three categories, which are pre-pandemic, lock-down, and post-pandemic.
-
-A3 shows the number of robbery incidents that occurred during each of the pandemic phases. The pre-pandemic phase had 2535 robbery incidents, the lock-down phase had 2729 robbery incidents, and the post-pandemic phase had 3079 robbery incidents.
-
-A4 shows the average number of robbery incidents per month during each pandemic phase. The pre-pandemic phase had an average of 181 robbery incidents per month, the lock-down phase had an average of 160 robbery incidents per month, and the post-pandemic phase had an average of 181 robbery incidents per month.
+A4 shows the average number of robbery incidents per month during each pandemic phase. 
 
 Overall, the data shows that there was an increase in the number of robbery incidents during the lock-down phase compared to the pre-pandemic phase. However, the number of robbery incidents during the post-pandemic phase was higher than both the pre-pandemic and lock-down phases. **The average number of robbery incidents per month remained relatively stable during the pre-pandemic and post-pandemic phases, but decreased during the lock-down phase.**
 
@@ -462,10 +425,7 @@ grid.arrange(plot_Month_pre, plot_Month_lock,plot_Month_post, ncol=1, nrow=3)
 
 ```
 
-
-This histograms shows the monthly robbery frequency during three different periods: pre-pandemic (A2-2), lockdown (A2-3), and post-pandemic (A2-4). The pre-pandemic period covers 14 months from January 2019 to February 2020. The lockdown period covers 17 months from March 2020 to July 2021. The post-pandemic period covers 17 months from August 2021 to December 2022.
-
-Looking at the histograms, the monthly robbery frequency during the pre-pandemic period ranged from 126 to 230 incidents, with an average of 181 incidents per month. During the lockdown period, the monthly robbery frequency ranged from 87 to 258 incidents, with an average of 160 incidents per month. Finally, during the post-pandemic period, the monthly robbery frequency ranged from 131 to 260 incidents, with an average of 181 incidents per month.
+The monthly robbery frequency during the pre-pandemic period ranged from 126 to 230 incidents, with an average of 181 incidents per month. During the lockdown period, it ranged from 87 to 258 incidents, with an average of 160 incidents per month. Finally, during the post-pandemic period,  it ranged from 131 to 260 incidents, with an average of 181 incidents per month.
 
 
 **2-2. Freq by Month :split by Years**
@@ -509,18 +469,13 @@ grid.arrange(plot_Month_2019, plot_Month_2020,plot_Month_2021, plot_Month_2022, 
 ```
 
 
-These charts provide valuable insights into the trends and patterns in robbery incidents over a four-year period.
-
 In 2019, the number of robberies increased from January to October, with the highest number of robberies occurring in October at 230. The number of robberies then decreased in the following months of the year. In 2020, the number of robberies remained relatively stable until August, after which it began to increase, peaking in October at 258. In 2021, the number of robberies continued to rise from August to October, with the highest number of robberies occurring in October at 220. The number of robberies decreased in November and December of the same year.
 
-Overall, the bar charts reveal an increasing trend in the number of robberies from 2019 to 2020, with October being the peak month for both years. Although the number of robberies decreased in 2021, it still remained relatively high compared to the beginning of the time period. These bar charts are useful for identifying patterns and making comparisons between different months and years, which can help in understanding the overall trend in robbery incidents.
-
+Overall, the bar charts reveal an increasing trend in the number of robberies from 2019 to 2020, with October being the peak month for both years. Although the number of robberies decreased in 2021, it still remained relatively high compared to the beginning of the time period. 
 
 **3-1. Freq by Season :split by pandemic phrases (Avg.Robbery(per month)**
   
-  + The data is split into four categories based on the season: Spring, Summer, Autumn, and Winter. The average number of robberies per month is calculated for each season.
-
-  + The data is then split into three categories based on pandemic phrases: Pre-pandemic, Lockdown, and Post-pandemic. The average number of robberies per month is calculated for each pandemic phase.
+  + Season: Spring, Summer, Autumn, and Winter. 
 
 ```{r}
 # Number of months per each season of pandemic phrases    
@@ -625,15 +580,15 @@ grid.arrange(plot_Season, plot_Season_pre, plot_Season_lock, plot_Season_post,
 
 ```
 
-Based on the provided data, Chart B1 shows the average number of robberies per month in each season. Spring and winter have the lowest average number of robberies, with 132 and 172 respectively, while summer and autumn have the highest averages, with 186 and 204 respectively.
+Chart B1 shows the average number of robberies per month in each season. Spring and winter have the lowest average number of robberies, with 132 and 172 respectively, while summer and autumn have the highest averages, with 186 and 204 respectively.
 
-Chart B1_1 shows the average number of robberies per month in each season before the pandemic. The pattern is similar to Chart B1, with summer and autumn having the highest averages, but with slightly higher numbers overall. Spring and winter also have slightly higher averages, with 156 and 154 respectively.
+Chart B1_1 is for pre-pandemic. The pattern is similar to Chart B1, with summer and autumn having the highest averages, but with slightly higher numbers overall. Spring and winter also have slightly higher averages, with 156 and 154 respectively.
 
-Chart B1_2 shows the average number of robberies per month in each season during the lockdown period. Interestingly, the number of robberies decreased significantly in spring and summer, with averages of 110 and 183 respectively. However, the number of robberies dramatically increased again in autumn, with an average of 221, and remained high in winter with an average of 160.
+Chart B1_2 is for lockdown. Interestingly, the number of robberies decreased significantly in spring and summer, with averages of 110 and 183 respectively. However, the number of robberies dramatically increased again in autumn, with an average of 221, and remained high in winter with an average of 160.
 
-Chart B1_3 shows the average number of robberies per month in each season after the lockdown period. The number of robberies in summer decreased slightly to an average of 168, while the number of robberies in autumn remained high at an average of 189. The number of robberies in spring increased to an average of 150, while the number of robberies in winter increased significantly to an average of 205.
+Chart B1_3 is for post-pandemic. The number of robberies in summer decreased slightly to an average of 168, while the number of robberies in autumn remained high at an average of 189. The number of robberies in spring increased to an average of 150, while the number of robberies in winter increased significantly to an average of 205.
 
-Overall, the data suggests that the pandemic had a significant impact on the number of robberies, with a decrease during the lockdown period and a subsequent increase afterward. The patterns of each season are generally consistent throughout the time period, with summer and autumn having the highest averages.
+Overall, the data shows a decrease during the lockdown period and a subsequent increase afterward. The patterns of each season are generally consistent throughout the time period, with summer and autumn having the highest averages.
 
 **3-2. Freq by Season :split by Years**
 
@@ -675,8 +630,6 @@ Overall, the data suggests that the pandemic had a significant impact on the ave
 **4-1. Freq by Date_cat(Begin,Middle,End) :split by pandemic phrases(Avg.Robbery(per month)**
 
   + In this analysis, the number of robberies is split by date categories: begin(<10), middle(<20), and end(21+) of each month.
-  +   The data is also split by pandemic phrases, to examine any potential impact of the pandemic on robbery frequency. 
-  +   The average number of robberies per month is calculated for each date category.
 
 ```{r}
 #Total
@@ -781,9 +734,9 @@ xkabledply(prop.1*100, title = "Robbery propotion by Date_cat(%)")
 
 ```
    
-From the chart, we can see that the highest number of robbery incidents occurred during the End category, followed by the Middle category and the Begin category.
+The highest number of robbery incidents occurred during the End category, followed by the Middle category and the Begin category.
 
-The data is further split into three pandemic phases: Pre-pandemic, Lockdown, and Post-pandemic. **Interestingly, the number of robbery incidents decreased during the Lockdown phase in all three date categories.** , but it increased again during the Post-pandemic phase.
+ **Interestingly, the number of robbery incidents decreased during the Lockdown phase in all three date categories.** , but it increased again during the Post-pandemic phase.
 
 Overall, it seems that the pandemic has an impact on robbery incidents, with a decrease during the Lockdown phase. And it is also important to note that robbery incidents increased again during the Post-pandemic phase.
 
@@ -800,9 +753,7 @@ boxplot_Date
 ```
 
 
-The boxplot shows the distribution of robbery incidents across three different time periods: pre-pandemic, lockdown, and post-pandemic. The median robbery date for each period is represented by the horizontal line within each box, while the lower and upper boundaries of the box represent the 25th and 75th percentiles, respectively.
-
-Looking at the plot, we can see that the distribution of robbery incidents is relatively similar across the different periods. The boxes for each period have similar widths and heights, indicating similar variability and spread of the data within each period.
+We can see that the distribution of robbery incidents is relatively similar across the different periods. The boxes for each period have similar widths and heights, indicating similar variability and spread of the data within each period.
 
 However, there are some differences in the medians and lower/upper boundaries for each period. For example, the median robbery date for the pre-pandemic period (around June 15th) appears to be slightly earlier than that for the lockdown period (around June 20th), and both of these are earlier than the median date for the post-pandemic period (around June 23rd).
 
@@ -812,8 +763,6 @@ Additionally, the range of robbery dates appears to be slightly wider for the po
 **5-1. Freq by SHIFT(DAY,EVENING,MIDNIGHT) :split by pandemic phrases(Avg.Robbery(per month)**
 
   + This section examines the frequency of robberies during different shifts of the day: Day( 09~17), Evening(18~23), and Midnight(00~08). 
-  + The average number of robberies per month is calculated for each shift category.
-  + This analysis provides insight into the impact of pandemic phases on the occurrence of robberies at various times of the day.
   
 ```{r}
 temp <- count(Robbery,SHIFT, sort=FALSE)
@@ -907,7 +856,7 @@ grid.arrange(plot_shift, plot_shift_pre, plot_shift_lock, plot_shift_post,
              ncol=2, nrow=2)
 ```  
 
-This charts shows (D1) the number of robberies was highest during the Midnight shift, with 70 incidents reported, followed by 68 in the Evening and 34 during the Day shift. During the Pre-pandemic phase, the highest number of robberies occurred during the Midnight shift, with 74 incidents, also in the Lockdown phase, the Midnight shift had the highest number of robberies, with 66 incidents. In the Post-pandemic phase, the Evening shift had the highest number of robberies, with 72 incidents reported with a decrease in Midnight shift.
+D1 shows the number of robberies was highest during the Midnight shift, with 70 incidents reported, followed by 68 in the Evening and 34 during the Day shift. During the Pre-pandemic phase, the highest number of robberies occurred during the Midnight shift, with 74 incidents, also in the Lockdown phase, the Midnight shift had the highest number of robberies, with 66 incidents. In the Post-pandemic phase, the Evening shift had the highest number of robberies, with 72 incidents reported with a decrease in Midnight shift.
 
 This analysis can help in identifying the high-risk periods for robbery and can assist law enforcement agencies in allocating resources to ensure public safety. It can also help in understanding the impact of pandemic phases on the incidence of robbery at different times of the day.
 
@@ -922,15 +871,14 @@ xkabledply(prop.1*100, title = "Robbery propotion by SHIFT(%)")
 
 The analysis of the data shows that during the day time, the percentage of robberies was consistent at around 20% across all three periods: pre-pandemic, lockdown, and post-pandemic. However, in the evening and midnight time periods, the percentage of robberies was consistently higher, at almost 40% for each period.
 
-Looking at the pre-pandemic period specifically, the percentage of robberies that occurred in the day time period was approximately 18%, which increased slightly to 21% in the post-pandemic period. The percentage of robberies that occurred in the midnight time period remained relatively constant, at approximately 42% in the pre-pandemic and lockdown periods, but decreased to 38% in the post-pandemic period.
+For the pre-pandemic period specifically, the percentage of robberies that occurred in the day time period was approximately 18%, which increased slightly to 21% in the post-pandemic period. The percentage of robberies that occurred in the midnight time period remained relatively constant, at approximately 42% in the pre-pandemic and lockdown periods, but decreased to 38% in the post-pandemic period.
 
 
 **6-1. Freq by Day_cat (Sun~Sat) :split by pandemic phrases(Avg.Robbery(per month)**
  
   + This section presents a frequency analysis of robbery incidents by day of the week
   + The days of the week are categorized as Sunday to Saturday. 
-  + The average number of robberies per month is calculated for each day category.
-  + The purpose of this analysis is to determine if there were any changes in the frequency of robbery incidents on specific days of the week during the pandemic phases.
+
 
 ```{r}
 
@@ -1039,9 +987,8 @@ grid.arrange(plot_shift, plot_shift_pre, plot_shift_lock, plot_shift_post,
 
 ```
 
-These four histograms show the frequency of robberies that occurred on each day of the week during different periods: overall, pre-pandemic, lockdown, and post-pandemic.
 
-Looking at the overall histogram, we can see that Saturday and Sunday had the highest frequency of robberies, with 27 incidents reported, The remaining days had frequencies that were relatively close to each other.
+We can see that Saturday and Sunday had the highest frequency of robberies, with 27 incidents reported, The remaining days had frequencies that were relatively close to each other.
 
 In the pre-pandemic period, the distribution among the days of the week was more even, with Saturday having the highest frequency of 28 incidents, and Tuesday having the lowest frequency of 23 incidents.
 
@@ -1257,7 +1204,7 @@ grid.arrange(plot_shift, plot_shift_pre, plot_shift_lock, plot_shift_post,
 
 The histograms show the frequency of robberies by weapon type, separated by pandemic period. In the overall period, the most common weapon used in robberies was "GUN," with 83 incidents, followed by "OTHERS" with 79 incidents, and "KNIFE" with 10 incidents.
 
-Looking at the pre-pandemic period, the most common weapon used was "OTHERS," with 106 incidents, followed by "GUN" with 62 incidents, and "KNIFE" with 13 incidents. **In the lockdown period, the most common weapon used was changed,"GUN," with 82 incidents,** followed by "OTHERS" with 67 incidents. In the post-pandemic period, the most common weapon used was again "GUN," with 103 incidents, followed by "OTHERS" with 68 incidents, and "KNIFE" with 9 incidents.
+In the pre-pandemic period, the most common weapon used was "OTHERS," with 106 incidents, followed by "GUN" with 62 incidents, and "KNIFE" with 13 incidents. **In the lockdown period, the most common weapon used was changed,"GUN," with 82 incidents,** followed by "OTHERS" with 67 incidents. In the post-pandemic period, the most common weapon used was again "GUN," with 103 incidents, followed by "OTHERS" with 68 incidents, and "KNIFE" with 9 incidents.
 
 Overall, the use of guns in robberies increased from the pre-pandemic period to the lockdown period, and then continued to increase in the post-pandemic period. Additionally, the use of knives remained relatively constant throughout the three periods.
 
@@ -1376,11 +1323,10 @@ grid.arrange(plot_shift, plot_shift_pre, plot_shift_lock, plot_shift_post,
 
 ```
 
-From the histograms, we can see the distribution of robbery incidents across the different districts in the city, and how they changed over time, with data available for pre-lockdown, lockdown, and post-lockdown periods.
 
-Looking at the first histogram, we can see that District 6 had the highest number of robbery incidents overall, followed by District 3, while District 2 had the lowest number of incidents.
+We can see that District 6 had the highest number of robbery incidents overall, followed by District 3, while District 2 had the lowest number of incidents.
 
-However, when we compare the three histograms, we can see some interesting changes over time. During the lockdown period, there was a decrease in robbery incidents across most districts, except for Districts 5-7, where incidents actually increased.
+During the lockdown period, there was a decrease in robbery incidents across most districts, except for Districts 5-7, where incidents actually increased.
 
 Looking at the changes in the number of incidents for each district, we can see that District 1 had the biggest increase in incidents between the pre-lockdown and post-lockdown periods, while District 3 had the smallest increase. Districts 6 had the biggest increase in incidents during the lockdown period.
 
@@ -1388,7 +1334,7 @@ Overall, the histograms suggest that there were some changes in the patterns of 
 
 **10-1. Boxplot distribution of PSA :split by pandemic phrases**
 
-The boxplot distribution of PSA (Police Service Area) is split by pandemic phrases and shows the median, quartiles, and outliers of the PSA values. The plot suggests that during the pandemic, the median PSA values remained relatively stable, with only a slight decrease in the post-lock phase. However, the plot also shows a significant increase in outliers during the lockdown and post-lock phases, indicating a higher variability in the data. In particular, the plot highlights a steep increase in the PSA values for districts 5-7 during the pandemic.
+The plot suggests that during the pandemic, the median PSA values remained relatively stable, with only a slight decrease in the post-lock phase. However, the plot also shows a significant increase in outliers during the lockdown and post-lock phases, indicating a higher variability in the data. In particular, the plot highlights a steep increase in the PSA values for districts 5-7 during the pandemic.
 
 ```{r}
 boxplot_PSA <- ggplot(Robbery, aes(y=PSA, x=Period_cat, fill=Period_cat)) + 
@@ -1401,7 +1347,7 @@ boxplot_PSA
 
 **10-2. Boxplot distribution of Clearance rate :split by pandemic phrases**
 
-This section presents a boxplot distribution of the clearance rate of robbery events, split by pandemic phrases. Overall, high clearance rates, which indicate that it took more time to complete the robbery event, were observed across all pandemic periods. The plot also shows that **during the lock-down period, the number of outliers (i.e., data points that are significantly different from the rest of the data) increased, indicating a higher variance in clearance rates. This may imply that the robbery events during these periods were more severe or challenging, or that there were inefficiencies in police administration.**
+Overall, high clearance rates, which indicate that it took more time to complete the robbery event, were observed across all pandemic periods. The plot also shows that **during the lock-down period, the number of outliers (i.e., data points that are significantly different from the rest of the data) increased, indicating a higher variance in clearance rates. This may imply that the robbery events during these periods were more severe or challenging, or that there were inefficiencies in police administration.**
 
 ```{r}
 boxplot_Clearance <- ggplot(Robbery, aes(y=Clearance_rate, x=Period_cat, fill=Period_cat)) + 
@@ -1415,12 +1361,8 @@ boxplot_Clearance
 
 ### 3. Unusual Observations: Data Quality
 
-In the "Unusual Observations" section, we will provide an in-depth analysis of the data, including a quick overview of the data with and without the outliers. Outliers can significantly impact the analysis of data and can skew the results. Therefore, it is crucial to identify and examine them closely to determine their impact on the data.By examining the data with and without the outliers, we can gain a clearer picture of the trends and patterns in the data. This information will be critical in developing an accurate and reliable analysis of the impact of the COVID-19 lockdown on robbery rates in Washington D.C.
-
 
 **Data Quality**
-
-To ensure data quality, we will perform the outlierKD function to detect any null values or outliers in our dataset. Once identified, we will remove them to ensure accurate analysis(Hypothesis testing). We will then display the cleaned data using a plot to visualize any trends or patterns in the data.
 
 We performed test for continuous variables, `OBJECTID``Clearance_rate` and `PSA`  
 
@@ -1450,7 +1392,7 @@ Robbery_clean = outlierKD2(Robbery, PSA, rm = TRUE, boxplt = TRUE, qqplt = TRUE)
 **The distribution of `Clearance_rate` is highly spread-wide, suggesting the presence of outliers.** To address this, **we have converted outliers with extremely high Clearance_rate to NA, which accounts for 4.8% of the data.** After cleansing outliers having the average clear time was 3656 minutes(2.5 days), the mean clearance rate for robbery incidents decreased from 215 to 50 minutes, which indicates that it took about 1 hours to clear the incidents. 
 We will use the outlier-excluded data to ensure a comprehensive analysis.
 
-After examining the data using the outlierKD function, we have identified outliers that have been replaced with NAs. However, we have not deleted these outliers from the dataset. Instead, we have replaced them with NAs to ensure that they do not affect the analysis of the data. This approach allows us to retain the maximum amount of data while still removing any data points that may negatively impact our analysis.
+We identified outliers and replaced with NAs. This approach allows us to retain the maximum amount of data while still removing any data points that may negatively impact our analysis.
 
 ```{r}
 Robbery_clean = outlierKD2(Robbery, Clearance_rate, rm = TRUE, boxplt = TRUE, qqplt = TRUE)
@@ -1476,7 +1418,6 @@ xkabledply(Robbery_avg_clr, title = "Avg.Robbery clearance by phase")
 
 ### 3. Additional Exploratory plots of robbery incidents (DISTRICT, METHOD, SHIFT)
 
-Based on the EDA plots of single variable, we tried additional analysis in three variables, `DISTRICT`, `SHIFT` and `METHOD` with two aspects, the amount and the difficulty of robbery incidents.  
 
 **1. DISTRICT**    
 
@@ -1526,7 +1467,7 @@ plot_DISTRICT_add
   + Interestingly, the difficulty of gun robbery also increased with increasing of the number during lockdown, however, decreased in post-pandemic.
   + The difficulty of knife robbery shows high fluctuation despite the amount of robbery has been decreasing.  
 
-This indicates that police should focus more on the high-risk incidents especially during lockdown.
+This indicates that police should focus more on the high-risk incidents.
 
 
 **A. Robbery amount ** 
