@@ -1,5 +1,5 @@
 ---
-title: "The Impact of COVID-19 Lockdown on Robbery Rates: An Exploratory Data Analysis (EDA) of Criminal Activity in Washington D.C."
+title: "Analyzing the Impact of COVID-19 Lockdown on Robbery Rates in Washington D.C: A Logistic Regression Approach"
 author: "Muhannad Alwhebie, Liang Gao, Nammin Woo"
 date: "`r Sys.Date()`"
 output:
@@ -43,9 +43,20 @@ options(scipen=9999, digits = 3)
 
 ## Introduction
 
-**Summary of initial project 1**
+This project builds upon the previous exploratory data analysis (EDA) project that examined the impact of COVID-19 lockdown on robbery rates in Washington D.C using a dataset of roughly 8000 observations. The previous project found that robbery frequency changed throughout the pandemic, and there may be underlying socio-economic factors contributing to the change in robbery patterns. The study also supported the findings of the Boman and Gallupe (2020) study that violent crime increased during the lockdown period. Additionally, the number of robberies in Autumn dramatically increased during the lockdown period.
+
+In this project, our team plans to use the same dataset to conduct a logistic regression analysis to identify the characteristics and connections between different variables and predict future trends in robbery rates. Our team aims to answer SMART questions related to robbery rates, such as the factors that influence robbery methods and time, the likelihood of a robbery being committed or solved based on location and method used, and the impact of external factors such as temperature, precipitation, and daylight hours. We will also attempt to predict the likelihood of dangerous or tricky robberies before the police are dispatched.
+
+By utilizing GLM models to answer these questions and incorporating the previous project's findings, we hope to gain a deeper understanding of the underlying factors that affect robbery rates in Washington D.C and provide insights that can inform future policy decisions related to crime prevention and public safety
 
 **SMART questions of project 2**
+1. What factors influence (positive or negative) on a robbery method?
+2. What factors influence (positive or negative) on the time of robbery crime?
+3. Can we predict the likelihood of a robbery being committed based on the time of day or day of the week? (GLM)
+4. Can we predict the likelihood of a robbery being solved based on the location and method used? (GLM)
+5. How do external factors such as temperature, precipitation, and daylight hours affect the likelihood of a robbery occurring? (GLM)
+6. Can we predict dangerous (used guns)  or tricky robberies (need longer time) before police are dispatched?  (GLM)
+
 
 What should police predict when receiving calls from victims?
 
