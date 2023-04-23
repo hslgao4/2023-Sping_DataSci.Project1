@@ -198,13 +198,11 @@ plot <- ggplot(data=Robbery_clean_p2_add, aes(Clearance_rate)) +
 plot
 ```
 ```{r}
-Robbery_clean_p2_add$Target_Clearance_time_2 <- ifelse(Robbery_clean_p2_add$Clearance_rate >= 30,
-c(1), c(0))
+#Robbery_clean_p2_add$Target_Clearance_time_2 <- ifelse(Robbery_clean_p2_add$Clearance_rate >= #30,
+#c(1), c(0))
 
 #count(Robbery_clean_p2_add,Target_Clearance_time)
 ```
-
-
 
 
 ```{r}
@@ -286,18 +284,17 @@ detach(Robbery_clean_p2_add)
 ```
 
 
-Temporary made second target for clear_rate.
-
 ```{r}
-Robbery_clean_p2_add$Target_Clearance_time_2 <- ifelse(Robbery_clean_p2_add$Clearance_rate >= 60,
-c(1), c(0))
+#Temporary made second target for clear_rate.
+#Robbery_clean_p2_add$Target_Clearance_time_2 <- ifelse(Robbery_clean_p2_add$Clearance_rate >= #60,
+#c(1), c(0))
 
 #count(Robbery_clean_p2_add,Target_Clearance_time)
 ```
 
 
 ```{r}
-col_org <- c('Date_cat','Day_cat','Day_cat_2','DISTRICT','Month','Period_cat_num_2','Season','SHIFT','METHOD','Clearance_rate','Target_Clearance_time','Target_Clearance_time_2','Target_robbery_method')
+col_org <- c('Date_cat','Day_cat','Day_cat_2','DISTRICT','Month','Period_cat_num_2','Season','SHIFT','METHOD','Clearance_rate','Target_Clearance_time','Target_robbery_method')
 
 ```
 
@@ -313,7 +310,7 @@ str(select(Robbery_clean_p2_add,col_org))
 Change categorical variables (including target) into factor. 
 
 ```{r}
-cols <- c('Date_cat','Day_cat_2','Season','SHIFT','METHOD','Period_cat_num_2','Target_Clearance_time','Target_Clearance_time_2','Target_robbery_method')  #array
+cols <- c('Date_cat','Day_cat_2','Season','SHIFT','METHOD','Period_cat_num_2','Target_Clearance_time','Target_robbery_method')  #array
 Robbery_clean_p2_add %<>%
        mutate_each_(funs(factor(.)),cols) 
 
@@ -362,18 +359,18 @@ Finalize modeling data 1 for `Target_Clearance_time`, exclude **Outliers of `Tar
 Number of records in modeling data 1(`Target_Clearance_time`) is 6338.
 
 ```{r}
-model_1 <-  subset(Robbery_clean_p2_model, Target_Clearance_time_2 == 0 |Target_Clearance_time_2 == 1)
+model_1 <-  subset(Robbery_clean_p2_model, Target_Clearance_time == 0 |Target_Clearance_time == 1)
 
 nrow(model_1)
 #NA: extremely long time is long time (or remove all NAs from data)
 #Robbery_clean_p2_add$Target_Clearance_time(is.na(Robbery_clean_p2_add$Target_Clearanc#e_time))=1
-count(model_1,Target_Clearance_time_2, sort=FALSE)
+count(model_1,Target_Clearance_time, sort=FALSE)
 ```
 And finalize modeling data 1 , 1 target and 87 input candidate variables (including 78 variables are Census).
 
 ```{r}
 
-cols_m1 <- c('Target_Clearance_time_2','Date_cat','Day_cat','Day_cat_2','DISTRICT','Month','Period_cat_num_2','Season','SHIFT','METHOD','Agriculture_forestry_fishing_and_hunting_and_mining_pct','armed_forces_rate','Arts_entertainment_and_recreation_and_accommodation_and_food_services_pct','carpooled_pct','Construction_pct','drove_alone_pct','Earning_mean','Earning_median_fmale_wk','Earning_median_male_wk','Earning_median_wk','Educational_services_and_health_care_and_social_assistance_pct','females_employed_rate','Finance_and_insurance_and_real_estate_and_rental_and_leasing_pct','Government_workers_pct','hs_10000_to_14999_pct','hs_100000_to_149999_pct','hs_15000_to_24999_pct','hs_150000_to_194999_pct','hs_200000__pct','hs_25000_to_34999_pct','hs_35000_to_49999_pct','hs_50000_to_74999_pct','hs_75000_to_99999_pct','hs_Less_than_10000_pct','hs_own_children_6_to_17_labor_force_pct','hs_own_children_6_to_17_pct','hs_own_children_under_6_labor_force_pct','hs_own_children_under_6_pct','Income_mean','Income_median','Information_pct','labor_forces_rate','management_business_science_arts_occupations_pct','Manufacturing_pct','mean_travel_time','Natural_resources_construction_and_maintenance_occupations_pct','other_means_pct','Other_services_except_public_administration_pct','pct_all_families_below_poverty','pct_all_families_related_children_below18_below_poverty','pct_all_families_related_children_below5_below_poverty','pct_all_people_18plus_below_poverty','pct_all_people_18to64_below_poverty','pct_all_people_65plus_below_poverty','pct_all_people_below_poverty','pct_all_people_related_children_under18_5to17_below_poverty','pct_all_people_related_children_under18_below_poverty','pct_all_people_related_children_under18_below5_below_poverty','pct_all_people_under18_below_poverty','pct_below_poverty_female_no_spouse_present','pct_below_poverty_female_no_spouse_present_related_children_below18','pct_female_no_spouse_present_related_children_below18_below5_below_poverty','pct_married_couple_families_below_poverty','pct_married_couple_families_related_children_below18_below_poverty','pct_married_couple_families_related_children_below5_below_poverty','pct_people_in_families_below_poverty','pct_unrelated_individuals_15plus_below_poverty','pop_16_over_emp_status','Private_wage_and_salary_workers_pct','Production_transportation_and_material_moving_occupations_pct','Professional_scientific_and_management_and_administrative_and_waste_management_services_pct','Public_administration_pct','public_assistance_income_mean','public_transportation_pct','Retail_trade_pct','Retirement_income_mean','Sales_and_office_occupations_pct','Self_employed_in_own_not_incorporated_business_workers_pct','service_occupations_pct','Social_Security_income_mean','Supplemental_Security_income_mean','Transportation_and_warehousing_and_utilities_pct','unemployment_rate','Unpaid_family_workers_pct','walked_pct','Wholesale_trade_pct','worked_from_home_pct','workers_16_over')
+cols_m1 <- c('Target_Clearance_time','Date_cat','Day_cat','Day_cat_2','DISTRICT','Month','Period_cat_num_2','Season','SHIFT','METHOD','Agriculture_forestry_fishing_and_hunting_and_mining_pct','armed_forces_rate','Arts_entertainment_and_recreation_and_accommodation_and_food_services_pct','carpooled_pct','Construction_pct','drove_alone_pct','Earning_mean','Earning_median_fmale_wk','Earning_median_male_wk','Earning_median_wk','Educational_services_and_health_care_and_social_assistance_pct','females_employed_rate','Finance_and_insurance_and_real_estate_and_rental_and_leasing_pct','Government_workers_pct','hs_10000_to_14999_pct','hs_100000_to_149999_pct','hs_15000_to_24999_pct','hs_150000_to_194999_pct','hs_200000__pct','hs_25000_to_34999_pct','hs_35000_to_49999_pct','hs_50000_to_74999_pct','hs_75000_to_99999_pct','hs_Less_than_10000_pct','hs_own_children_6_to_17_labor_force_pct','hs_own_children_6_to_17_pct','hs_own_children_under_6_labor_force_pct','hs_own_children_under_6_pct','Income_mean','Income_median','Information_pct','labor_forces_rate','management_business_science_arts_occupations_pct','Manufacturing_pct','mean_travel_time','Natural_resources_construction_and_maintenance_occupations_pct','other_means_pct','Other_services_except_public_administration_pct','pct_all_families_below_poverty','pct_all_families_related_children_below18_below_poverty','pct_all_families_related_children_below5_below_poverty','pct_all_people_18plus_below_poverty','pct_all_people_18to64_below_poverty','pct_all_people_65plus_below_poverty','pct_all_people_below_poverty','pct_all_people_related_children_under18_5to17_below_poverty','pct_all_people_related_children_under18_below_poverty','pct_all_people_related_children_under18_below5_below_poverty','pct_all_people_under18_below_poverty','pct_below_poverty_female_no_spouse_present','pct_below_poverty_female_no_spouse_present_related_children_below18','pct_female_no_spouse_present_related_children_below18_below5_below_poverty','pct_married_couple_families_below_poverty','pct_married_couple_families_related_children_below18_below_poverty','pct_married_couple_families_related_children_below5_below_poverty','pct_people_in_families_below_poverty','pct_unrelated_individuals_15plus_below_poverty','pop_16_over_emp_status','Private_wage_and_salary_workers_pct','Production_transportation_and_material_moving_occupations_pct','Professional_scientific_and_management_and_administrative_and_waste_management_services_pct','Public_administration_pct','public_assistance_income_mean','public_transportation_pct','Retail_trade_pct','Retirement_income_mean','Sales_and_office_occupations_pct','Self_employed_in_own_not_incorporated_business_workers_pct','service_occupations_pct','Social_Security_income_mean','Supplemental_Security_income_mean','Transportation_and_warehousing_and_utilities_pct','unemployment_rate','Unpaid_family_workers_pct','walked_pct','Wholesale_trade_pct','worked_from_home_pct','workers_16_over')
 
 model_1_clean <- select(model_1,cols_m1)
 #str(model_1_clean)
@@ -439,7 +436,7 @@ Model building process
 ### 3. Model 1- Logistic regression(`Target_Clearance_time`)
 
 Data: model_1_clean
-Target: `Target_Clearance_time` , (temp) `Target_Clearance_time_2`
+Target: `Target_Clearance_time` 
 
 
 **1. EDA for pick the input variables **
@@ -796,7 +793,7 @@ Then, train the first logistic regression model, and exclude vars that are not s
 
 ```{r}
 #exclude vars that p-value is not significant 
-Logit_model_2 <- glm(Target_Clearance_time_2 ~ DISTRICT + Period_cat_num_2 + SHIFT + Income_mean  + pct_all_families_below_poverty + worked_from_home_pct , data = data_train_model_1, family = "binomial")
+Logit_model_2 <- glm(Target_Clearance_time ~ DISTRICT + Period_cat_num_2 + SHIFT + Income_mean  + pct_all_families_below_poverty + worked_from_home_pct , data = data_train_model_1, family = "binomial")
 
 #+ hs_200000__pct
 #Logit_model_0 <- glm(Target_Clearance_time ~ DISTRICT + Period_cat_num_2 + SHIFT + METHOD + Season Earning_mean  + , data = data_train_model_1, family = "binomial")
@@ -855,7 +852,7 @@ By seeing probability distribution charts by target groups, cut-off (Criterion t
 
 ```{r}
 # distribution of the prediction score grouped by known outcome
-ggplot( data_train_model_1, aes( prediction, color = Target_Clearance_time_2 ) ) + geom_density( size = 1 ) +
+ggplot( data_train_model_1, aes( prediction, color = Target_Clearance_time ) ) + geom_density( size = 1 ) +
 ggtitle( "Train Set's Predicted Score(model_1)" ) + 
 scale_color_economist( name = "data", labels = c( "Lower time", "Higher time" ) ) + 
 theme_economist()
@@ -865,7 +862,7 @@ theme_economist()
 
 ```{r}
 # distribution of the prediction score grouped by known outcome
-ggplot( data_test_model_1, aes( prediction, color = Target_Clearance_time_2 ) ) + geom_density( size = 1 ) +
+ggplot( data_test_model_1, aes( prediction, color = Target_Clearance_time ) ) + geom_density( size = 1 ) +
 ggtitle( "Test Set's Predicted Score(model_1)" ) + 
 scale_color_economist( name = "data", labels = c( "Lower time", "Higher time" ) ) + 
 theme_economist()
@@ -911,7 +908,7 @@ proc_auc2 <- function(data, outcome_var, predictor_var) {
 # visualize .4 cutoff (lowest point of the previous plot)
 
 cm_info <- ConfusionMatrixInfo( data = data_test_model_1, predict = "prediction", 
-                                actual = "Target_Clearance_time_2", cutoff = .55 )
+                                actual = "Target_Clearance_time", cutoff = .55 )
 
 #ggthemr("flat")
 
@@ -955,14 +952,14 @@ F1
 C-3. AUROC
 
 ```{r}
-h <- roc(Target_Clearance_time_2~prediction, data=data_test_model_1)
+h <- roc(Target_Clearance_time~prediction, data=data_test_model_1)
 
 plot(h)
 ```
 
 ```{r}
-proc_auc2(data_test_model_1, 'Target_Clearance_time_2', 'prediction')
-proc_auc2(data_train_model_1, 'Target_Clearance_time_2', 'prediction')
+proc_auc2(data_test_model_1, 'Target_Clearance_time', 'prediction')
+proc_auc2(data_train_model_1, 'Target_Clearance_time', 'prediction')
 
 ```
 
