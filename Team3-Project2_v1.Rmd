@@ -28,7 +28,23 @@ library(graphics)
 library(gridExtra) #graph arrange(positioning)
 library(data.table)
 ```
+```{r}
+# environment for model evaluation 
+library(ROCR)
+library(grid)
+library(broom)
+#library(caret)
+library(tidyr)
+library(dplyr)
+library(scales)
+library(ggplot2)
+#library(ggthemr)
+library(ggthemes)
+library(gridExtra)
+library(data.table)
 
+loadPkg("pROC") 
+```
 ```{r setup, include=FALSE}
 #nammin revise: knitr::opts_chunk$set(echo = TRUE) > combined as following
 knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
@@ -1125,28 +1141,104 @@ str(model_2_clean)
 
 **A. Correlation- original variables (w.o Census)**
 
-A quick correlation plot matrix here shows the general correlations as well as histograms for the variables in the dataframe. 
-
-District(Police Service Area), Period_cat_num_2(If Pandemic period) and SHIFT(Timezone of robberies) seem to have a relationship with Clearance_time.
-
 ```{r}
-library(psych) # pair plots with histogram on diagonal and other options
-pairs.panels(model_2_clean[,c(1,2:11)],   #[,c(2:7,9:10)]
-             method = "pearson", # correlation method
-             hist.col = "#00AFBB",
-             density = FALSE,  # show density plots
-             ellipses = FALSE # show correlation ellipses
-             )
-
-#Other way
-#library(lattice)
-#pairs(model_1_clean[,c(1:9)])
-
-
+model_2_clean <- 
+  readr::read_rds("Robbery_clean_p2_model_2.Rds")
+head(model_2_clean, 5)
+str(model_2_clean)
+count(model_2_clean,Target_robbery_method, sort=FALSE)
 ```
 
+```{r}
+library(psych)
+pairs.panels(model_2_clean[,c(1:10)], 
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
 
 **B. Correlation- Census variables **
+```{r}
+pairs.panels(model_2_clean[,c(1, 11:20)], 
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+```{r}
+pairs.panels(model_2_clean[,c(1, 21:30)], 
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+```{r}
+pairs.panels(model_2_clean[,c(1,31:40)], 
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+```{r}
+pairs.panels(model_2_clean[,c(1,41:50)], 
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+
+```{r}
+pairs.panels(model_2_clean[,c(1,51:60)], 
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+```{r}
+pairs.panels(model_2_clean[,c(1,61:70)], 
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+```{r}
+pairs.panels(model_2_clean[,c(1,71:80)], 
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+
+```{r}
+pairs.panels(model_2_clean[,c(1,80:86)], 
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+
+**Final variables chosen: DISTRICT + Period_cat_num_2 + Season + Month +SHIFT + drove_alone_pct + Earning_mean + Income_mean + labor_forces_rate + mean_travel_time + unemployment_rate **
+
+**Check the final version correlation **
+```{r}
+pairs.panels(model_2_clean[,c("Target_robbery_method","DISTRICT","Period_cat_num_2","Season", "Month", "SHIFT", "drove_alone_pct", "Earning_mean", "Income_mean", "labor_forces_rate",  "mean_travel_time", "unemployment_rate")], 
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+
 
 **C. Mini EDA for candidate features**
 
@@ -1159,116 +1251,56 @@ pairs.panels(model_2_clean[,c(1,2:11)],   #[,c(2:7,9:10)]
 
 **A. The Train and Test data are: **
 
-
 ```{r}
-col = c('Target_robbery_method','Hour', 'Day_cat_2', 'Period_cat_num_2', 'Season', 'DISTRICT', 'SHIFT','Earning_mean','females_employed_rate','pct_all_people_under18_below_poverty','Private_wage_and_salary_workers_pct')
-temp <- select(model_2_clean,col)
+set.seed(8343)
+sample <- sample(c(TRUE, FALSE), nrow(model_2_clean), replace=TRUE, prob=c(0.7,0.3))
+df_train <- model_2_clean[sample, ]
+df_test  <- model_2_clean[!sample, ]
 
-```
-
-```{r}
-str(temp)
-```
-
-
-
-```{r}
-#sum(is.na(temp)) #결측치 개수
-summary(temp) 
-```
-```{r}
-temp <- na.omit(temp)
-summary(temp) 
-```
-```{r}
-model_2_clean <- temp
-```
-
-
-```{r}
-#Use 70% of dataset as training set and remaining 30% as testing set
-set.seed(4321)
-sample <- sample(c(TRUE, FALSE), nrow(df), replace=TRUE, prob=c(0.7,0.3))
-data_train_model_2  <- model_2_clean[sample, ]
-data_test_model_2   <- model_2_clean[!sample, ]
+nrow(df_train)
+nrow(df_test )
 ```
 
 **B. Train the model**
-
-Then, train the first logistic regression model, and exclude vars that are not significant in terms of P-value, and re-fit. Finally, 5 vars are chosen. 
-
-
 ```{r}
-#exclude vars that p-value is not significant 
-Logit_model_gun <- glm(Target_robbery_method ~ Hour + Day_cat_2 + Period_cat_num_2 + Season + DISTRICT + SHIFT + Earning_mean + females_employed_rate + pct_all_people_under18_below_poverty + Private_wage_and_salary_workers_pct, data = data_train_model_2, family = "binomial")
-
- 
+Model <- glm(Target_robbery_method ~  DISTRICT + + Period_cat_num_2 + Season + Month +SHIFT + drove_alone_pct + Earning_mean + Income_mean + labor_forces_rate + mean_travel_time + unemployment_rate, data = df_train, family = "binomial")
+sum_model = summary(Model)
+sum_model
 ```
 
 ```{r}
-summary(Logit_model_gun)
-Logit_model_sum <- summary(Logit_model_gun)
-```
-Lockdown make the robbery difficult (long time to clear), Over>1, Lock(1) increase prob. high_diff_rob
-
-```{r}
-expcoeff = exp(coef(Logit_model_gun))
+expcoeff = exp(coef(Model))
 expcoeff
-#xkabledply( as.table(expcoeff), title = "Exponential of coefficients in model_1" )
 ```
-
-This is the prediction of the model, probability `p`.
-
-```{r}
-# prediction of p
-data_train_model_2$prediction <- predict( Logit_model_gun, newdata = data_train_model_2, type = "response" )
-data_test_model_2$prediction  <- predict( Logit_model_gun, newdata = data_test_model_2 , type = "response" )
-
-```
-
-
 **C. Evaluate the model**
-
 ```{r}
-# environment for model evaluation 
-library(ROCR)
-library(grid)
-library(broom)
-#library(caret)
-library(tidyr)
-library(dplyr)
-library(scales)
-library(ggplot2)
-#library(ggthemr)
-library(ggthemes)
-library(gridExtra)
-library(data.table)
-
-loadPkg("pROC") 
+df_train$prediction <- predict( Model, newdata = df_train, type = "response" )
+df_test$prediction  <- predict( Model, newdata = df_test , type = "response" )
 ```
-
-C-1. Cut-off
-By seeing probability distribution charts by target groups, cut-off (Criterion to preict=1) was set to 0.45.
 
 
 ```{r}
 # distribution of the prediction score grouped by known outcome
-ggplot( data_train_model_2, aes( prediction, color = Target_robbery_method ) ) + geom_density( size = 1 ) +
-ggtitle( "Train Set's Predicted Score(model_2)" ) + 
-scale_color_economist( name = "data", labels = c( "Others", "Gun" ) ) + 
-theme_economist()
+ggplot( df_train, aes( prediction, color = Target_robbery_method ) ) + geom_density( size = 1 ) +
+ggtitle( "Train Set's Predicted Score" ) 
 
 ```
 
 ```{r}
-# distribution of the prediction score grouped by known outcome
-ggplot( data_test_model_2, aes( prediction, color = Target_robbery_method ) ) + geom_density( size = 1 ) +
-ggtitle( "Test Set's Predicted Score(model_2)" ) + 
-scale_color_economist( name = "data", labels = c( "Others", "Gun" ) ) + 
-theme_economist()
+ggplot( df_test, aes( prediction, color = Target_robbery_method ) ) + geom_density( size = 1 ) +
+ggtitle( "Test Set's Predicted Score" ) 
+```
+```{r}
+h <- roc(Target_robbery_method~prediction, data=df_train)
+plot(h)
+auc(h)
 ```
 
-C-2 Accuracy, Recall
+```{r}
+h <- roc(Target_robbery_method~prediction, data=df_test)
+plot(h)
+auc(h)
+```
 
 ```{r}
 
@@ -1305,27 +1337,14 @@ proc_auc2 <- function(data, outcome_var, predictor_var) {
 }
 ```
 
-```{r}
-# visualize .4 cutoff (lowest point of the previous plot)
 
-cm_info <- ConfusionMatrixInfo( data = data_test_model_2, predict = "prediction", 
+```{r}
+cm_info <- ConfusionMatrixInfo( data = df_test, predict = "prediction", 
                                 actual = "Target_robbery_method", cutoff = .5 )
 
-#ggthemr("flat")
-
 cm_info$plot
-#print(cm_info$data)
-
 ```
-
-
 ```{r}
-# Accuracy    = (TP + TN) / Total
-# Precision   = TP / (TP + FP)
-# Recall rate = TP / (TP + FN) = Sensitivity
-# Specificity = TN / (TN + FP)
-# F1_score is the "harmonic mean" of precision and recall
-#          F1 = 2 (precision)(recall)/(precision + recall)
 
 temp <- cm_info$data
 TP <- nrow(subset(temp,subset = temp$type == 'TP'))
@@ -1333,12 +1352,7 @@ TN <- nrow(subset(temp,subset = temp$type == 'TN'))
 FP <- nrow(subset(temp,subset = temp$type == 'FP'))
 FN <- nrow(subset(temp,subset = temp$type == 'FN'))
 
-Total <-nrow(data_test_model_2)
-#print(cm_info$data)
-
-```
-
-```{r}
+Total <-nrow(df_test)
 Accuracy <-  (TP + TN) / Total
 Precision  <- TP / (TP + FP)
 Recall_rate <- TP / (TP + FN)
@@ -1350,22 +1364,6 @@ Precision
 Recall_rate
 F1
 ```
-
-C-3. AUROC
-
-```{r}
-h <- roc(Target_robbery_method~prediction, data=data_test_model_2)
-
-plot(h)
-```
-
-
-```{r}
-proc_auc2(data_test_model_2, 'Target_robbery_method', 'prediction')
-proc_auc2(data_train_model_2, 'Target_robbery_method', 'prediction')
-
-```
-Regardless of a cutoff level, the AUROC(area-under-curve) is 0.64, which is less than 0.8. The model does not seem to make the best good predict power.
 
 **3. Model 2-2 (Decision Tree with model_2_clean): Predict `Target_robbery_method`. **
 
