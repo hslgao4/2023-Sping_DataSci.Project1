@@ -709,7 +709,7 @@ Following chart indicate % of High Clearance_time per DISTRICT categories.
 ```{r}
 #One var Groupby(mean of target by X category group)= % of High Clearance_time
 #temp <- data.frame(x = model_1_clean$DISTRICT,
-                 y = as.numeric(model_1_clean$Target_Clearance_time_2))
+                 y = as.numeric(model_1_clean$Target_Clearance_time_2)
 #temp_gr <- aggregate(y ~ x, data = temp, mean)  #Table: % of High Clearance_time by categories
 
 #Make chart (scatter)
@@ -1372,10 +1372,8 @@ sample <- sample(c(TRUE, FALSE), nrow(model_2_clean), replace=TRUE, prob=c(0.7,0
 df_train <- model_2_clean[sample, ]
 df_test  <- model_2_clean[!sample, ]
 
-<<<<<<< HEAD
 nrow(df_train)
 nrow(df_test )
-=======
 ```
 
 **B. Train the model**
