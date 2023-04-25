@@ -692,15 +692,15 @@ Following chart indicate % of High Clearance_time per DISTRICT categories.
 
 ```{r}
 #One var Groupby(mean of target by X category group)= % of High Clearance_time
-temp <- data.frame(x = model_1_clean$DISTRICT,
+#temp <- data.frame(x = model_1_clean$DISTRICT,
                  y = as.numeric(model_1_clean$Target_Clearance_time_2))
-temp_gr <- aggregate(y ~ x, data = temp, mean)  #Table: % of High Clearance_time by categories
+#temp_gr <- aggregate(y ~ x, data = temp, mean)  #Table: % of High Clearance_time by categories
 
 #Make chart (scatter)
-plot_DISTRICT_add <- ggplot(temp_gr, aes(x, y)) + geom_line() + labs(x="district", y="% of High Clearance_time") +
-  labs(title="Portion of target by district") + scale_x_discrete(limits=c("1","2","3","4","5","6","7")) + geom_point() #with 3-D: ggplot(temp_gr, aes(x, y, colour = Period_cat))  
+#plot_DISTRICT_add <- ggplot(temp_gr, aes(x, y)) + geom_line() + labs(x="district", y="% of High Clearance_time") +
+ # labs(title="Portion of target by district") + scale_x_discrete(limits=c("1","2","3","4","5","6","7")) + geom_point() #with 3-D: ggplot(temp_gr, aes(x, y, colour = Period_cat))  
 
-plot_DISTRICT_add
+#plot_DISTRICT_add
 
 #Other way: Pivot Table: Cate(x) x Cate(target), if # of category is small
 #prop.1 <- with(model_1_clean, table(DISTRICT, Target_Clearance_time)) %>% 
@@ -1116,10 +1116,27 @@ model_2_clean <-
 
 ```{r}
 str(model_2_clean)
+
 ```
 
 
 **1. EDA for pick the input variables **
+
+```{r}
+
+library(psych) # pair plots with histogram on diagonal and other options
+pairs.panels(model_2_clean[,c(2,3:12)],   #[,c(2:7,9:10)]
+             method = "pearson", # correlation method
+             hist.col = "#00AFBB",
+             density = FALSE,  # show density plots
+             ellipses = FALSE # show correlation ellipses
+             )
+
+
+
+
+```
+
 
 **A. Correlation- original variables (w.o Census)**
 
@@ -1148,9 +1165,107 @@ pairs.panels(model_2_clean[,c(1,2:11)],   #[,c(2:7,9:10)]
 
 **B. Correlation- Census variables **
 
+A quick correlation plot matrix for first 10 Census variables.
+
+```{r}
+pairs.panels(model_2_clean[,c(2,13:20)],   #Target, Census [,c(2:7,9:10)]
+             method = "pearson", # correlation method
+             hist.col = "#00AFBB",
+             density = FALSE,  # show density plots
+             ellipses = FALSE # show correlation ellipses
+             )
+```
+
+
+
+```{r}
+pairs.panels(model_2_clean[,c(2,21:30)],   #Target, Census [,c(2:7,9:10)]
+             method = "pearson", # correlation method
+             hist.col = "#00AFBB",
+             density = FALSE,  # show density plots
+             ellipses = FALSE # show correlation ellipses
+             )
+```
+
+```{r}
+pairs.panels(model_2_clean[,c(2,31:40)],   #Target, Census [,c(2:7,9:10)]
+             method = "pearson", # correlation method
+             hist.col = "#00AFBB",
+             density = FALSE,  # show density plots
+             ellipses = FALSE # show correlation ellipses
+             )
+```
+
+```{r}
+pairs.panels(model_2_clean[,c(2,41:50)],   #Target, Census [,c(2:7,9:10)]
+             method = "pearson", # correlation method
+             hist.col = "#00AFBB",
+             density = FALSE,  # show density plots
+             ellipses = FALSE # show correlation ellipses
+             )
+```
+
+
+```{r}
+pairs.panels(model_2_clean[,c(2,51:60)],   #Target, Census [,c(2:7,9:10)]
+             method = "pearson", # correlation method
+             hist.col = "#00AFBB",
+             density = FALSE,  # show density plots
+             ellipses = FALSE # show correlation ellipses
+             )
+```
+
+```{r}
+pairs.panels(model_2_clean[,c(2,61:70)],   #Target, Census [,c(2:7,9:10)]
+             method = "pearson", # correlation method
+             hist.col = "#00AFBB",
+             density = FALSE,  # show density plots
+             ellipses = FALSE # show correlation ellipses
+             )
+```
+
+```{r}
+pairs.panels(model_2_clean[,c(2,71:80)],   #Target, Census [,c(2:7,9:10)]
+             method = "pearson", # correlation method
+             hist.col = "#00AFBB",
+             density = FALSE,  # show density plots
+             ellipses = FALSE # show correlation ellipses
+             )
+```
+
+```{r}
+pairs.panels(model_2_clean[,c(2,81:88)],   #Target, Census [,c(2:7,9:10)]
+             method = "pearson", # correlation method
+             hist.col = "#00AFBB",
+             density = FALSE,  # show density plots
+             ellipses = FALSE # show correlation ellipses
+             )
+```
+
+
+
 **C. Mini EDA for candidate features**
 
+```{r}
+
+
+
+```
+
 **1. Categorical Variable w Target variable ** 
+
+```{r}
+
+
+ggplot(model_2_clean, aes(x = DISTRICT, y = Target_robbery_method)) +
+  geom_boxplot(fill = "#00AFBB") +
+  labs(x = "District", y = "Robbery Method Target") +
+  theme_minimal()
+
+
+```
+
+
 
 **2. Numeric Variable w Target variable ** 
 
@@ -1176,6 +1291,8 @@ str(temp)
 #sum(is.na(temp)) #결측치 개수
 summary(temp) 
 ```
+
+
 ```{r}
 temp <- na.omit(temp)
 summary(temp) 
