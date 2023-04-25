@@ -1,0 +1,288 @@
+
+```{r init, include=F}
+#nammin revise: add library options
+library(ezids)
+library(readr) #install & load 
+library(ggplot2)
+library(DBI) #SQL
+library(magrittr)
+library(dplyr)  #for data manipulation.
+library(tidyr) #for data tidying.
+library(tidyverse)
+library(graphics) 
+library(gridExtra) #graph arrange(positioning)
+library(data.table)
+```
+
+```{r setup, include=FALSE}
+#nammin revise: knitr::opts_chunk$set(echo = TRUE) > combined as following
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
+options(scipen=9999, digits = 3) 
+#options(scientific=T, digits = 3) 
+#options(scipen = 9999) # suppress scientific notation
+```
+
+```{r}
+model_2_clean <- 
+  readr::read_rds("Robbery_clean_p2_model_2.Rds")
+```
+
+
+```{r}
+df = model_2_clean[, c(1:9)]
+colnames(df)
+```
+
+```{r}
+head(df, 5)
+str(df)
+count(df,Target_robbery_method, sort=FALSE)
+```
+
+
+```{r}
+library(psych)
+pairs.panels(model_2_clean[,c(1:10)], 
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+```{r}
+pairs.panels(model_2_clean[,c(1, 11:20)], 
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+```{r}
+pairs.panels(model_2_clean[,c(1, 21:30)], 
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+```{r}
+pairs.panels(model_2_clean[,c(1,31:40)], 
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+```{r}
+pairs.panels(model_2_clean[,c(1,41:50)], 
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+
+```{r}
+pairs.panels(model_2_clean[,c(1,51:60)], 
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+```{r}
+pairs.panels(model_2_clean[,c(1,61:70)], 
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+```{r}
+pairs.panels(model_2_clean[,c(1,71:80)], 
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+
+```{r}
+pairs.panels(model_2_clean[,c(1,80:86)], 
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+
+**Two-way tests**
+
+```{r}
+contable = xtabs( ~ Target_robbery_method + Date_cat, data = df)
+contable
+test1 = chisq.test(contable)
+test1
+```
+
+```{r}
+contable = xtabs( ~ Target_robbery_method + Day_cat_2, data = df)
+contable
+test3 = chisq.test(contable)
+test3
+```
+
+```{r}
+contable = xtabs( ~ Target_robbery_method + Period_cat_num_2, data = df)
+contable
+test6 = chisq.test(contable)
+test6
+```
+
+```{r}
+contable = xtabs( ~ Target_robbery_method + Season, data = df)
+contable
+test7 = chisq.test(contable)
+test7
+```
+```{r}
+contable = xtabs( ~ Target_robbery_method + SHIFT, data = df)
+contable
+test8 = chisq.test(contable)
+test8
+```
+**Model**
+
+```{r}
+set.seed(8343)
+sample <- sample(c(TRUE, FALSE), nrow(model_2_clean), replace=TRUE, prob=c(0.7,0.3))
+df_train <- model_2_clean[sample, ]
+df_test  <- model_2_clean[!sample, ]
+
+nrow(df_train)
+nrow(df_test )
+```
+
+```{r}
+Model <- glm(Target_robbery_method ~  DISTRICT + + Period_cat_num_2 + Season + Month +SHIFT + drove_alone_pct + Earning_mean + Income_mean + labor_forces_rate + mean_travel_time + unemployment_rate, data = df_train, family = "binomial")
+sum_model = summary(Model)
+sum_model
+
+#Model <- glm(Target_robbery_method ~  DISTRICT + + Period_cat_num_2 + Season + Month +SHIFT + drove_alone_pct + Earning_mean + Income_mean + labor_forces_rate + mean_travel_time + unemployment_rate, data = df_train, family = "binomial")
+```
+
+```{r}
+expcoeff = exp(coef(Model))
+expcoeff
+```
+
+
+```{r}
+# environment for model evaluation 
+library(ROCR)
+library(grid)
+library(broom)
+#library(caret)
+library(tidyr)
+library(dplyr)
+library(scales)
+library(ggplot2)
+#library(ggthemr)
+library(ggthemes)
+library(gridExtra)
+library(data.table)
+
+loadPkg("pROC") 
+```
+
+```{r}
+df_train$prediction <- predict( Model, newdata = df_train, type = "response" )
+df_test$prediction  <- predict( Model, newdata = df_test , type = "response" )
+```
+
+```{r}
+# distribution of the prediction score grouped by known outcome
+ggplot( df_train, aes( prediction, color = Target_robbery_method ) ) + geom_density( size = 1 ) +
+ggtitle( "Train Set's Predicted Score" ) 
+
+```
+
+```{r}
+ggplot( df_test, aes( prediction, color = Target_robbery_method ) ) + geom_density( size = 1 ) +
+ggtitle( "Test Set's Predicted Score" ) 
+```
+
+
+```{r}
+h <- roc(Target_robbery_method~prediction, data=df_train)
+plot(h)
+proc_auc2(df_train, 'Target_robbery_method', 'prediction')
+```
+
+```{r}
+h <- roc(Target_robbery_method~prediction, data=df_test)
+plot(h)
+proc_auc2(df_test, 'Target_robbery_method', 'prediction')
+```
+```{r}
+
+ConfusionMatrixInfo <- function( data, predict, actual, cutoff )
+{	
+	# extract the column ;
+	# relevel making 1 appears on the more commonly seen position in 
+	# a two by two confusion matrix	
+	predict <- data[[predict]]
+	actual  <- relevel( as.factor( data[[actual]] ), "1" )
+	
+	result <- data.table( actual = actual, predict = predict )
+
+	# calculating each pred falls into which category for the confusion matrix
+	result[ , type := ifelse( predict >= cutoff & actual == 1, "TP",
+					  ifelse( predict >= cutoff & actual == 0, "FP", 
+					  ifelse( predict <  cutoff & actual == 1, "FN", "TN" ) ) ) %>% as.factor() ]
+
+	# jittering : can spread the points along the x axis 
+	plot <- ggplot( result, aes( actual, predict, color = type ) ) + 
+			geom_violin( fill = "white", color = NA ) +
+			geom_jitter( shape = 1 ) + 
+			geom_hline( yintercept = cutoff, color = "blue", alpha = 0.6 ) + 
+			scale_y_continuous( limits = c( 0, 1 ) ) + 
+			scale_color_discrete( breaks = c( "TP", "FN", "FP", "TN" ) ) + # ordering of the legend 
+			guides( col = guide_legend( nrow = 2 ) ) + # adjust the legend to have two rows  
+			ggtitle( sprintf( "Confusion Matrix with Cutoff at %.2f", cutoff ) )
+
+	return( list( data = result, plot = plot ) )
+}
+
+proc_auc2 <- function(data, outcome_var, predictor_var) {
+    pROC::auc(pROC::roc_(data, outcome_var, predictor_var))
+}
+```
+
+```{r}
+cm_info <- ConfusionMatrixInfo( data = df_test, predict = "prediction", 
+                                actual = "Target_robbery_method", cutoff = .5 )
+
+cm_info$plot
+```
+
+```{r}
+temp <- cm_info$data
+TP <- nrow(subset(temp,subset = temp$type == 'TP'))
+TN <- nrow(subset(temp,subset = temp$type == 'TN'))
+FP <- nrow(subset(temp,subset = temp$type == 'FP'))
+FN <- nrow(subset(temp,subset = temp$type == 'FN'))
+
+Total <-nrow(df_test)
+Accuracy <-  (TP + TN) / Total
+Precision  <- TP / (TP + FP)
+Recall_rate <- TP / (TP + FN)
+Specificity <- TN / (TN + FP)
+F1 <- 2 *(Precision)*(Recall_rate)/(Precision + Recall_rate)
+
+Accuracy
+Precision
+Recall_rate
+F1
+```
+
