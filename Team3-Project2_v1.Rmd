@@ -68,12 +68,8 @@ In this project, our team plans to use the same dataset to conduct a logistic re
 By utilizing GLM models to answer these questions and incorporating the previous project's findings, we hope to gain a deeper understanding of the underlying factors that affect robbery rates in Washington D.C and provide insights that can inform future policy decisions related to crime prevention and public safety
 
 **SMART questions of project 2**
-1. What factors influence (positive or negative) on a robbery method?
-2. What factors influence (positive or negative) on the time of robbery crime?
-3. Can we predict the likelihood of a robbery being committed based on the time of day or day of the week? (GLM)
-4. Can we predict the likelihood of a robbery being solved based on the location and method used? (GLM)
-5. How do external factors such as temperature, precipitation, and daylight hours affect the likelihood of a robbery occurring? (GLM)
-6. Can we predict dangerous (used guns)  or tricky robberies (need longer time) before police are dispatched?  (GLM)
+1. What are the most important features that influence the police efficiency (clearance rate) and also the severity of robbery (method)?                     
+2. How accurately can we predict the clearance rate and method based on these features?
 
 
 What should police predict when receiving calls from victims?
@@ -363,14 +359,12 @@ model_2_clean <- select(Robbery_clean_p2_model,cols_m2)
 #str(model_2_clean)
 ```
 
-Temporary Saved current data.
 
 ```{r}
 #Dataframe Save and load
 #readr::write_rds(model_2_clean, "Robbery_clean_p2_model_2.Rds")
 
-model_2_clean <- 
-  readr::read_rds("Robbery_clean_p2_model_2.Rds")
+#model_2_clean <- readr::read_rds("Robbery_clean_p2_model_2.Rds")
 ```
 
 `r nrow(model_2_clean)`records,`r ncol(model_2_clean)` variables in data 2.
@@ -438,12 +432,6 @@ plot <- ggplot(temp_gr, aes(DISTRICT, avg)) + geom_line() + labs(x="district", y
   labs(title="Avg.Clearance time by district") + scale_x_discrete(limits=c("1","2","3","4","5","6","7")) + geom_point() #with 3-D: ggplot(temp_gr, aes(x, y, colour = Period_cat))  
 
 plot
-
-#PIVOT with Target
-#prop.1 <- with(model_1_clean, table(SHIFT, Clearance_rate)) %>% 
-#          prop.table(margin = 1)  #Percent
-#xkabledply(prop.1*100, title = "% of High Clearance_time by SHIFT")
-
 ```
 Hour.
 
@@ -567,10 +555,6 @@ Check before moving on to the next.
 
 ```{r}
 count(model_1_clean,Target_Clearance_time_f, sort=FALSE)
-#PIVOT with Target
-#prop.1 <- with(model_1_clean, table(Target_Clearance_time_f, Target_clr_gun)) %>% 
-#          prop.table(margin = 1)  #Percent
-#prop.1*100
 ```
 
 ```{r}
@@ -1217,84 +1201,6 @@ pairs.panels(model_2_clean[,c("Target_robbery_method","DISTRICT","Period_cat_num
 ```
 
 
-A quick correlation plot matrix for first 10 Census variables.
-
-```{r}
-pairs.panels(model_2_clean[,c(2,13:20)],   #Target, Census [,c(2:7,9:10)]
-             method = "pearson", # correlation method
-             hist.col = "#00AFBB",
-             density = FALSE,  # show density plots
-             ellipses = FALSE # show correlation ellipses
-             )
-```
-
-
-
-```{r}
-pairs.panels(model_2_clean[,c(2,21:30)],   #Target, Census [,c(2:7,9:10)]
-             method = "pearson", # correlation method
-             hist.col = "#00AFBB",
-             density = FALSE,  # show density plots
-             ellipses = FALSE # show correlation ellipses
-             )
-```
-
-```{r}
-pairs.panels(model_2_clean[,c(2,31:40)],   #Target, Census [,c(2:7,9:10)]
-             method = "pearson", # correlation method
-             hist.col = "#00AFBB",
-             density = FALSE,  # show density plots
-             ellipses = FALSE # show correlation ellipses
-             )
-```
-
-```{r}
-pairs.panels(model_2_clean[,c(2,41:50)],   #Target, Census [,c(2:7,9:10)]
-             method = "pearson", # correlation method
-             hist.col = "#00AFBB",
-             density = FALSE,  # show density plots
-             ellipses = FALSE # show correlation ellipses
-             )
-```
-
-
-```{r}
-pairs.panels(model_2_clean[,c(2,51:60)],   #Target, Census [,c(2:7,9:10)]
-             method = "pearson", # correlation method
-             hist.col = "#00AFBB",
-             density = FALSE,  # show density plots
-             ellipses = FALSE # show correlation ellipses
-             )
-```
-
-```{r}
-pairs.panels(model_2_clean[,c(2,61:70)],   #Target, Census [,c(2:7,9:10)]
-             method = "pearson", # correlation method
-             hist.col = "#00AFBB",
-             density = FALSE,  # show density plots
-             ellipses = FALSE # show correlation ellipses
-             )
-```
-
-```{r}
-pairs.panels(model_2_clean[,c(2,71:80)],   #Target, Census [,c(2:7,9:10)]
-             method = "pearson", # correlation method
-             hist.col = "#00AFBB",
-             density = FALSE,  # show density plots
-             ellipses = FALSE # show correlation ellipses
-             )
-```
-
-```{r}
-pairs.panels(model_2_clean[,c(2,81:88)],   #Target, Census [,c(2:7,9:10)]
-             method = "pearson", # correlation method
-             hist.col = "#00AFBB",
-             density = FALSE,  # show density plots
-             ellipses = FALSE # show correlation ellipses
-             )
-```
-
-
 
 **C. Mini EDA for candidate features**
 
@@ -1354,13 +1260,6 @@ df_test$prediction  <- predict( Model, newdata = df_test , type = "response" )
 ```
 
 
-```{r}
-# distribution of the prediction score grouped by known outcome
-#ggplot( df_train, aes( prediction, color = Target_robbery_method ) ) + geom_density( size = 1 ) +
-#ggtitle( "Train Set's Predicted Score" ) + 
-#scale_color_economist( name = "data", labels = c( "Lower time", "Higher time" ) ) + 
-#theme_economist()
-```
 
 ```{r}
 # distribution of the prediction score grouped by known outcome
@@ -1385,41 +1284,6 @@ ROC 65.9 (final)
 h <- roc(Target_robbery_method~prediction, data=df_test)
 plot(h)
 auc(h)
-```
-
-```{r}
-
-ConfusionMatrixInfo <- function( data, predict, actual, cutoff )
-{	
-	# extract the column ;
-	# relevel making 1 appears on the more commonly seen position in 
-	# a two by two confusion matrix	
-	predict <- data[[predict]]
-	actual  <- relevel( as.factor( data[[actual]] ), "1" )
-	
-	result <- data.table( actual = actual, predict = predict )
-
-	# calculating each pred falls into which category for the confusion matrix
-	result[ , type := ifelse( predict >= cutoff & actual == 1, "TP",
-					  ifelse( predict >= cutoff & actual == 0, "FP", 
-					  ifelse( predict <  cutoff & actual == 1, "FN", "TN" ) ) ) %>% as.factor() ]
-
-	# jittering : can spread the points along the x axis 
-	plot <- ggplot( result, aes( actual, predict, color = type ) ) + 
-			geom_violin( fill = "white", color = NA ) +
-			geom_jitter( shape = 1 ) + 
-			geom_hline( yintercept = cutoff, color = "blue", alpha = 0.6 ) + 
-			scale_y_continuous( limits = c( 0, 1 ) ) + 
-			scale_color_discrete( breaks = c( "TP", "FN", "FP", "TN" ) ) + # ordering of the legend 
-			guides( col = guide_legend( nrow = 2 ) ) + # adjust the legend to have two rows  
-			ggtitle( sprintf( "Confusion Matrix with Cutoff at %.2f", cutoff ) )
-
-	return( list( data = result, plot = plot ) )
-}
-
-proc_auc2 <- function(data, outcome_var, predictor_var) {
-    pROC::auc(pROC::roc_(data, outcome_var, predictor_var))
-}
 ```
 
 Accurcy, Precision, Recall when cut-off 0.5
