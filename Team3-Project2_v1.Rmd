@@ -1,5 +1,5 @@
 ---
-title: "Analyzing the Impact of COVID-19 Lockdown on Robbery Rates in Washington D.C: A Logistic Regression Approach"
+title: "Logistic Regression Analysis of Robbery Rates in Washington D.C During COVID-19 Lockdown: Identifying Factors that Influence Police Efficiency and Severity of Robbery"
 author: "Muhannad Alwhebie, Liang Gao, Nammin Woo"
 date: "`r Sys.Date()`"
 output:
@@ -46,6 +46,8 @@ library(data.table)
 
 loadPkg("pROC") 
 ```
+
+
 ```{r setup, include=FALSE}
 #nammin revise: knitr::opts_chunk$set(echo = TRUE) > combined as following
 knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
@@ -59,13 +61,23 @@ options(scipen=9999, digits = 3)
 
 ## Abstract
 
-## Introduction
+## Introduction 
 
-This project builds upon the previous exploratory data analysis (EDA) project that examined the impact of COVID-19 lockdown on robbery rates in Washington D.C using a dataset of roughly 8000 observations. The previous project found that robbery frequency changed throughout the pandemic, and there may be underlying socio-economic factors contributing to the change in robbery patterns. The study also supported the findings of the Boman and Gallupe (2020) study that violent crime increased during the lockdown period. Additionally, the number of robberies in Autumn dramatically increased during the lockdown period.
+This project aims to build upon the previous exploratory data analysis project that examined the impact of COVID-19 lockdown on robbery rates in Washington D.C. Our objective is to conduct a logistic regression analysis to identify the characteristics and connections between different variables and predict future trends in robbery rates. To gain a more comprehensive understanding of the underlying factors affecting robbery rates, we plan to incorporate demographic and economic data from the Census Bureau, such as median household income, poverty rate, and education level, as predictor variables in our GLM model.
 
-In this project, our team plans to use the same dataset to conduct a logistic regression analysis to identify the characteristics and connections between different variables and predict future trends in robbery rates. Our team aims to answer SMART questions related to robbery rates, such as the factors that influence robbery methods and time, the likelihood of a robbery being committed or solved based on location and method used, and the impact of external factors such as temperature, precipitation, and daylight hours. We will also attempt to predict the likelihood of dangerous or tricky robberies before the police are dispatched.
+We will use two target variables in our logistic regression analysis: Target_Clearance_time (whether the robbery took longer to clear) and Target_robbery_method (whether the robbery involved a gun or another type of weapon). By analyzing the relationships between these target variables and other explanatory variables, we hope to gain insights into the factors that affect clearance time and the use of guns in robberies.
 
-By utilizing GLM models to answer these questions and incorporating the previous project's findings, we hope to gain a deeper understanding of the underlying factors that affect robbery rates in Washington D.C and provide insights that can inform future policy decisions related to crime prevention and public safety
+The previous project found changes in robbery frequency during the pandemic, with underlying socio-economic factors potentially contributing to the patterns. Additionally, it supported the findings of the Boman and Gallupe (2020) study that violent crime increased during the lockdown period, with a dramatic increase in the number of robberies during Autumn. By utilizing GLM models to answer SMART questions related to robbery rates, we aim to gain a deeper understanding of the underlying factors that affect robbery rates in Washington D.C and provide insights that can inform future policy decisions related to crime prevention and public safety.
+
+**Our SMART questions for this project include:**
+
+1. What are the most important features that influence the clearance time and severity of robbery methods?
+2. How accurately can we predict the clearance time and method based on these features?
+3. What is the impact of incorporating economic and demographic data from the Census in the model, compared to using only crime data?
+4. What are some potential use cases for this model in the field of law enforcement, and how could it be integrated into existing crime prevention strategies?
+5. What are the most significant predictors of the target variable (Target_robbery_method) in this logistic regression model, and how do they affect the likelihood of the occurrence of the target variable?
+6. How accurate is the decision tree model in predicting the Target_robbery_method, and how does it compare to the logistic regression model?
+
 
 **SMART questions of project 2**
 1. What are the most important features that influence the police efficiency (clearance rate) and also the severity of robbery (method)?                     
@@ -79,9 +91,29 @@ What should police predict when receiving calls from victims?
 3.  What if police could forecast whether the dangerous districts is?
 
 
+1. What factors have the strongest impact on the clearance time of robbery incidents, based on the model results?
+2.How does the inclusion of economic and demographic data from the Census in the model affect its predictive power compared to using only crime data?
+3.What are some potential use cases for this model in the field of law enforcement, and how could it be integrated into existing crime prevention strategies? 
+
+4.What are the most significant predictors of the target variable (Target_robbery_method) in this logistic regression model, and how do they affect the likelihood of the occurrence of the target variable?
+
 
 ## Methodology
 
+Data Sourcing:
+The dataset used in this study was sourced from the Open Data DC repository, which contains a collection of publicly available datasets related to various aspects of life in Washington D.C. Specifically, we used a dataset containing roughly 8000 observations of robbery incidents in the District of Columbia between January 2019 and December 2022. In addition, we obtained the Economic Characteristics of DC Census Tracts surveyed by the U.S. government using the CENSUS_TRACT variable.
+
+Data Preprocessing:
+After obtaining the necessary data, we first aggregated the census bureau data to the original dataset to include economic characteristics. Next, we defined two target variables, Target_Clearance_time and Target_robbery_method, which represent whether the robbery took longer to clear and whether a gun was used or not, respectively. We then conducted exploratory data analysis (EDA) to gain insights into the data and performed pre-processing to prepare the data for predictive modeling.
+
+Feature Selection:
+We used correlation analysis to identify the features that have the strongest relationship with the target variables. We also performed EDA on the target variables to understand their distribution and behavior with respect to the candidate features.
+
+Model Building and Evaluation:
+We used a split/train method to build a predictive model using the selected features. We evaluated the model's performance using various metrics such as accuracy, precision, recall, and F1 score. We also interpreted the model to gain insights into the most important features that influence the target variables.
+
+
+Overall, the methodology used in this study involved data sourcing, preprocessing, feature selection, model building, and evaluation. The inclusion of economic characteristics data and the use of machine learning techniques can help to provide insights into the underlying factors that influence robbery rates in Washington D.C.
 
 ### 1. Data sourcing
 
@@ -105,7 +137,7 @@ Robbery_clean <-
 #write.csv(Robbery, "Robbery.csv", row.names=FALSE)
 ```
 
-To delve into predictive modeling, we decided to add a few new features that come from census bureau. 
+To help into predictive modeling, we decided to add a few new features that come from census bureau. 
 
 ```{r}
 #Import
@@ -179,11 +211,13 @@ head(Robbery_clean_p2_add,5)
 
 ### 2. Define target variables
 
-Define three target variables. 
+To define the target variables for our predictive modeling, we first need to understand what we are trying to predict. In this case, we are interested in predicting the clearance time and the method of robbery.
 
+The first target variable we will define is "Target_Clearance_time." This variable will indicate whether a robbery took longer to clear or not. The clearance time will be defined as the time between the initial report of the robbery and the time when the case is closed. If the clearance time is longer than the median clearance time for all cases in the dataset, the value for Target_Clearance_time will be 1, indicating that the robbery took longer to clear. If the clearance time is shorter than the median, the value for Target_Clearance_time will be 0, indicating that the robbery did not take longer to clear.
 
-1. Target_Clearance_time: whether Longer time or not 
-2. Target_robbery_method: Gun or other
+The second target variable we will define is "Target_robbery_method." This variable will indicate whether the robbery was committed with a gun or with some other weapon or no weapon at all. We will use the "Gun" variable from the dataset to determine the robbery method. If the weapon used was a gun, the value for Target_robbery_method will be 1, indicating that the robbery was committed with a gun. If the weapon used was anything else, the value for Target_robbery_method will be 0, indicating that the robbery was committed with some other weapon or no weapon at all.
+
+By defining these two target variables, we can build predictive models that will allow us to identify the factors that contribute to longer clearance times and gun-related robberies. We can then use this information to develop strategies for reducing these types of crimes in Washington D.C.
 
 
 ```{r}
@@ -268,6 +302,7 @@ Robbery_clean_p2_add$Period_cat_num_2[Period_cat == 'Pre'] <- 0
 Robbery_clean_p2_add$Period_cat_num_2[Period_cat == 'Lock'] <- 1
 Robbery_clean_p2_add$Period_cat_num_2[Period_cat  == 'Post'] <- 0
 detach(Robbery_clean_p2_add)
+summary(Robbery_clean_p2_add$Period_cat_num_2)
 ```
 
 
@@ -978,7 +1013,7 @@ target30: Area under the curve: 0.625
 Lockdown make the robbery difficult (long time to clear), Over>1, Lock(1) increase prob. high_diff_rob
 
 ```{r}
-expcoeff = exp(coef(Logit_model_2))
+expcoeff = exp(coef(Logit_model_1))
 expcoeff
 #xkabledply( as.table(expcoeff), title = "Exponential of coefficients in model_1" )
 ```
@@ -1084,7 +1119,7 @@ str(model_2_clean)
 ```
 
 
-**1. EDA for pick the input variables **
+**1. Feature Selection **
 
 ```{r}
 
@@ -1098,7 +1133,7 @@ pairs.panels(model_2_clean[,c(2,3:12)],   #[,c(2:7,9:10)]
 ```
 
 
-**A. Correlation- original variables (w.o Census)**
+
 
 **A. Correlation- original variables (w.o Census)**
 
@@ -1129,6 +1164,8 @@ pairs.panels(model_2_clean[,c(1, 11:20)],
              ellipses = FALSE 
              )
 ```
+
+
 ```{r}
 pairs.panels(model_2_clean[,c(1, 21:30)], 
              method = "pearson", 
@@ -1137,6 +1174,8 @@ pairs.panels(model_2_clean[,c(1, 21:30)],
              ellipses = FALSE 
              )
 ```
+
+
 ```{r}
 pairs.panels(model_2_clean[,c(1,31:40)], 
              method = "pearson", 
@@ -1145,6 +1184,8 @@ pairs.panels(model_2_clean[,c(1,31:40)],
              ellipses = FALSE 
              )
 ```
+
+
 ```{r}
 pairs.panels(model_2_clean[,c(1,41:50)], 
              method = "pearson", 
@@ -1154,6 +1195,7 @@ pairs.panels(model_2_clean[,c(1,41:50)],
              )
 ```
 
+
 ```{r}
 pairs.panels(model_2_clean[,c(1,51:60)], 
              method = "pearson", 
@@ -1162,6 +1204,9 @@ pairs.panels(model_2_clean[,c(1,51:60)],
              ellipses = FALSE 
              )
 ```
+
+
+
 ```{r}
 pairs.panels(model_2_clean[,c(1,61:70)], 
              method = "pearson", 
@@ -1170,6 +1215,9 @@ pairs.panels(model_2_clean[,c(1,61:70)],
              ellipses = FALSE 
              )
 ```
+
+
+
 ```{r}
 pairs.panels(model_2_clean[,c(1,71:80)], 
              method = "pearson", 
@@ -1178,6 +1226,8 @@ pairs.panels(model_2_clean[,c(1,71:80)],
              ellipses = FALSE 
              )
 ```
+
+
 
 ```{r}
 pairs.panels(model_2_clean[,c(1,80:86)], 
