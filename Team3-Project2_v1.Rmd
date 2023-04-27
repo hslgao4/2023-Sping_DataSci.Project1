@@ -1,5 +1,5 @@
 ---
-title: "Logistic Regression Analysis of Robbery Rates in Washington D.C During COVID-19 Lockdown: Identifying Factors that Influence Police Efficiency and Severity of Robbery"
+title: "Analysis of Robbery Rates in Washington D.C: Identifying Factors that Influence Police Efficiency and Severity of Robbery"
 author: "Muhannad Alwhebie, Liang Gao, Nammin Woo"
 date: "`r Sys.Date()`"
 output:
@@ -57,9 +57,10 @@ options(scipen=9999, digits = 3)
 ```
 
 
-# The Effect of COVID-19 Lockdown on Robbery Incidents in Washington D.C.
 
 ## Abstract
+
+
 
 ## Introduction 
 
@@ -69,51 +70,40 @@ We will use two target variables in our logistic regression analysis: Target_Cle
 
 The previous project found changes in robbery frequency during the pandemic, with underlying socio-economic factors potentially contributing to the patterns. Additionally, it supported the findings of the Boman and Gallupe (2020) study that violent crime increased during the lockdown period, with a dramatic increase in the number of robberies during Autumn. By utilizing GLM models to answer SMART questions related to robbery rates, we aim to gain a deeper understanding of the underlying factors that affect robbery rates in Washington D.C and provide insights that can inform future policy decisions related to crime prevention and public safety.
 
+**Goal of this project: Building models to identify factors that influence police efficiency and severity of robbery.**
+
+
+
 **Our SMART questions for this project include:**
 
 1. What are the most important features that influence the clearance time and severity of robbery methods?
+
+
 2. How accurately can we predict the clearance time and method based on these features?
-3. What is the impact of incorporating economic and demographic data from the Census in the model, compared to using only crime data?
-4. What are some potential use cases for this model in the field of law enforcement, and how could it be integrated into existing crime prevention strategies?
-5. What are the most significant predictors of the target variable (Target_robbery_method) in this logistic regression model, and how do they affect the likelihood of the occurrence of the target variable?
-6. How accurate is the decision tree model in predicting the Target_robbery_method, and how does it compare to the logistic regression model?
 
 
-**SMART questions of project 2**
-1. What are the most important features that influence the police efficiency (clearance rate) and also the severity of robbery (method)?                     
-2. How accurately can we predict the clearance rate and method based on these features?
 
-
-What should police predict when receiving calls from victims?
-
-1. What if police could predict dangerous robberies (used "GUN") based on information that were gathered at the beginning?   
-2. What if police could forecast how tricky the robberies would be(need longer time to clear) before being dispatched?
-3.  What if police could forecast whether the dangerous districts is?
-
-
-1. What factors have the strongest impact on the clearance time of robbery incidents, based on the model results?
-2.How does the inclusion of economic and demographic data from the Census in the model affect its predictive power compared to using only crime data?
-3.What are some potential use cases for this model in the field of law enforcement, and how could it be integrated into existing crime prevention strategies? 
-
-4.What are the most significant predictors of the target variable (Target_robbery_method) in this logistic regression model, and how do they affect the likelihood of the occurrence of the target variable?
 
 
 ## Methodology
 
-Data Sourcing:
+*Data Sourcing*:
+
 The dataset used in this study was sourced from the Open Data DC repository, which contains a collection of publicly available datasets related to various aspects of life in Washington D.C. Specifically, we used a dataset containing roughly 8000 observations of robbery incidents in the District of Columbia between January 2019 and December 2022. In addition, we obtained the Economic Characteristics of DC Census Tracts surveyed by the U.S. government using the CENSUS_TRACT variable.
 
-Data Preprocessing:
+*Data Preprocessing:*
+
 After obtaining the necessary data, we first aggregated the census bureau data to the original dataset to include economic characteristics. Next, we defined two target variables, Target_Clearance_time and Target_robbery_method, which represent whether the robbery took longer to clear and whether a gun was used or not, respectively. We then conducted exploratory data analysis (EDA) to gain insights into the data and performed pre-processing to prepare the data for predictive modeling.
 
-Feature Selection:
+*Feature Selection:*
 We used correlation analysis to identify the features that have the strongest relationship with the target variables. We also performed EDA on the target variables to understand their distribution and behavior with respect to the candidate features.
 
-Model Building and Evaluation:
+*Model Building and Evaluation:*
 We used a split/train method to build a predictive model using the selected features. We evaluated the model's performance using various metrics such as accuracy, precision, recall, and F1 score. We also interpreted the model to gain insights into the most important features that influence the target variables.
 
 
 Overall, the methodology used in this study involved data sourcing, preprocessing, feature selection, model building, and evaluation. The inclusion of economic characteristics data and the use of machine learning techniques can help to provide insights into the underlying factors that influence robbery rates in Washington D.C.
+
 
 ### 1. Data sourcing
 
@@ -213,9 +203,9 @@ head(Robbery_clean_p2_add,5)
 
 To define the target variables for our predictive modeling, we first need to understand what we are trying to predict. In this case, we are interested in predicting the clearance time and the method of robbery.
 
-The first target variable we will define is "Target_Clearance_time." This variable will indicate whether a robbery took longer to clear or not. The clearance time will be defined as the time between the initial report of the robbery and the time when the case is closed. If the clearance time is longer than the median clearance time for all cases in the dataset, the value for Target_Clearance_time will be 1, indicating that the robbery took longer to clear. If the clearance time is shorter than the median, the value for Target_Clearance_time will be 0, indicating that the robbery did not take longer to clear.
+The first target variable we will define is `Target_Clearance_time.` This variable will indicate whether a robbery took longer to clear or not. The clearance time will be defined as the time between the initial report of the robbery and the time when the case is closed. If the clearance time is longer than the median clearance time for all cases in the dataset, the value for `Target_Clearance_time` will be 1, indicating that the robbery took longer to clear. If the clearance time is shorter than the median, the value for `Target_Clearance_time` will be 0, indicating that the robbery did not take longer to clear.
 
-The second target variable we will define is "Target_robbery_method." This variable will indicate whether the robbery was committed with a gun or with some other weapon or no weapon at all. We will use the "Gun" variable from the dataset to determine the robbery method. If the weapon used was a gun, the value for Target_robbery_method will be 1, indicating that the robbery was committed with a gun. If the weapon used was anything else, the value for Target_robbery_method will be 0, indicating that the robbery was committed with some other weapon or no weapon at all.
+The second target variable we will define is `Target_robbery_method.` This variable will indicate whether the robbery was committed with a gun or with some other weapon or no weapon at all. We will use the "Gun" variable from the dataset to determine the robbery method. If the weapon used was a gun, the value for Target_robbery_method will be 1, indicating that the robbery was committed with a gun. If the weapon used was anything else, the value for `Target_robbery_method` will be 0, indicating that the robbery was committed with some other weapon or no weapon at all.
 
 By defining these two target variables, we can build predictive models that will allow us to identify the factors that contribute to longer clearance times and gun-related robberies. We can then use this information to develop strategies for reducing these types of crimes in Washington D.C.
 
@@ -243,7 +233,7 @@ plot <- ggplot(data=Robbery_clean_p2_add, aes(Clearance_rate)) +
 plot
 ```
 
-We defined Long clearance time as over 85 min (75% quantile, Target_Clearance_time = 1).
+We defined Long clearance time as over 85 min (75% quantile, `Target_Clearance_time` = 1).
 But will check detail in the stage of modeling.
 
 ```{r}
@@ -256,16 +246,20 @@ c(1), c(0))
 
 ```
 
+
+
 At this stage, we have three levels for for `Target_Clearance_time`. 
   + `Target_Clearance_time`=1 : Need more than 85 min (75% quantile) 
   + `Target_Clearance_time`=0 : Need less than 85 min 
-  +  NA: Outliers (Need extremely long time (avg 2.5 days), will not use in modeling
+  +  NA: `Outliers` (Need extremely long time (avg 2.5 days), will not use in modeling
+
+
 
 ```{r}
 count(Robbery_clean_p2_add,Target_Clearance_time, sort=FALSE)
 ```
 
-2. Target_robbery_method: Gun or other
+2. `Target_robbery_method`: Gun or other
 
 ```{r}
 # 1
@@ -292,7 +286,7 @@ Robbery_clean_p2_add <-
 
 From this section, we will check only input/target variables that are used for modeling.
 
-Check data type of original variables (w.o Census)
+Check data type of original variables (With or Without Census Track)
 
 A. To use `Period_cat` in our model, convert into two categories (Lock-down=1, other=0).
 
@@ -335,15 +329,21 @@ Verified conversion of data type.
 str(select(Robbery_clean_p2_add,col_org)) 
 ```
 
+
+
 C. Changed Census variables into numeric. 
+
 
 ```{r}
 #15 vars 
 cols <- c('females_employed_rate','hs_10000_to_14999_pct','hs_100000_to_149999_pct','hs_15000_to_24999_pct','hs_150000_to_194999_pct','hs_200000__pct','hs_25000_to_34999_pct','hs_35000_to_49999_pct','hs_50000_to_74999_pct','hs_75000_to_99999_pct','hs_Less_than_10000_pct','hs_own_children_6_to_17_labor_force_pct','hs_own_children_6_to_17_pct','hs_own_children_under_6_labor_force_pct','hs_own_children_under_6_pct')  #array
 Robbery_clean_p2_add[cols] <- sapply(Robbery_clean_p2_add[cols],as.numeric)
 ```
+
+
 Verified conversion of data type.
 `r nrow(Robbery_clean_p2_add)`records in data.
+
 
 ```{r}
 str(select(Robbery_clean_p2_add,cols)) 
@@ -364,6 +364,8 @@ Robbery_clean_p2_add$Hour <- hour(Robbery_clean_p2_add$START_DATE)
 co = c('START_DATE','Hour')
 head(select(Robbery_clean_p2_add,co),5)
 ```
+
+
 Temporary Saved current data.
 
 ```{r}
@@ -383,6 +385,7 @@ To finalize modeling data 2 for `Target_robbery_method`, we do not need to exclu
 ```{r}
 count(Robbery_clean_p2_model,Target_robbery_method, sort=FALSE)
 ```
+
 
 And finalize modeling data 2 , 1 target and 86 input candidate variables (including 78 variables are Census).
 
@@ -421,7 +424,10 @@ model_1_clean <- select(Robbery_clean_p2_model,cols_m1)
 ```
 
 
-Exclude **Outliers of `Target_Clearance_time`** having value Na. (We did Unusual Observations test using outlierKD2 in project 1, and outliers of Clearance_rate that have extremely large value were converted into Na)
+
+Exclude **Outliers of `Target_Clearance_time`** having value Na. (We did Unusual Observations test using `outlierKD2` in project 1, and outliers of Clearance_rate that have extremely large value were converted into Na).
+
+
 
 ```{r}
 model_1_clean <-  subset(model_1_clean, Target_Clearance_time == 0 |Target_Clearance_time == 1)
@@ -433,9 +439,13 @@ count(model_1_clean,Target_Clearance_time, sort=FALSE)
 #str(model_1_clean)
 ```
 
+
+
+
 **Let Check detail about `Target_Clearance_time` by examining relationship with independent vars.**
 
-Distribution of Clearance_rate after cleansing Outliers.
+Distribution of `Clearance_rate` after cleansing outliers.
+
 
 ```{r}
 plot <- ggplot(data=model_1_clean, aes(Clearance_rate)) + 
@@ -446,13 +456,16 @@ plot <- ggplot(data=model_1_clean, aes(Clearance_rate)) +
   labs(title="Clearance_rate frequency") 
 plot
 ```
+
+
 ```{r}
 summary(model_1_clean$Clearance_rate)
 ```
 
-First, display avg.Clearance_time per categorical variables that have many levels.
 
-DISTRICT.
+First, display `avg.Clearance_time` per categorical variables that have many levels.
+
+Average of clearance_time v.s DISTRICT
 
 ```{r}
 #TWO var Groupby(mean of target by X category groups)
@@ -468,6 +481,11 @@ plot <- ggplot(temp_gr, aes(DISTRICT, avg)) + geom_line() + labs(x="district", y
 
 plot
 ```
+
+
+
+
+
 Hour.
 
 ```{r}
@@ -483,6 +501,9 @@ plot <- ggplot(temp_gr, aes(Hour, avg)) + geom_line() + labs(x="Hour", y="Avg.Cl
 
 plot
 ```
+
+
+
 Month.
 
 ```{r}
