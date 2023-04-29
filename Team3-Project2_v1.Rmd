@@ -15,58 +15,41 @@ output:
 ---
 
 ```{r init, include=F}
-#nammin revise: add library options
 library(ezids)
-library(readr) #install & load 
+library(readr) 
 library(ggplot2)
-library(DBI) #SQL
+library(DBI) 
 library(magrittr)
-library(dplyr)  #for data manipulation.
-library(tidyr) #for data tidying.
+library(dplyr)  
+library(tidyr) 
 library(tidyverse)
 library(graphics) 
-library(gridExtra) #graph arrange(positioning)
+library(gridExtra) 
 library(data.table)
-```
-
-```{r}
-# environment for model evaluation 
 library(ROCR)
 library(grid)
 library(broom)
-#library(caret)
-library(tidyr)
-library(dplyr)
 library(scales)
-library(ggplot2)
-#library(ggthemr)
 library(ggthemes)
-library(gridExtra)
-library(data.table)
-
+library(psych)
 loadPkg("pROC") 
+loadPkg("rpart")
 ```
 
 
 ```{r setup, include=FALSE}
-#nammin revise: knitr::opts_chunk$set(echo = TRUE) > combined as following
 knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
 options(scipen=9999, digits = 3) 
-#options(scientific=T, digits = 3) 
-#options(scipen = 9999) # suppress scientific notation
 ```
-
-
 
 ## Abstract
 
 
-
 ## Introduction 
 
-This project aims to build upon the previous exploratory data analysis project that examined the impact of COVID-19 lockdown on robbery rates in Washington D.C. Our objective is to conduct a logistic regression analysis to identify the characteristics and connections between different variables and predict future trends in robbery rates. To gain a more comprehensive understanding of the underlying factors affecting robbery rates, we plan to incorporate demographic and economic data from the Census Bureau, such as median household income, poverty rate, and education level, as predictor variables in our GLM model.
+This project aims to build upon the previous exploratory data analysis project that examined the impact of COVID-19 lockdown on robbery rates in Washington D.C. In this project, our objective is to identify factors that influence police efficiency and severity of robbery crime. To gain a more comprehensive understanding of the underlying factors affecting robbery rates, we plan to incorporate demographic and economic data from the Census Bureau, such as median household income, poverty rate, and education level, as predictor variables in our model.
 
-We will use two target variables in our logistic regression analysis: Target_Clearance_time (whether the robbery took longer to clear) and Target_robbery_method (whether the robbery involved a gun or another type of weapon). By analyzing the relationships between these target variables and other explanatory variables, we hope to gain insights into the factors that affect clearance time and the use of guns in robberies.
+We will use two target variables in our analysis: Target_Clearance_time (whether the robbery took longer to clear) and Target_robbery_method (whether the robbery involved a gun or another type of weapon). By analyzing the relationships between these target variables and other explanatory variables, we hope to gain insights into the factors that affect clearance time and the use of guns in robberies.
 
 The previous project found changes in robbery frequency during the pandemic, with underlying socio-economic factors potentially contributing to the patterns. Additionally, it supported the findings of the Boman and Gallupe (2020) study that violent crime increased during the lockdown period, with a dramatic increase in the number of robberies during Autumn. By utilizing GLM models to answer SMART questions related to robbery rates, we aim to gain a deeper understanding of the underlying factors that affect robbery rates in Washington D.C and provide insights that can inform future policy decisions related to crime prevention and public safety.
 
@@ -78,11 +61,7 @@ The previous project found changes in robbery frequency during the pandemic, wit
 
 1. What are the most important features that influence the clearance time and severity of robbery methods?
 
-
 2. How accurately can we predict the clearance time and method based on these features?
-
-
-
 
 
 ## Methodology
@@ -110,43 +89,26 @@ Overall, the methodology used in this study involved data sourcing, preprocessin
 Load the latest data in project 1. The outliers of clearance_rate have been removed (converted into NA) in Robbery_clean.
 
 ```{r}
-#
-#1. Robbery_230303.Rds: original
-#2. Robbery_clean_230303.Rds : outlier transformed to NA
-
-#Use this code to load
 Robbery <- 
   readr::read_rds("Robbery_230303.Rds")
 
 Robbery_clean <- 
   readr::read_rds("Robbery_clean_230303.Rds")
-
-
-#Export again into csv (for addon some keyvalue for census track)
-#write.csv(Robbery_clean, "Robbery_clean.csv", row.names=FALSE)
-#write.csv(Robbery, "Robbery.csv", row.names=FALSE)
 ```
 
 To help into predictive modeling, we decided to add a few new features that come from census bureau. 
-
 ```{r}
 #Import
 Robbery_clean_p2 = data.frame(read.csv("Robbery_clean_p2.csv"))
 Robbery_p2 = data.frame(read.csv("Robbery_p2.csv"))
 Census_eco = data.frame(read.csv("ACS_Economic_Census_clean.csv"))
 
-#Import
-#str(Robbery)  
 ```
 
 This is original dataset we will use.
 
 ```{r}
 head(Robbery_clean_p2,5) 
-#str(Robbery_clean_p2)
-#colnames(Robbery)
-#ncol(Robbery)
-#nrow(Robbery)
 ```
 
 
@@ -227,7 +189,6 @@ By defining these two target variables, we can build predictive models that will
 cols <- c('Clearance_rate','METHOD')
 #summary(select(Robbery,cols))
 summary(select(Robbery_clean_p2_add,cols))        
-#knitr::kable(summary(select(Robbery,cols)), format = "markdown", caption="Summary #statistics of Robbery between 2019 to 2022 in D.C")
 
 ```
 
@@ -248,10 +209,6 @@ We defined Long clearance time as over 85 min (75% quantile, `Target_Clearance_t
 But will check detail in the stage of modeling.
 
 ```{r}
-#Create target vars with Conditional statement
-#Clearance_rate METHOD DISTRICT
-
-# 1
 Robbery_clean_p2_add$Target_Clearance_time <- ifelse(Robbery_clean_p2_add$Clearance_rate >= 85,
 c(1), c(0))
 
@@ -495,8 +452,6 @@ plot
 
 
 
-
-
 Hour.
 
 ```{r}
@@ -678,13 +633,11 @@ Day_Cat does not have relationship so we will not use that.
 
 
 ```{r}
-#str(model_1_clean)
-library(psych) # pair plots with histogram on diagonal and other options
-pairs.panels(model_1_clean[,c(91,3:12)],   #91: Final Target
-             method = "pearson", # correlation method
+pairs.panels(model_1_clean[,c(91,3:12)],   
+             method = 
              hist.col = "#00AFBB",
-             density = FALSE,  # show density plots
-             ellipses = FALSE # show correlation ellipses
+             density = FALSE,  
+             ellipses = FALSE 
              )
 ```
 Try to find statistical clue by Chi-square test.
@@ -694,8 +647,6 @@ DISTRICT.
 
 ```{r}
 contable = table(model_1_clean$DISTRICT, model_1_clean$Target_Clearance_time_f)
-# contable # the contingency table
-#knitr::kable(contable, format = "markdown", caption="Contingency table")
 chitest = chisq.test(contable)
 chitest
 
@@ -711,8 +662,6 @@ SHIFT.
 
 ```{r}
 contable = table(model_1_clean$SHIFT, model_1_clean$Target_Clearance_time_f)
-# contable # the contingency table
-#knitr::kable(contable, format = "markdown", caption="Contingency table")
 chitest = chisq.test(contable)
 chitest
 
@@ -721,8 +670,6 @@ Period_cat_num_2
 
 ```{r}
 contable = table(model_1_clean$Period_cat_num_2, model_1_clean$Target_Clearance_time_f)
-# contable # the contingency table
-#knitr::kable(contable, format = "markdown", caption="Contingency table")
 chitest = chisq.test(contable)
 chitest
 
@@ -731,8 +678,6 @@ A few variables like `Hour` is not significant (corr = 0.02). But we will use it
 
 ```{r}
 contable = table(model_1_clean$Hour, model_1_clean$Target_Clearance_time_f)
-# contable # the contingency table
-#knitr::kable(contable, format = "markdown", caption="Contingency table")
 chitest = chisq.test(contable)
 chitest
 
@@ -745,11 +690,11 @@ chitest
 (#1~8) drove_alone_pct,Earning_mean,Earning_median_fmale_wk
 
 ```{r}
-pairs.panels(model_1_clean[,c(91,13:20)],   #Target, Census [,c(2:7,9:10)]
-             method = "pearson", # correlation method
+pairs.panels(model_1_clean[,c(91,13:20)],   
+             method = "pearson", 
              hist.col = "#00AFBB",
-             density = FALSE,  # show density plots
-             ellipses = FALSE # show correlation ellipses
+             density = FALSE,  
+             ellipses = FALSE 
              )
 ```
 
@@ -758,11 +703,11 @@ pairs.panels(model_1_clean[,c(91,13:20)],   #Target, Census [,c(2:7,9:10)]
 
 
 ```{r}
-pairs.panels(model_1_clean[,c(91,21:30)],   #Target, Census [,c(2:7,9:10)]
-             method = "pearson", # correlation method
+pairs.panels(model_1_clean[,c(91,21:30)],  
+             method = "pearson", 
              hist.col = "#00AFBB",
-             density = FALSE,  # show density plots
-             ellipses = FALSE # show correlation ellipses
+             density = FALSE, 
+             ellipses = FALSE 
              )
 ```
 ```{r}
@@ -773,53 +718,53 @@ str(model_1_clean)
 (#19~28) hs_200000__pct,hs_25000_to_34999_pct,hs_Less_than_10000_pct
 
 ```{r}
-pairs.panels(model_1_clean[,c(91,31:40)],   #Target, Census [,c(2:7,9:10)]
-             method = "pearson", # correlation method
+pairs.panels(model_1_clean[,c(91,31:40)],  
+             method = "pearson", 
              hist.col = "#00AFBB",
-             density = FALSE,  # show density plots
-             ellipses = FALSE # show correlation ellipses
+             density = FALSE,  
+             ellipses = FALSE 
              )
 ```
 
 (#29~38) hs_200000__pct,hs_25000_to_34999_pct,hs_Less_than_10000_pct
 
 ```{r}
-pairs.panels(model_1_clean[,c(91,41:50)],   #Target, Census [,c(2:7,9:10)]
-             method = "pearson", # correlation method
+pairs.panels(model_1_clean[,c(91,41:50)],  
+             method = "pearson", 
              hist.col = "#00AFBB",
-             density = FALSE,  # show density plots
-             ellipses = FALSE # show correlation ellipses
+             density = FALSE,  
+             ellipses = FALSE 
              )
 ```
 
 ```{r}
-pairs.panels(model_1_clean[,c(1,41:50)],   #Target, Census [,c(2:7,9:10)]
-             method = "pearson", # correlation method
+pairs.panels(model_1_clean[,c(1,41:50)],   
+             method = "pearson", 
              hist.col = "#00AFBB",
-             density = FALSE,  # show density plots
-             ellipses = FALSE # show correlation ellipses
+             density = FALSE, 
+             ellipses = FALSE 
              )
 ```
 
 (#39~48)
 
 ```{r}
-pairs.panels(model_1_clean[,c(91,51:60)],   #Target, Census [,c(2:7,9:10)]
-             method = "pearson", # correlation method
+pairs.panels(model_1_clean[,c(91,51:60)],  
+             method = "pearson", 
              hist.col = "#00AFBB",
-             density = FALSE,  # show density plots
-             ellipses = FALSE # show correlation ellipses
+             density = FALSE, 
+             ellipses = FALSE 
              )
 ```
 
 (#49~58) pct_all_people_under18_below_poverty
 
 ```{r}
-pairs.panels(model_1_clean[,c(91,61:70)],   #Target, Census [,c(2:7,9:10)]
-             method = "pearson", # correlation method
+pairs.panels(model_1_clean[,c(91,61:70)],  
+             method = "pearson", 
              hist.col = "#00AFBB",
-             density = FALSE,  # show density plots
-             ellipses = FALSE # show correlation ellipses
+             density = FALSE,  
+             ellipses = FALSE 
              )
 ```
 
@@ -829,21 +774,20 @@ Sales_and_office_occupations_pct
 
 
 ```{r}
-pairs.panels(model_1_clean[,c(91,71:80)],   #Target, Census [,c(2:7,9:10)]
-             method = "pearson", # correlation method
+pairs.panels(model_1_clean[,c(91,71:80)],   
+             method = "pearson",
              hist.col = "#00AFBB",
-             density = FALSE,  # show density plots
-             ellipses = FALSE # show correlation ellipses
+             density = FALSE,  # show correlation ellipses
              )
 ```
 (#69~78) 
 
 ```{r}
-pairs.panels(model_1_clean[,c(91,81:89)],   #Target, Census [,c(2:7,9:10)]
-             method = "pearson", # correlation method
+pairs.panels(model_1_clean[,c(91,81:89)],  
+             method = "pearson", 
              hist.col = "#00AFBB",
-             density = FALSE,  # show density plots
-             ellipses = FALSE # show correlation ellipses
+             density = FALSE,  
+             ellipses = FALSE 
              )
 ```
 
@@ -955,24 +899,6 @@ ggplot(model_1_clean, aes(worked_from_home_pct, fill = Target_Clearance_time_f))
 
 **2. Build model **
 
-```{r}
-# environment for model evaluation 
-library(ROCR)
-library(grid)
-library(broom)
-#library(caret)
-library(tidyr)
-library(dplyr)
-library(scales)
-library(ggplot2)
-#library(ggthemr)
-library(ggthemes)
-library(gridExtra)
-library(data.table)
-
-loadPkg("pROC") 
-```
-
 Define evaluation functions.
 
 ```{r}
@@ -1013,14 +939,8 @@ proc_auc2 <- function(data, outcome_var, predictor_var) {
 **A. The Train and Test data are: **
 
 ```{r}
-#Dataframe Save and load
-#readr::write_rds(model_1_clean, "Robbery_clean_p2_model_1.Rds")
-
 model_1_clean <- 
   readr::read_rds("Robbery_clean_p2_model_1.Rds")
-
-#str(model_1_clean)
-
 ```
 
 ```{r}
@@ -1050,9 +970,8 @@ data_test_model_1   <- model_1_clean[!sample, ]
 nrow(data_train_model_1)
 nrow(data_test_model_1)
 
-#count(data_train_model_1,Target_Clearance_time, sort=FALSE)
-#count(data_test_model_1,Target_Clearance_time, sort=FALSE)
 ```
+
 ```{r}
 count(data_train_model_1,Target_Clearance_time_f)
 ```
@@ -1167,16 +1086,6 @@ cm_info$plot
 ```
 
 ```{r}
-# Accuracy    = (TP + TN) / Total
-# Precision   = TP / (TP + FP)
-# Recall rate = TP / (TP + FN) = Sensitivity
-# Specificity = TN / (TN + FP)
-# F1_score is the "harmonic mean" of precision and recall
-#          F1 = 2 (precision)(recall)/(precision + recall)
-#fpr = (y_pred == 1)[y_test == 0].sum() / (y_test == 0).sum() FP/(TN+FP)
-#fnr = (y_pred == 0)[y_test == 1].sum() / (y_test == 1).sum() FN/(TP+FN)
-
-
 temp <- cm_info$data
 TP <- nrow(subset(temp,subset = temp$type == 'TP'))
 TN <- nrow(subset(temp,subset = temp$type == 'TN'))
@@ -1184,7 +1093,6 @@ FP <- nrow(subset(temp,subset = temp$type == 'FP'))
 FN <- nrow(subset(temp,subset = temp$type == 'FN'))
 
 Total <-nrow(data_test_model_1)
-#print(cm_info$data)
 
 ```
 
@@ -1242,6 +1150,8 @@ F1
 FPR
 FNR
 ```
+
+
 Performance of Positive (target=1, High time)
 ```{r}
 TP <- nrow(subset(df_pos,subset = df_pos$type == 'TP'))
@@ -1273,9 +1183,6 @@ Data: model_2_clean
 Target: `Target_robbery_method` 
 
 ```{r}
-#Dataframe Save and load
-#readr::write_rds(model_2_clean, "Robbery_clean_p2_model_2.Rds")
-
 model_2_clean <- 
   readr::read_rds("Robbery_clean_p2_model_2.Rds")
 ```
@@ -1287,35 +1194,13 @@ count(model_2_clean,Target_robbery_method)
 
 ```{r}
 str(model_2_clean)
-
 ```
 
 
 **1. Feature Selection **
 
-```{r}
-
-library(psych) # pair plots with histogram on diagonal and other options
-pairs.panels(model_2_clean[,c(2,3:12)],   #[,c(2:7,9:10)]
-             method = "pearson", # correlation method
-             hist.col = "#00AFBB",
-             density = FALSE,  # show density plots
-             ellipses = FALSE # show correlation ellipses
-             )
-```
-
-
-
 
 **A. Correlation- original variables (w.o Census)**
-
-```{r}
-model_2_clean <- 
-  readr::read_rds("Robbery_clean_p2_model_2.Rds")
-head(model_2_clean, 5)
-str(model_2_clean)
-count(model_2_clean,Target_robbery_method, sort=FALSE)
-```
 
 ```{r}
 library(psych)
@@ -1422,8 +1307,6 @@ pairs.panels(model_2_clean[,c("Target_robbery_method","DISTRICT","Period_cat_num
              )
 ```
 
-
-
 **C. Mini EDA for candidate features**
 
 Features that are used in final model
@@ -1448,16 +1331,14 @@ Season + Month +SHIFT
 DISTRICT.
 
 ```{r}
-#TWO var Groupby(mean of target by X category groups)
 temp <-  model_2_clean %>% group_by(DISTRICT) %>%
                    summarise(avg = mean(as.numeric(Target_robbery_method), na.rm = TRUE),.groups = 'drop') 
 
 arrange(temp, DISTRICT) 
 temp_gr <- data.frame(temp)
 
-#Make chart (scatter)
 plot <- ggplot(temp_gr, aes(DISTRICT, avg)) + geom_line() + labs(x="district", y="Target_robbery_method(% of GUN)") +
-  labs(title="Prop. of Gun method by district") + scale_x_discrete(limits=c("1","2","3","4","5","6","7")) + geom_point() #with 3-D: ggplot(temp_gr, aes(x, y, colour = Period_cat))  
+  labs(title="Prop. of Gun method by district") + scale_x_discrete(limits=c("1","2","3","4","5","6","7")) + geom_point() 
 
 plot
 ```
@@ -1513,9 +1394,7 @@ df_test$prediction  <- predict( Model, newdata = df_test , type = "response" )
 ```
 
 
-
 ```{r}
-# distribution of the prediction score grouped by known outcome
 ggplot( df_train, aes( prediction, color = Target_robbery_method ) ) + geom_density( size = 1 ) +
 ggtitle( "Train Set's Predicted Score" ) 
 ```
@@ -1549,7 +1428,6 @@ cm_info$plot
 ```
 
 ```{r}
-
 temp <- cm_info$data
 TP <- nrow(subset(temp,subset = temp$type == 'TP'))
 TN <- nrow(subset(temp,subset = temp$type == 'TN'))
@@ -1655,15 +1533,9 @@ data_test_model_1   <- model_2_clean[!sample, ]
 nrow(data_train_model_1)
 nrow(data_test_model_1)
 
-#count(data_train_model_1,Target_Clearance_time, sort=FALSE)
-#count(data_test_model_1,Target_Clearance_time, sort=FALSE)
 ```
 
 **B. Train the model**
-
-```{r}
-loadPkg("rpart") # Classification trees, rpart(formula, data=, method=,control=) 
-```
 
 Use same variables with logistic regression.
 
@@ -1671,10 +1543,6 @@ Use same variables with logistic regression.
 set.seed(4321)
 
 Tree_model_gun <- rpart(Target_robbery_method ~ DISTRICT + + Period_cat_num_2 + Season + Month +SHIFT + drove_alone_pct + Earning_mean + Income_mean + labor_forces_rate + mean_travel_time + unemployment_rate + walked_pct + Sales_and_office_occupations_pct + public_transportation_pct, data=data_train_model_1, method="class", control = list(maxdepth = 30))
-#
-#rpart.control(maxdepth = 30, minsplit = 20, minbucket = round(minsplit/3), cp = 0.01, maxcompete = 4, maxsurrogate = 5, usesurrogate = 2, xval = 10, surrogatestyle = 0)
-#, minsplit = 1, cp = 0.01
-
 ```
 
 Check if tree is pruned.
@@ -1771,13 +1639,6 @@ cm_info$plot
 ```
 
 ```{r}
-# Accuracy    = (TP + TN) / Total
-# Precision   = TP / (TP + FP)
-# Recall rate = TP / (TP + FN) = Sensitivity
-# Specificity = TN / (TN + FP)
-# F1_score is the "harmonic mean" of precision and recall
-#          F1 = 2 (precision)(recall)/(precision + recall)
-
 temp <- cm_info$data
 TP <- nrow(subset(temp,subset = temp$type == 'TP'))
 TN <- nrow(subset(temp,subset = temp$type == 'TN'))
@@ -1785,8 +1646,6 @@ FP <- nrow(subset(temp,subset = temp$type == 'FP'))
 FN <- nrow(subset(temp,subset = temp$type == 'FN'))
 
 Total <-nrow(data_test_model_1)
-#print(cm_info$data)
-
 ```
 
 ```{r}
