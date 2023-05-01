@@ -34,6 +34,7 @@ library(ggthemes)
 library(psych)
 loadPkg("pROC") 
 loadPkg("rpart")
+library(corrplot)
 ```
 
 
@@ -633,12 +634,14 @@ Day_Cat does not have relationship so we will not use that.
 
 
 ```{r}
+
 pairs.panels(model_1_clean[,c(91,3:12)],   
-             method = 
+             method = "pearson",
              hist.col = "#00AFBB",
              density = FALSE,  
              ellipses = FALSE 
              )
+
 ```
 Try to find statistical clue by Chi-square test.
 Test result shows significance.
@@ -840,17 +843,20 @@ There are some NAs but not much amount, so converted that with average value of 
 temp <- temp %>%
                mutate_all(~ifelse(is.na(.), mean(., na.rm = TRUE), .))
 summary(temp)
+
 ```
 
 ```{r}
 
-temp_1 = temp[,c(1:10)]
+
+temp_1= temp[,c(1:7)]
 cor_cs= cor(temp_1)
 corrplot.mixed(cor_cs)
 
 ```
 
 Finally picked 18 features as an input.
+
 
 ```{r, results='hide'}
 
