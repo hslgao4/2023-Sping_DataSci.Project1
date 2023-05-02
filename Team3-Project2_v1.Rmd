@@ -67,77 +67,97 @@ The previous project found changes in robbery frequency during the pandemic, wit
 
 ## Methodology
 
-*Data Sourcing*:
+**Data Sourcing**:
 
 The dataset used in this study was sourced from the Open Data DC repository, which contains a collection of publicly available datasets related to various aspects of life in Washington D.C. Specifically, we used a dataset containing roughly 8000 observations of robbery incidents in the District of Columbia between January 2019 and December 2022. In addition, we obtained the Economic Characteristics of DC Census Tracts surveyed by the U.S. government using the CENSUS_TRACT variable.
 
-*Data Preprocessing:*
+**Data Pre-processing:**
 
 After obtaining the necessary data, we first aggregated the census bureau data to the original dataset to include economic characteristics. Next, we defined two target variables, Target_Clearance_time and Target_robbery_method, which represent whether the robbery took longer to clear and whether a gun was used or not, respectively. We then conducted exploratory data analysis (EDA) to gain insights into the data and performed pre-processing to prepare the data for predictive modeling.
 
-*Feature Selection:*
+**Feature Selection:**
 We used correlation analysis to identify the features that have the strongest relationship with the target variables. We also performed EDA on the target variables to understand their distribution and behavior with respect to the candidate features.
 
-*Model Building and Evaluation:*
+**Model Building and Evaluation:**
 We used a split/train method to build a predictive model using the selected features. We evaluated the model's performance using various metrics such as accuracy, precision, recall, and F1 score. We also interpreted the model to gain insights into the most important features that influence the target variables.
 
 
 Overall, the methodology used in this study involved data sourcing, preprocessing, feature selection, model building, and evaluation. The inclusion of economic characteristics data and the use of machine learning techniques can help to provide insights into the underlying factors that influence robbery rates in Washington D.C.
 
 
-### 1. Data sourcing
+### Ⅰ. Data sourcing
 
-Load the latest data in project 1. The outliers of clearance_rate have been removed (converted into NA) in Robbery_clean.
+We initially used the latest data in project 1, Robbery_clean. The outliers of clearance_rate have been removed (converted into NA).
 
 ```{r}
+
+# the latest data of Project 1
 Robbery <- 
   readr::read_rds("Robbery_230303.Rds")
 
+# the latest data of Project 1 (The outliers of clearance_rate have been removed (converted into NA))
 Robbery_clean <- 
   readr::read_rds("Robbery_clean_230303.Rds")
-```
 
-To help into predictive modeling, we decided to add a few new features that come from census bureau. 
-```{r}
-#Import
+
+#Import data of project 2: started from Robbery_clean (added CENSUS_TRACT for aggregating census feature)
 Robbery_clean_p2 = data.frame(read.csv("Robbery_clean_p2.csv"))
 Robbery_p2 = data.frame(read.csv("Robbery_p2.csv"))
 Census_eco = data.frame(read.csv("ACS_Economic_Census_clean.csv"))
 
 ```
 
-This is original dataset we will use.
 
 ```{r}
-head(Robbery_clean_p2,5) 
+#head(Robbery_clean_p2,5) 
+xkabledply(Robbery_clean_p2[1:4,], title = "First Four Rows of initial main Data (Robbery)")
 ```
 
+Following 10 original features were mainly used as predictors in this project 2.
 
-This is census data we will add on to original dataset.
-All robbery records in our dataset have its own location information that the robberies are occured.
+* `Period_cat_num`: a categorical variable indicating whether the robbery occurred before, during, or after the COVID-19 lockdown period
 
-We used location variable `DISTRICT` in project 1 meaning Police Service Area, and decided the additional location variable `CENSUS_TRACT` meaning statistical subdivisions of a 
-county.(Population from 1,200 to 1,800)
+* `Month`: the month the robbery incident occurred (Transformed: Month_2, Month_3)
+* `Season`: the season in which the robbery incident occurred
+* `Date_cat`: a categorical variable indicating whether the robbery incident occurred at the beginning, middle, or end of the month
+* `SHIFT`: a categorical variable indicating the shift during which the robbery incident occurred, which can be "DAY," "EVENING," or "NIGHT"
+* `Day_cat`: the day of the week the robbery incident occurred, represented as an integer
+* `Day_cat_2`: a categorical variable indicating whether the robbery incident occurred on a weekday or weekend
+* `METHOD`: a categorical variable indicating the method used in the robbery, which can be "GUN," "KNIFE," or "OTHER"
+* `DISTRICT`: the police district where the robbery incident occurred, represented as an integer
+* `Clearance_rate`: the percentage of robbery incidents that were cleared by the police
 
-And using `CENSUS_TRACT`, we additionally got the **specific Economic Characteristics of DC Census Tracts** that are surveyed from U.S government. 
+And to help with predictive modeling, we decided to add a few new features that come from the Census. 
+This is census Tracts data that we will add on to original dataset.
 
-Economic Characteristics are about Employment, Commuting, Occupation, Income, Health Insurance, Poverty,etc., and it is basaed on the most current release of data from the American Community Survey (ACS) about economic characteristics. (2020 Census Tract boundaries)
 
 ```{r}
-head(Robbery_clean_p2,5) 
-#str(Census_eco)
+#head(Robbery_clean_p2,5) 
+xkabledply(Census_eco[1:4,], title = "First Four Rows of Census Tracts Dataframe")
 ```
+
+All robbery records in our dataset have its own location information that the robberies are occurred.
+We already used location variable `DISTRICT` in project 1 meaning Police Service Area, and additionally used location variable `CENSUS_TRACT` meaning statistical subdivisions of a county.(Population from 1,200 to 1,800)
+
+Specifically, we used the **specific Economic Characteristics of DC Census Tracts** that are surveyed from U.S government instead of directly using `CENSUS_TRACT`.
+
+Economic Characteristics are about Employment, Commuting, Occupation, Income, Health Insurance, Poverty,etc., and it is based on the most current release of data from the American Community Survey (ACS) about economic characteristics. (2020 Census Tract boundaries). 
+
+All Census features were Wrangled through follows:  ​
+  - Checked basic things of each feature (existence of NaN, distribution,etc.)​
+  - Name of features were changed for being easily recognized for analysis.​
+  - Considering purpose of analysis, all features are re-scaled as proportion and dummified (ex. percentage of workers who are using carpool for commuting) or summarized (Mean, Median).
+  
 
 ```{r}
 #columns that are necessary to anaysis
 #ex_cols <- c('OBJECTID','STATEFP','COUNTYFP','CENSUS_TRACT','GEOID')
-temp <- select(Census_eco,-OBJECTID,-STATEFP,-COUNTYFP,-CENSUS_TRACT,-GEOID)
-
-knitr::kable(temp, format = "markdown", caption="Overall summary statistics of DC Census Tract(Economic Characteristics)")
+#temp <- select(Census_eco,-OBJECTID,-STATEFP,-COUNTYFP,-CENSUS_TRACT,-GEOID)
+#knitr::kable(temp, format = "markdown", caption="Overall summary statistics of DC Census Tract(Economic Characteristics)")
 
 ```
 
-Aggregate census bureau data to the original dataset.
+Census features were aggregated to initial main data by the key of `CENSUS_TRACT`.
 
 ```{r}
 #Add new features joining with key
@@ -145,35 +165,28 @@ temp <- select(Census_eco,-OBJECTID,-STATEFP,-COUNTYFP,-GEOID)
 Robbery_clean_p2_add <- merge(x = Robbery_clean_p2, y = temp, by = "CENSUS_TRACT", all.x = TRUE)
 ```
 
-```{r}
-count(Robbery_clean_p2,SHIFT)
-```
+The dataset consists of `r nrow(Robbery_clean_p2_add)` observations and `r ncol(Robbery_clean_p2_add)` variables. including `r ncol(Census_eco)-5` Census Economic Characteristics features.
+Number of Census features by the categories are belows:
+ + INCOME:	20
+ + POVERTY: 19 
+ + INDUSTRY: 12 
+ + EMPLOYMENT: 9
+ + COMMUTING TO WORK:	8
+ + OCCUPATION: 5
+ + CLASS OF WORKER: 4
 
 
-```{r}
-head(temp,5) 
-```
-
-
-Verify the aggregation (number of rows and columns)
-
-```{r}
+```{r, results='hide'}
+#count(Robbery_clean_p2,SHIFT)
+#head(temp,5) 
 nrow(Robbery_clean_p2)
 nrow(Robbery_clean_p2_add)
-```
-
-
-```{r}
 ncol(Robbery_clean_p2) #Before aggregation
 ncol(Census_eco)-5     #Census 
 ncol(Robbery_clean_p2_add) #After aggregation(add Cesnsus)
 ```
 
-```{r}
-head(Robbery_clean_p2_add,5) 
-```
-
-### 2. Define target variables
+### Ⅱ. Define target variables
 
 To define the target variables for our predictive modeling, we first need to understand what we are trying to predict. In this case, we are interested in predicting the clearance time and the method of robbery.
 
@@ -189,11 +202,13 @@ By defining these two target variables, we can build predictive models that will
 #columns to analyse 
 cols <- c('Clearance_rate','METHOD')
 #summary(select(Robbery,cols))
-summary(select(Robbery_clean_p2_add,cols))        
+#summary(select(Robbery_clean_p2_add,cols))   
+
+knitr::kable(summary(select(Robbery_clean_p2_add,cols)), format = "markdown", caption="T1.Summary statistics of Target variables")
 
 ```
 
-1. `Target_Clearance_time`: whether need Longer time to clear or not
+**1. `Target_Clearance_time` implys Efficiency of Police or Difficulty of incident, whether need Longer time to clear or not.**
 
 
 ```{r}
@@ -202,62 +217,89 @@ plot <- ggplot(data=Robbery_clean_p2_add, aes(Clearance_rate)) +
                  fill="lightgrey", 
                  alpha = .7,bins = 30) + 
   labs(x="Clearance_rate", y="Frequency") +
-  labs(title="Clearance_rate frequency") 
+  labs(title="C1.Clearance_rate frequency") 
 plot
 ```
 
-We defined Long clearance time as over 85 min (75% quantile, `Target_Clearance_time` = 1).
-But will check detail in the stage of modeling.
+```{r}
+#TWO var Groupby(mean of target by X category groups)
+temp <-  Robbery_clean_p2_add %>% group_by(DISTRICT) %>%
+                   summarise(avg = mean(Clearance_rate, na.rm = TRUE),.groups = 'drop')  #Targe(%): mean( as.numeric(Target_Clearance_time)
+
+arrange(temp, DISTRICT) 
+temp_gr <- data.frame(temp)
+
+#Make chart (scatter)
+plot <- ggplot(temp_gr, aes(DISTRICT, avg)) + geom_line() + labs(x="district", y="Avg.Clearance time(min)") +
+  labs(title="C2.Avg.Clearance time by district") + scale_x_discrete(limits=c("1","2","3","4","5","6","7")) + geom_point() #with 3-D: ggplot(temp_gr, aes(x, y, colour = Period_cat))  
+
+plot
+```
+
+Chart C1 shows `Clearance_rate` is highly right skewed, and Chart C2 displaying `avg.Clearance_time` per `DISTRICT` exhibits 
+clearance time of robbery visually distinguished by the threshold 40~50 min(similar to average). 
+So, We defined Long clearance time as over 40 min and short clearance time as less than 40 min.
 
 ```{r}
+
+#Final target
+Robbery_clean_p2_add$Target_Clearance_time_f <- ifelse(Robbery_clean_p2_add$Clearance_rate >= 40,
+c(1), c(0))
+
+#This one is optional (over Q3)
 Robbery_clean_p2_add$Target_Clearance_time <- ifelse(Robbery_clean_p2_add$Clearance_rate >= 85,
 c(1), c(0))
 
+#This one is optional (GUN&Clear)
+Robbery_clean_p2_add$Target_clr_gun <- ifelse((Robbery_clean_p2_add$Target_Clearance_time_f ==1) & (Robbery_clean_p2_add$METHOD =='GUN'), c(1),c(0))
+
+
+count(Robbery_clean_p2_add,Target_Clearance_time_f, sort=FALSE)
+
 ```
 
 
-
-At this stage, we have three levels for for `Target_Clearance_time`. 
-  + `Target_Clearance_time`=1 : Need more than 85 min (75% quantile) 
-  + `Target_Clearance_time`=0 : Need less than 85 min 
-  +  NA: `Outliers` (Need extremely long time (avg 2.5 days), will not use in modeling
-
+Our first modeling target, `Target_Clearance_time` has three levels as follows:  
+  + `Target_Clearance_time`=1 : Need more than 40 min (near to the average clearance time)
+  + `Target_Clearance_time`=0 : Need less than 40 min 
+  +  NA: `Outliers` (Need extremely long time (avg 2.5 days).
 
 
-```{r}
-count(Robbery_clean_p2_add,Target_Clearance_time, sort=FALSE)
-```
 
-2. `Target_robbery_method`: Gun or other
+**2. `Target_robbery_method` indicates Severity of robbery, whether firearm, Gun was used or not.**
 
 ```{r}
 # 1
 Robbery_clean_p2_add$Target_robbery_method <- ifelse(Robbery_clean_p2_add$METHOD == 'GUN',c(1), c(0))
-
-```
-
-```{r}
 count(Robbery_clean_p2_add,Target_robbery_method, sort=FALSE)
 ```
 
-Temporary Saved current data.
+Our second modeling target, `Target_robbery_method` has two levels as follows:  
+  + `Target_robbery_method`=1 : Gun was used for robbery.
+  + `Target_robbery_method`=0 : Knife or Other weapons were used,
+
 
 ```{r}
+#Temporary Saved current data.
+
 #Dataframe Save and load
 #readr::write_rds(Robbery_clean_p2_add, "Robbery_clean_p2_add.Rds")
 
-Robbery_clean_p2_add <- 
-  readr::read_rds("Robbery_clean_p2_add.Rds")
+#Can load the dataset of this stage by letting active below code 
+#Robbery_clean_p2_add <- 
+#  readr::read_rds("Robbery_clean_p2_add.Rds")
 ```
 
 
-### 3. Pre-processing for predictive modeling
+### Ⅲ. Pre-processing for predictive modeling
 
 From this section, we will check only input/target variables that are used for modeling.
 
 Check data type of original variables (With or Without Census Track)
 
-A. To use `Period_cat` in our model, convert into two categories (Lock-down=1, other=0).
+**1. Revise/Add features**
+
+A. In terms of using `Period_cat_num` to precit target, we simplifed the period into two categories (Lock-down=1, other=0).
 
 ```{r}
 attach(Robbery_clean_p2_add)
@@ -265,158 +307,157 @@ Robbery_clean_p2_add$Period_cat_num_2[Period_cat == 'Pre'] <- 0
 Robbery_clean_p2_add$Period_cat_num_2[Period_cat == 'Lock'] <- 1
 Robbery_clean_p2_add$Period_cat_num_2[Period_cat  == 'Post'] <- 0
 detach(Robbery_clean_p2_add)
-summary(Robbery_clean_p2_add$Period_cat_num_2)
+#summary(Robbery_clean_p2_add$Period_cat_num_2)
 ```
 
 
-```{r}
-col_org <- c('Date_cat','Day_cat','Day_cat_2','DISTRICT','Month','Period_cat_num_2','Season','SHIFT','METHOD','Clearance_rate','Target_robbery_method','Target_Clearance_time')
+B. `Hour` Start time of police clearance was created.
 
+```{r}
+#colnames(Robbery_clean_p2_model)
+library(lubridate)
+#head(Robbery_clean_p2_add$START_DATE,5)
+Robbery_clean_p2_add$Hour <- hour(Robbery_clean_p2_add$START_DATE)
 ```
 
-Check data type of original variables (w.o Census)
+```{r, results='hide'}
+co = c('START_DATE','Hour')
+head(select(Robbery_clean_p2_add,co),5)
+```
+
+Types of original predictors (w.o Census) are below. Some categorical features needs to be **converted into Factor**. for logistic regression.  
 
 ```{r}
+col_org <- c('Date_cat','Day_cat','Day_cat_2','DISTRICT','Month','Period_cat_num_2','Season','SHIFT','Hour','METHOD')
+
 str(select(Robbery_clean_p2_add,col_org)) 
-
 #sum_list <- summary(Robbery_clean_p2_add)   
 #write.csv(sum_list, "sum_list.csv", row.names=FALSE)
 ```
 
-B. Changed categorical variables (including target) into factor. 
+**2. Change data types of features**
+
+A. So, a few categorical variables including targets were Changed into factor. 
 
 ```{r}
-cols <- c('Date_cat','Day_cat_2','Season','SHIFT','METHOD','Period_cat_num_2','Target_Clearance_time','Target_robbery_method')  
+cols <- c('Date_cat','Day_cat_2','Season','SHIFT','METHOD','Period_cat_num_2','Target_Clearance_time_f','Target_robbery_method')  
 #array
 Robbery_clean_p2_add %<>%
        mutate_each_(funs(factor(.)),cols) 
+
+str(select(Robbery_clean_p2_add,cols)) 
 ```
 
-Verified conversion of data type.
-
-```{r}
-str(select(Robbery_clean_p2_add,col_org)) 
-```
-
-
-
-C. Changed Census variables into numeric. 
+B. And a few Census features were converted into numeric.  
 
 
 ```{r}
 #15 vars 
 cols <- c('females_employed_rate','hs_10000_to_14999_pct','hs_100000_to_149999_pct','hs_15000_to_24999_pct','hs_150000_to_194999_pct','hs_200000__pct','hs_25000_to_34999_pct','hs_35000_to_49999_pct','hs_50000_to_74999_pct','hs_75000_to_99999_pct','hs_Less_than_10000_pct','hs_own_children_6_to_17_labor_force_pct','hs_own_children_6_to_17_pct','hs_own_children_under_6_labor_force_pct','hs_own_children_under_6_pct')  #array
 Robbery_clean_p2_add[cols] <- sapply(Robbery_clean_p2_add[cols],as.numeric)
+#str(select(Robbery_clean_p2_add,cols)) 
 ```
 
 
-Verified conversion of data type.
-`r nrow(Robbery_clean_p2_add)`records in data.
+Finally, The dataset consists of `r ncol(Robbery_clean_p2_add)` variables. including `r ncol(Census_eco)-5` Census Economic Characteristics features.
 
 
-```{r}
-str(select(Robbery_clean_p2_add,cols)) 
-#sum_list <- summary(select(Robbery_clean_p2_add,cols))   
-#write.csv(sum_list, "sum_list_rv.csv", row.names=FALSE)
+```{r, results='hide'}
+nrow(Robbery_clean_p2_add)    #Census 
+ncol(Robbery_clean_p2_add) #After aggregation(add Cesnsus)
+#str(Robbery_clean_p2_add)
 ```
-
-D. Additional input var (`Hour`): Start time of police clearance.
-
-```{r}
-#colnames(Robbery_clean_p2_model)
-library(lubridate)
-head(Robbery_clean_p2_add$START_DATE,5)
-Robbery_clean_p2_add$Hour <- hour(Robbery_clean_p2_add$START_DATE)
-```
-
-```{r}
-co = c('START_DATE','Hour')
-head(select(Robbery_clean_p2_add,co),5)
-```
-
-
-Temporary Saved current data.
 
 ```{r}
 #Dataframe Save and load
 #readr::write_rds(Robbery_clean_p2_add, "Robbery_clean_p2_model.Rds")
 
-Robbery_clean_p2_model <- 
-  readr::read_rds("Robbery_clean_p2_model.Rds")
+#Can load the dataset of this stage by letting active below code 
+#Robbery_clean_p2_model <- 
+#  readr::read_rds("Robbery_clean_p2_model.Rds")
 ```
 
 
+**3-1.Finalize defining modeling data 2 for `Target_robbery_method`**  
 
-**E.Final modeling data 2.(`Target_robbery_method`)**
-
-To finalize modeling data 2 for `Target_robbery_method`, we do not need to exclude records(there are no outliers). So just maintain the initial data. (8343 records)
-
-```{r}
-count(Robbery_clean_p2_model,Target_robbery_method, sort=FALSE)
-```
-
-
-And finalize modeling data 2 , 1 target and 86 input candidate variables (including 78 variables are Census).
-
-```{r}
+```{r, results='hide'}
+#count(Robbery_clean_p2_add,Target_robbery_method, sort=FALSE)
 
   cols_m2 <- c('Target_robbery_method','Hour','Date_cat','Day_cat','Day_cat_2','DISTRICT','Month','Period_cat_num_2','Season','SHIFT','Agriculture_forestry_fishing_and_hunting_and_mining_pct','armed_forces_rate','Arts_entertainment_and_recreation_and_accommodation_and_food_services_pct','carpooled_pct','Construction_pct','drove_alone_pct','Earning_mean','Earning_median_fmale_wk','Earning_median_male_wk','Earning_median_wk','Educational_services_and_health_care_and_social_assistance_pct','females_employed_rate','Finance_and_insurance_and_real_estate_and_rental_and_leasing_pct','Government_workers_pct','hs_10000_to_14999_pct','hs_100000_to_149999_pct','hs_15000_to_24999_pct','hs_150000_to_194999_pct','hs_200000__pct','hs_25000_to_34999_pct','hs_35000_to_49999_pct','hs_50000_to_74999_pct','hs_75000_to_99999_pct','hs_Less_than_10000_pct','hs_own_children_6_to_17_labor_force_pct','hs_own_children_6_to_17_pct','hs_own_children_under_6_labor_force_pct','hs_own_children_under_6_pct','Income_mean','Income_median','Information_pct','labor_forces_rate','management_business_science_arts_occupations_pct','Manufacturing_pct','mean_travel_time','Natural_resources_construction_and_maintenance_occupations_pct','other_means_pct','Other_services_except_public_administration_pct','pct_all_families_below_poverty','pct_all_families_related_children_below18_below_poverty','pct_all_families_related_children_below5_below_poverty','pct_all_people_18plus_below_poverty','pct_all_people_18to64_below_poverty','pct_all_people_65plus_below_poverty','pct_all_people_below_poverty','pct_all_people_related_children_under18_5to17_below_poverty','pct_all_people_related_children_under18_below_poverty','pct_all_people_related_children_under18_below5_below_poverty','pct_all_people_under18_below_poverty','pct_below_poverty_female_no_spouse_present','pct_below_poverty_female_no_spouse_present_related_children_below18','pct_female_no_spouse_present_related_children_below18_below5_below_poverty','pct_married_couple_families_below_poverty','pct_married_couple_families_related_children_below18_below_poverty','pct_married_couple_families_related_children_below5_below_poverty','pct_people_in_families_below_poverty','pct_unrelated_individuals_15plus_below_poverty','pop_16_over_emp_status','Private_wage_and_salary_workers_pct','Production_transportation_and_material_moving_occupations_pct','Professional_scientific_and_management_and_administrative_and_waste_management_services_pct','Public_administration_pct','public_assistance_income_mean','public_transportation_pct','Retail_trade_pct','Retirement_income_mean','Sales_and_office_occupations_pct','Self_employed_in_own_not_incorporated_business_workers_pct','service_occupations_pct','Social_Security_income_mean','Supplemental_Security_income_mean','Transportation_and_warehousing_and_utilities_pct','unemployment_rate','Unpaid_family_workers_pct','walked_pct','Wholesale_trade_pct','worked_from_home_pct','workers_16_over')
 
-model_2_clean <- select(Robbery_clean_p2_model,cols_m2)
+model_2_clean <- select(Robbery_clean_p2_add,cols_m2)
 #str(model_2_clean)
 ```
 
+To finalize modeling data 2 for `Target_robbery_method`, 
+ + The dataset has `r nrow(model_2_clean)` observations same as the initial dataset,
+ + and `r ncol(model_2_clean)-1` features and 1 target variable after excluding needless columns for modeling. 
+
+
+```{r, results='hide'}
+nrow(model_2_clean)    #Census 
+ncol(model_2_clean) #After aggregation(add Cesnsus)
+#str(model_2_clean)
+```
 
 ```{r}
 #Dataframe Save and load
 #readr::write_rds(model_2_clean, "Robbery_clean_p2_model_2.Rds")
 
+#Can load the dataset of this stage by letting active below code 
 #model_2_clean <- readr::read_rds("Robbery_clean_p2_model_2.Rds")
 ```
 
-`r nrow(model_2_clean)`records,`r ncol(model_2_clean)` variables in data 2.
-Include 1 target and 78 Census variables.
-Save finalized dataset for model 1. Now, it's ready to Modeling.
 
+**3-2.Finalize defining modeling data 1 for `Target_Clearance_time`**  
 
+```{r, results='hide'}
+cols_m1 <- c('Clearance_rate','Target_Clearance_time_f','Hour','Date_cat','Day_cat','Day_cat_2','DISTRICT','Month','Period_cat_num_2','Season','SHIFT','METHOD','Agriculture_forestry_fishing_and_hunting_and_mining_pct','armed_forces_rate','Arts_entertainment_and_recreation_and_accommodation_and_food_services_pct','carpooled_pct','Construction_pct','drove_alone_pct','Earning_mean','Earning_median_fmale_wk','Earning_median_male_wk','Earning_median_wk','Educational_services_and_health_care_and_social_assistance_pct','females_employed_rate','Finance_and_insurance_and_real_estate_and_rental_and_leasing_pct','Government_workers_pct','hs_10000_to_14999_pct','hs_100000_to_149999_pct','hs_15000_to_24999_pct','hs_150000_to_194999_pct','hs_200000__pct','hs_25000_to_34999_pct','hs_35000_to_49999_pct','hs_50000_to_74999_pct','hs_75000_to_99999_pct','hs_Less_than_10000_pct','hs_own_children_6_to_17_labor_force_pct','hs_own_children_6_to_17_pct','hs_own_children_under_6_labor_force_pct','hs_own_children_under_6_pct','Income_mean','Income_median','Information_pct','labor_forces_rate','management_business_science_arts_occupations_pct','Manufacturing_pct','mean_travel_time','Natural_resources_construction_and_maintenance_occupations_pct','other_means_pct','Other_services_except_public_administration_pct','pct_all_families_below_poverty','pct_all_families_related_children_below18_below_poverty','pct_all_families_related_children_below5_below_poverty','pct_all_people_18plus_below_poverty','pct_all_people_18to64_below_poverty','pct_all_people_65plus_below_poverty','pct_all_people_below_poverty','pct_all_people_related_children_under18_5to17_below_poverty','pct_all_people_related_children_under18_below_poverty','pct_all_people_related_children_under18_below5_below_poverty','pct_all_people_under18_below_poverty','pct_below_poverty_female_no_spouse_present','pct_below_poverty_female_no_spouse_present_related_children_below18','pct_female_no_spouse_present_related_children_below18_below5_below_poverty','pct_married_couple_families_below_poverty','pct_married_couple_families_related_children_below18_below_poverty','pct_married_couple_families_related_children_below5_below_poverty','pct_people_in_families_below_poverty','pct_unrelated_individuals_15plus_below_poverty','pop_16_over_emp_status','Private_wage_and_salary_workers_pct','Production_transportation_and_material_moving_occupations_pct','Professional_scientific_and_management_and_administrative_and_waste_management_services_pct','Public_administration_pct','public_assistance_income_mean','public_transportation_pct','Retail_trade_pct','Retirement_income_mean','Sales_and_office_occupations_pct','Self_employed_in_own_not_incorporated_business_workers_pct','service_occupations_pct','Social_Security_income_mean','Supplemental_Security_income_mean','Transportation_and_warehousing_and_utilities_pct','unemployment_rate','Unpaid_family_workers_pct','walked_pct','Wholesale_trade_pct','worked_from_home_pct','workers_16_over')
 
-**F.Final modeling data 1.(`Target_Clearance_time`)**
-
-
-```{r}
-cols_m1 <- c('Clearance_rate','Target_Clearance_time','Hour','Date_cat','Day_cat','Day_cat_2','DISTRICT','Month','Period_cat_num_2','Season','SHIFT','METHOD','Agriculture_forestry_fishing_and_hunting_and_mining_pct','armed_forces_rate','Arts_entertainment_and_recreation_and_accommodation_and_food_services_pct','carpooled_pct','Construction_pct','drove_alone_pct','Earning_mean','Earning_median_fmale_wk','Earning_median_male_wk','Earning_median_wk','Educational_services_and_health_care_and_social_assistance_pct','females_employed_rate','Finance_and_insurance_and_real_estate_and_rental_and_leasing_pct','Government_workers_pct','hs_10000_to_14999_pct','hs_100000_to_149999_pct','hs_15000_to_24999_pct','hs_150000_to_194999_pct','hs_200000__pct','hs_25000_to_34999_pct','hs_35000_to_49999_pct','hs_50000_to_74999_pct','hs_75000_to_99999_pct','hs_Less_than_10000_pct','hs_own_children_6_to_17_labor_force_pct','hs_own_children_6_to_17_pct','hs_own_children_under_6_labor_force_pct','hs_own_children_under_6_pct','Income_mean','Income_median','Information_pct','labor_forces_rate','management_business_science_arts_occupations_pct','Manufacturing_pct','mean_travel_time','Natural_resources_construction_and_maintenance_occupations_pct','other_means_pct','Other_services_except_public_administration_pct','pct_all_families_below_poverty','pct_all_families_related_children_below18_below_poverty','pct_all_families_related_children_below5_below_poverty','pct_all_people_18plus_below_poverty','pct_all_people_18to64_below_poverty','pct_all_people_65plus_below_poverty','pct_all_people_below_poverty','pct_all_people_related_children_under18_5to17_below_poverty','pct_all_people_related_children_under18_below_poverty','pct_all_people_related_children_under18_below5_below_poverty','pct_all_people_under18_below_poverty','pct_below_poverty_female_no_spouse_present','pct_below_poverty_female_no_spouse_present_related_children_below18','pct_female_no_spouse_present_related_children_below18_below5_below_poverty','pct_married_couple_families_below_poverty','pct_married_couple_families_related_children_below18_below_poverty','pct_married_couple_families_related_children_below5_below_poverty','pct_people_in_families_below_poverty','pct_unrelated_individuals_15plus_below_poverty','pop_16_over_emp_status','Private_wage_and_salary_workers_pct','Production_transportation_and_material_moving_occupations_pct','Professional_scientific_and_management_and_administrative_and_waste_management_services_pct','Public_administration_pct','public_assistance_income_mean','public_transportation_pct','Retail_trade_pct','Retirement_income_mean','Sales_and_office_occupations_pct','Self_employed_in_own_not_incorporated_business_workers_pct','service_occupations_pct','Social_Security_income_mean','Supplemental_Security_income_mean','Transportation_and_warehousing_and_utilities_pct','unemployment_rate','Unpaid_family_workers_pct','walked_pct','Wholesale_trade_pct','worked_from_home_pct','workers_16_over')
-
-model_1_clean <- select(Robbery_clean_p2_model,cols_m1)
+model_1_clean <- select(Robbery_clean_p2_add,cols_m1)
+model_1_clean <-  subset(model_1_clean, Target_Clearance_time_f == 0 |Target_Clearance_time_f == 1)
 #str(model_1_clean)
-#nrow(model_1_clean)
-#ncol(model_1_clean)
-```
-
-
-
-Exclude **Outliers of `Target_Clearance_time`** having value Na. (We did Unusual Observations test using `outlierKD2` in project 1, and outliers of Clearance_rate that have extremely large value were converted into Na).
-
-
-
-```{r}
-model_1_clean <-  subset(model_1_clean, Target_Clearance_time == 0 |Target_Clearance_time == 1)
-
 nrow(model_1_clean)
-#NA: extremely long time is long time (or remove all NAs from data)
-#Robbery_clean_p2_add$Target_Clearance_time(is.na(Robbery_clean_p2_add$Target_Clearanc#e_time))=1
-count(model_1_clean,Target_Clearance_time, sort=FALSE)
-#str(model_1_clean)
+ncol(model_1_clean)
+count(model_1_clean,Target_Clearance_time_f, sort=FALSE)
+```
+
+To finalize modeling data 1 for `Target_Clearance_time_f`, 
+ + The dataset has `r nrow(model_1_clean)` observations, excluded **Outliers of `Target_Clearance_time`** having value Na, 
+  (By unusual Observations test using `outlierKD2`in project 1, outliers of `Clearance_rate` that have extremely large value
+  were converted into Na).
+ 
+ + And, it has `r ncol(model_1_clean)-2` features and 1 target variable after excluding needless columns for modeling. 
+   (`METHOD` also could be used as predictor for model 1).
+
+```{r}
+#Dataframe Save and load
+#readr::write_rds(model_1_clean, "Robbery_clean_p2_model_1.Rds")
+
+#Can load the dataset of this stage by letting active below code 
+#model_1_clean <- readr::read_rds("Robbery_clean_p2_model_1.Rds")
 ```
 
 
+### Ⅳ. Feature Selection (Step 1 of the modeling)
+ 
+**From this section, candidate features were chosen for initial model by  examining relationship with target variables, `Target_Clearance_time_f` and `Target_robbery_method` by examining relationship with independent vars.**
 
 
-**Let Check detail about `Target_Clearance_time` by examining relationship with independent vars.**
+1. Model 1 (`Target_Clearance_time_f`)
 
-Distribution of `Clearance_rate` after cleansing outliers.
+ A.(EDA) Since `Target_Clearance_time_f` came from **Ratio variable, `Clearance_time` that refers duration**, 
+  The Box Plots or summarized plots of `Clearance_time` were showed for a few categorical features.
+  
+ B.(EDA) In terms of interval variables such as Census, Histograms split by the target groups were used for checking relationship.
+ 
+ Finally, **Correlation plots** were used for feature selection.
+ + For categorical features,  we used correlations only for relatively comparing the linear relationship with target.
+ + Hypothesis tests (Chi-square) were additionally conducted for getting statistical clues.
+ + For continuous features, correlations were used to filter highly correlated predictors to prevent a multicollinearity.  
 
 
-```{r}
+```{r, results='hide'}
 plot <- ggplot(data=model_1_clean, aes(Clearance_rate)) + 
   geom_histogram(col="darkgrey", 
                  fill="lightgrey", 
@@ -426,15 +467,9 @@ plot <- ggplot(data=model_1_clean, aes(Clearance_rate)) +
 plot
 ```
 
+A-1. (EDA-categorical features) Chart 3 indicates `avg.Clearance_time` per `DISTRICTS`. 
 
-```{r}
-summary(model_1_clean$Clearance_rate)
-```
-
-
-First, display `avg.Clearance_time` per categorical variables that have many levels.
-
-Average of clearance_time v.s DISTRICT
+  + It seems to have explicit relationship with target.
 
 ```{r}
 #TWO var Groupby(mean of target by X category groups)
@@ -446,14 +481,43 @@ temp_gr <- data.frame(temp)
 
 #Make chart (scatter)
 plot <- ggplot(temp_gr, aes(DISTRICT, avg)) + geom_line() + labs(x="district", y="Avg.Clearance time(min)") +
-  labs(title="Avg.Clearance time by district") + scale_x_discrete(limits=c("1","2","3","4","5","6","7")) + geom_point() #with 3-D: ggplot(temp_gr, aes(x, y, colour = Period_cat))  
+  labs(title="C3.Avg.Clearance time by district") + scale_x_discrete(limits=c("1","2","3","4","5","6","7")) + geom_point() #with 3-D: ggplot(temp_gr, aes(x, y, colour = Period_cat))  
 
 plot
 ```
 
+This is the Chi-square test to identify independence with DISTRICT and Target_Clearance_time_f 
+
+```{r}
+contable = table(model_1_clean$DISTRICT, model_1_clean$Target_Clearance_time_f)
+chitest = chisq.test(contable)
+chitest
+
+```
+
+  + $\chi^2$ value of the test is **`r chitest$statistic`**
+  + The p-value is **0.1**, which is < $\alpha$ (0.05), set to the significant level.
+  + **So, The data present it has enough evidence to reject H0.** 
 
 
-Hour.
+
+```{r, results='hide'}
+#SHIFT.
+contable = table(model_1_clean$SHIFT, model_1_clean$Target_Clearance_time_f)
+chitest = chisq.test(contable)
+chitest
+
+#Period_cat_num_2
+contable = table(model_1_clean$Period_cat_num_2, model_1_clean$Target_Clearance_time_f)
+chitest = chisq.test(contable)
+chitest
+
+```
+
+
+A-2. Chart 4 indicates `avg.Clearance_time` per `Hour`. 
+
+  + In the evening, after 7pm, clear time seems to slightly increase. 
 
 ```{r}
 temp <-  model_1_clean %>% group_by(Hour) %>%
@@ -464,14 +528,40 @@ temp_gr <- data.frame(temp)
 
 #Make chart (scatter)
 plot <- ggplot(temp_gr, aes(Hour, avg)) + geom_line() + labs(x="Hour", y="Avg.Clearance time(min)") +
-  labs(title="Avg.Clearance time by Hour") + geom_point() 
+  labs(title="C4.Avg.Clearance time by Hour") + geom_point() 
 
 plot
 ```
 
+```{r}
+contable = table(model_1_clean$Hour, model_1_clean$Target_Clearance_time_f)
+chitest = chisq.test(contable)
+chitest
+```
+
+In Chi-squared test of independence between Hour and Target_Clearance_time_f, `Hour` is not statistically significant, but we will use it for prediction.
+
+  + $\chi^2$ value of the test is **`r chitest$statistic`**
+  + The p-value is **0.1**, which is > $\alpha$ (0.05), set to the significant level.
+  + **So, The data present it does not have enough evidence to reject H0.** 
 
 
-Month.
+A-3. Chart 5 indicates distribution of `Clearance_time` per `SHIFT`.
+
+  + We identified clear time seems to slightly increased after the evening, midnight.
+
+```{r}
+box <- ggplot(model_1_clean, aes(y=Clearance_rate, x=SHIFT)) + 
+  geom_boxplot() + 
+  geom_boxplot( colour="darkblue", outlier.colour="lightblue", outlier.shape=8, outlier.size=1) +
+  labs(title="C5.Clearance_rate by SHIFT",x="SHIFT", y = "Clearance_rate")
+box
+```
+
+
+A-4. Chart 6 indicates `avg.Clearance_time` per `Month`. 
+
+  + It seems to identify seasonality by additionally checking `Season`.
 
 ```{r}
 temp <-  model_1_clean %>% group_by(Month) %>%
@@ -482,74 +572,59 @@ temp_gr <- data.frame(temp)
 
 #Make chart (scatter)
 plot <- ggplot(temp_gr, aes(Month, avg)) + geom_line() + labs(x="Month", y="Avg.Clearance time(min)") +
-  labs(title="Avg.Clearance time by Month") + geom_point() 
+  labs(title="C6.Avg.Clearance time by Month") + geom_point() 
 
 plot
 ```
+A-5. Chart 7 indicates distribution of `Clearance_time` per `Season`. 
 
-Next, Following is Boxplots of `Clearance_rate` for the rest categorical variables. 
-
-```{r}
-box <- ggplot(model_1_clean, aes(y=Clearance_rate, x=SHIFT)) + 
-  geom_boxplot() + 
-  geom_boxplot( colour="darkblue", outlier.colour="lightblue", outlier.shape=8, outlier.size=1) +
-  labs(title="Clearance_rate by SHIFT",x="SHIFT", y = "Clearance_rate")
-box
-```
+  + Clear time relatively decreased in winter season.
 
 ```{r}
 box <- ggplot(model_1_clean, aes(y=Clearance_rate, x=Season)) + 
   geom_boxplot() + 
   geom_boxplot( colour="darkblue", outlier.colour="lightblue", outlier.shape=8, outlier.size=1) +
-  labs(title="Clearance_rate by Season",x="Season", y = "Clearance_rate")
+  labs(title="C7. Clearance_rate by Season",x="Season", y = "Clearance_rate")
 box
 ```
 
+A-6. Chart 8 indicates distribution of `Clearance_time` per `Period_cat_num_2`. 
 
-```{r}
-#Dataframe Save and load
-#readr::write_rds(model_2_clean, "Robbery_clean_p2_model_2.Rds")
-
-model_1_clean <- readr::read_rds("Robbery_clean_p2_model_1.Rds")
-```
+  + In Lock-down period, clear time was increased implying some relationship with efficiency of police.
 
 ```{r}
 box <- ggplot(model_1_clean, aes(y=Clearance_rate, x=Period_cat_num_2)) + 
   geom_boxplot() + 
   geom_boxplot( colour="darkblue", outlier.colour="lightblue", outlier.shape=8, outlier.size=1) +
-  labs(title="Clearance_rate by Lockdown",x="Period_cat_num_2", y = "Clearance_rate")
+  labs(title="C8.Clearance_rate by Lockdown",x="Period_cat_num_2", y = "Clearance_rate")
 box
 ```
 
-```{r}
+```{r, results='hide'}
+
+#Reference- Not showing in the final report.
+
+#Date_cat
 box <- ggplot(model_1_clean, aes(y=Clearance_rate, x=Date_cat)) + 
   geom_boxplot() + 
   geom_boxplot( colour="darkblue", outlier.colour="lightblue", outlier.shape=8, outlier.size=1) +
   labs(title="Clearance_rate by Date_cat",x="Date_cat", y = "Clearance_rate")
 box
-```
 
-```{r}
+#Day_cat_2
 box <- ggplot(model_1_clean, aes(y=Clearance_rate, x=Day_cat_2)) + 
   geom_boxplot() + 
   geom_boxplot( colour="darkblue", outlier.colour="lightblue", outlier.shape=8, outlier.size=1) +
   labs(title="Clearance_rate by Day_cat_2",x="Day_cat_2", y = "Clearance_rate")
 box
-```
 
-Method.
-
-```{r}
+#Method.
 box <- ggplot(model_1_clean, aes(y=Clearance_rate, x=METHOD)) + 
   geom_boxplot() + 
   geom_boxplot( colour="darkblue", outlier.colour="lightblue", outlier.shape=8, outlier.size=1) +
   labs(title="Clearance_rate by METHOD",x="METHOD", y = "Clearance_rate")
 box
-```
-METHOD splitted by Period_cat_num_2(lockdown or not). 
-Clearance time by Method shows very large fluctuation by lock-down. so it does not show significant relationship with target Clearance time in etire period.
 
-```{r}
 #TWO var Groupby(mean of target by X category groups)= % of High Clearance_time
 temp <-  model_1_clean %>% group_by(METHOD,Period_cat_num_2) %>%
                    summarise(avg = mean(Clearance_rate, na.rm = TRUE),.groups = 'drop')
@@ -563,230 +638,51 @@ plot_2 <- ggplot(temp_gr, aes(METHOD, avg, colour = Period_cat_num_2)) + geom_li
   labs(title="Avg.Clearance time(min) by METHOD and Period") + geom_point()  
 
 plot_2
-
 ```
 
-
-**Every charts indicate we had better change threshold of clearance_rate.**
-
-Clearance_rate is highly right skewed, and main variables are showing difference around 40~50 line. So, decided to change definition of `Target_Clearance_time` from 85 min(Q3) to 40min.
-But, will be keep the orginal target by the stage of modeling.
-
-```{r}
-# 1
-model_1_clean$Target_Clearance_time_f <- ifelse(model_1_clean$Clearance_rate >= 40,
-c(1), c(0))
-
-#2. This one is optional (GUN&Clear)
-model_1_clean$Target_clr_gun <- ifelse((model_1_clean$Target_Clearance_time_f ==1) & (model_1_clean$METHOD =='GUN'), c(1),c(0))
-
-```
-
-Check before moving on to the next.
-
-```{r}
-count(model_1_clean,Target_Clearance_time_f, sort=FALSE)
-```
-
-```{r}
-#convert into factor
-cols <- c('Target_Clearance_time_f', 'Target_clr_gun')  
-#array
-model_1_clean %<>%
-       mutate_each_(funs(factor(.)),cols) 
-#str(model_1_clean)
-```
-
-
-Temporary Saved current data.
-
-```{r}
-#Dataframe Save and load
-#readr::write_rds(model_1_clean, "Robbery_clean_p2_model_1.Rds")
-
-model_1_clean <- 
-  readr::read_rds("Robbery_clean_p2_model_1.Rds")
-```
-
-`r nrow(model_1_clean)`records,`r ncol(model_1_clean)` variables in data 1.
-Include 1 target and 78 Census variables.
-Save finalized dataset for model 1. Now, it's ready to Modeling.
-
-
-### 4. Model 1- Logistic regression(`Target_Clearance_time`)
-
- + Data: model_1_clean
- + Target: `Target_Clearance_time_f` (over 40 min)
-
-
-**1. Pick the input variables for modeling**
-
- + Correlation between candidate variables and target variable.
- + Related EDA: Scatter charts w target, Confusion matrix etc.
-
-
-**A. Correlation- original variables (w.o Census)**
-
-Most origin variables will be used in the model. 
-
-District(Police Service Area), Period_cat_num_2(If Pandemic period) and SHIFT(Timezone of robberies) show correlation with Clearance_target, but it is small.
-Day_Cat does not have relationship so we will not use that.
-
-
-```{r}
-
-pairs.panels(model_1_clean[,c(91,3:12)],   
-             method = "pearson",
-             hist.col = "#00AFBB",
-             density = FALSE,  
-             ellipses = FALSE 
-             )
-
-```
-Try to find statistical clue by Chi-square test.
-Test result shows significance.
-
-DISTRICT.
-
-```{r}
-contable = table(model_1_clean$DISTRICT, model_1_clean$Target_Clearance_time_f)
-chitest = chisq.test(contable)
-chitest
-
-```
-
-In Chi-squared test of independence betwwen DISTRICT and Target_Clearance_time_f,
-
-  + $\chi^2$ value of the test is **`r chitest$statistic`**
-  + The p-value is **0.1**, which is > $\alpha$ (0.05), set to the significant level.
-  + **So, The data present it does not have enough evidence to reject H0.** 
-
-SHIFT.
-
-```{r}
-contable = table(model_1_clean$SHIFT, model_1_clean$Target_Clearance_time_f)
-chitest = chisq.test(contable)
-chitest
-
-```
-Period_cat_num_2
-
-```{r}
-contable = table(model_1_clean$Period_cat_num_2, model_1_clean$Target_Clearance_time_f)
-chitest = chisq.test(contable)
-chitest
-
-```
-A few variables like `Hour` is not significant (corr = 0.02). But we will use it for prediction.
-
-```{r}
-contable = table(model_1_clean$Hour, model_1_clean$Target_Clearance_time_f)
-chitest = chisq.test(contable)
-chitest
-
-```
-
-**B. Correlation- Census variables **
-
-1. By examining correlation plot matrix for Census variables, initally picked up variables that have correlation with target over 0.1
-
-(#1~8) drove_alone_pct,Earning_mean,Earning_median_fmale_wk
-
-```{r}
-pairs.panels(model_1_clean[,c(91,13:20)],   
-             method = "pearson", 
-             hist.col = "#00AFBB",
-             density = FALSE,  
-             ellipses = FALSE 
-             )
-```
-
-(#9~18) Earning_median_male_wk,Earning_median_wk,females_employed_rate
-,hs_10000_to_14999_pct,hs_100000_to_149999_pct,hs_15000_to_24999_pct, hs_150000_to_194999_pct
-
-
-```{r}
-pairs.panels(model_1_clean[,c(91,21:30)],  
-             method = "pearson", 
-             hist.col = "#00AFBB",
-             density = FALSE, 
-             ellipses = FALSE 
-             )
-```
-```{r}
+```{r, results='hide'}
 str(model_1_clean)
 ```
 
+**A-7. Below is Correlation plots with original features and target (with out Census)**
 
-(#19~28) hs_200000__pct,hs_25000_to_34999_pct,hs_Less_than_10000_pct
-
-```{r}
-pairs.panels(model_1_clean[,c(91,31:40)],  
-             method = "pearson", 
-             hist.col = "#00AFBB",
-             density = FALSE,  
-             ellipses = FALSE 
-             )
-```
-
-(#29~38) hs_200000__pct,hs_25000_to_34999_pct,hs_Less_than_10000_pct
+ + **The first row means the relationship between features and target.** 
+ + District(Police Service Area), Period_cat_num_2, and SHIFT(Timezone of robberies) show relatively high correlation with Clearance_target, but it is small.
+ + Most origin variables will be initially used in the model except for a few features like Day_cat,etc.
 
 ```{r}
-pairs.panels(model_1_clean[,c(91,41:50)],  
-             method = "pearson", 
-             hist.col = "#00AFBB",
-             density = FALSE,  
-             ellipses = FALSE 
-             )
-```
 
-```{r}
-pairs.panels(model_1_clean[,c(1,41:50)],   
-             method = "pearson", 
-             hist.col = "#00AFBB",
-             density = FALSE, 
-             ellipses = FALSE 
-             )
-```
-
-(#39~48)
-
-```{r}
-pairs.panels(model_1_clean[,c(91,51:60)],  
-             method = "pearson", 
-             hist.col = "#00AFBB",
-             density = FALSE, 
-             ellipses = FALSE 
-             )
-```
-
-(#49~58) pct_all_people_under18_below_poverty
-
-```{r}
-pairs.panels(model_1_clean[,c(91,61:70)],  
-             method = "pearson", 
-             hist.col = "#00AFBB",
-             density = FALSE,  
-             ellipses = FALSE 
-             )
-```
-
-(#59~68) Production_transportation_and_material_moving_occupations_pct
-Professional_scientific_and_management_and_administrative_and_waste_management_services_pct
-Sales_and_office_occupations_pct
-
-
-```{r}
-pairs.panels(model_1_clean[,c(91,71:80)],   
+pairs.panels(model_1_clean[,c(2,3:12)],   
              method = "pearson",
              hist.col = "#00AFBB",
-             density = FALSE,  # show correlation ellipses
+             density = FALSE,  
+             ellipses = FALSE 
              )
+
 ```
-(#69~78) 
+
+**B-1. Below is Correlation plots with Census features and target **
+
+Since we have 78 features, it is impossible all the relationship in one plot. 
+ + So we checked each unit of 10 features (sorted by feature names) considering correlation with target (over 0.1) and checking the multicollinearity
+ + By above process, features were initially picked up for model.
+ 
+This is the Correlation plot of the first unit 1 (10 features).  
+ + Some features like `drove_alone_pct`,`Earning_mean`,`Earning_median_fmale_wk`appear to have relationship with target.
+ + But `Earning_mean`and `Earning_median_fmale_wk` have strong relationship (Corr > 0.7), which suggest choosing one for model.
 
 ```{r}
-pairs.panels(model_1_clean[,c(91,81:89)],  
+pairs.panels(model_1_clean[,c(2,13:22)],   
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+This is the example of the unit 3 that also showed interaction betwwen similar income features.
+
+```{r}
+pairs.panels(model_1_clean[,c(2,41:50)],  
              method = "pearson", 
              hist.col = "#00AFBB",
              density = FALSE,  
@@ -794,118 +690,409 @@ pairs.panels(model_1_clean[,c(91,81:89)],
              )
 ```
 
-2. After initially picked 34 census features having correlation with target over 0.1, checked again correlation between features and excluded highly correlated one (pick one)
+This is the entire process of examining all census features (Code chunk has been inactive since it needs time to show). 
 
+```{r}
+
+
+
+#pairs.panels(model_1_clean[,c(2,23:32)],   
+#             method = "pearson", 
+#             hist.col = "#00AFBB",
+#             density = FALSE,  
+#             ellipses = FALSE 
+#             )
+
+#pairs.panels(model_1_clean[,c(2,33:42)],   
+#             method = "pearson", 
+#             hist.col = "#00AFBB",
+#             density = FALSE,  
+#             ellipses = FALSE 
+#             )
+
+#pairs.panels(model_1_clean[,c(2,43:52)],   
+#             method = "pearson", 
+#             hist.col = "#00AFBB",
+#             density = FALSE,  
+#             ellipses = FALSE 
+#             )
+
+#pairs.panels(model_1_clean[,c(2,53:62)],   
+#             method = "pearson", 
+#             hist.col = "#00AFBB",
+#             density = FALSE,  
+#             ellipses = FALSE 
+#             )
+
+#pairs.panels(model_1_clean[,c(2,63:72)],   
+#             method = "pearson", 
+#             hist.col = "#00AFBB",
+#             density = FALSE,  
+#             ellipses = FALSE 
+#             )
+
+#pairs.panels(model_1_clean[,c(2,73:82)],   
+#             method = "pearson", 
+#             hist.col = "#00AFBB",
+#             density = FALSE,  
+#             ellipses = FALSE 
+#             )
+
+#pairs.panels(model_1_clean[,c(2,83:90)],   
+#             method = "pearson", 
+#             hist.col = "#00AFBB",
+#             density = FALSE,  
+#             ellipses = FALSE 
+#             )
+```
+
+After going through entire process, 18 census features were initially picked. 
  
-```{r}
-
-cols <- c('drove_alone_pct','Earning_mean','Earning_median_fmale_wk','Earning_median_male_wk','Earning_median_wk','females_employed_rate','hs_10000_to_14999_pct','hs_100000_to_149999_pct','hs_15000_to_24999_pct','hs_150000_to_194999_pct','hs_200000__pct','hs_25000_to_34999_pct','hs_Less_than_10000_pct','Income_mean','Income_median','labor_forces_rate','management_business_science_arts_occupations_pct','mean_travel_time','pct_all_families_below_poverty','pct_all_families_related_children_below18_below_poverty','pct_all_people_18plus_below_poverty','pct_all_people_18to64_below_poverty','pct_all_people_below_poverty','pct_all_people_related_children_under18_below_poverty','pct_all_people_related_children_under18_below5_below_poverty','pct_all_people_under18_below_poverty','Production_transportation_and_material_moving_occupations_pct','Professional_scientific_and_management_and_administrative_and_waste_management_services_pct','Sales_and_office_occupations_pct','service_occupations_pct','Social_Security_income_mean','Transportation_and_warehousing_and_utilities_pct','unemployment_rate','worked_from_home_pct'
-)
-
-temp <- select(model_1_clean,cols)
-```
-
-And identify summary stats of them.
-
-```{r}
-#colSums(is.na(temp))
-summary(temp)
-```
-(Temp) Summary stat (total data)
-```{r}
-
-cols <- c('drove_alone_pct','Earning_mean','Earning_median_fmale_wk','Earning_median_male_wk','Earning_median_wk','females_employed_rate','hs_10000_to_14999_pct','hs_100000_to_149999_pct','hs_15000_to_24999_pct','hs_150000_to_194999_pct','hs_200000__pct','hs_25000_to_34999_pct','hs_Less_than_10000_pct','Income_mean','Income_median','labor_forces_rate','management_business_science_arts_occupations_pct','mean_travel_time','pct_all_families_below_poverty','pct_all_families_related_children_below18_below_poverty','pct_all_people_18plus_below_poverty','pct_all_people_18to64_below_poverty','pct_all_people_below_poverty','pct_all_people_related_children_under18_below_poverty','pct_all_people_related_children_under18_below5_below_poverty','pct_all_people_under18_below_poverty','Production_transportation_and_material_moving_occupations_pct','Professional_scientific_and_management_and_administrative_and_waste_management_services_pct','Sales_and_office_occupations_pct','service_occupations_pct','Social_Security_income_mean','Transportation_and_warehousing_and_utilities_pct','unemployment_rate','worked_from_home_pct'
-)
-
-temp <- select(model_2_clean,cols)
-```
-
-```{r}
-knitr::kable(summary(temp), format = "markdown", caption="Overall summary statistics of Census")
-```
 
 ```{r}
 
-cols <- c('DISTRICT','Date_cat','Day_cat_2','Period_cat_num_2','Season','Month','SHIFT')
+feat_cen <- c('drove_alone_pct','females_employed_rate','hs_10000_to_14999_pct','hs_100000_to_149999_pct','hs_15000_to_24999_pct','hs_150000_to_194999_pct','hs_200000__pct','hs_25000_to_34999_pct','hs_Less_than_10000_pct','Income_mean','labor_forces_rate','management_business_science_arts_occupations_pct','mean_travel_time','service_occupations_pct','Social_Security_income_mean','Transportation_and_warehousing_and_utilities_pct','unemployment_rate','worked_from_home_pct')
 
-temp <- select(model_2_clean,cols)
-```
+temp <- select(model_1_clean,feat_cen)
+knitr::kable(summary(temp[,c(1:9)]), format = "markdown", caption="T2.Summary statistics (picked Census)_1")
 
+knitr::kable(summary(temp[,c(10:18)]), format = "markdown", caption="T3.Summary statistics (picked Census)_2")
 
-```{r}
-knitr::kable(summary(temp), format = "markdown", caption="Overall summary statistics of Origin.features")
-```
+# 34 features Initially picked by corrplots. 
 
+#cols <- c('drove_alone_pct','Earning_mean','Earning_median_fmale_wk','Earning_median_male_wk','Earning_median_wk','females_employed_rate','hs_10000_to_14999_pct','hs_100000_to_149999_pct','hs_15000_to_24999_pct','hs_150000_to_194999_pct','hs_200000__pct','hs_25000_to_34999_pct','hs_Less_than_10000_pct','Income_mean','Income_median','labor_forces_rate','management_business_science_arts_occupations_pct','mean_travel_time','pct_all_families_below_poverty','pct_all_families_related_children_below18_below_poverty','pct_all_people_18plus_below_poverty','pct_all_people_18to64_below_poverty','pct_all_people_below_poverty','pct_all_people_related_children_under18_below_poverty','pct_all_people_related_children_under18_below5_below_poverty','pct_all_people_under18_below_poverty','Production_transportation_and_material_moving_occupations_pct','Professional_scientific_and_management_and_administrative_and_waste_management_services_pct','Sales_and_office_occupations_pct','service_occupations_pct','Social_Security_income_mean','Transportation_and_warehousing_and_utilities_pct','unemployment_rate','worked_from_home_pct')
 
-There are some NAs but not much amount, so converted that with average value of each. 
+#temp <- select(model_1_clean,cols)
 
-```{r}
-temp <- temp %>%
-               mutate_all(~ifelse(is.na(.), mean(., na.rm = TRUE), .))
-summary(temp)
-
-```
-
-```{r}
-
-
-temp_1= temp[,c(1:7)]
-cor_cs= cor(temp_1)
-corrplot.mixed(cor_cs)
-
-```
-
-Finally picked 18 features as an input.
-
-
-```{r, results='hide'}
-
-cor_matrix <- cor(temp)
-high_cor_pairs <- which(cor_matrix > 0.8 & cor_matrix != 1, arr.ind = TRUE)
-high_cor_vars <- unique(c(high_cor_pairs[,1], high_cor_pairs[,2]))
-high_cor_matrix <- cor_matrix[high_cor_vars, high_cor_vars]
-high_cor_matrix
+#cor_matrix <- cor(temp)
+#high_cor_pairs <- which(cor_matrix > 0.8 & cor_matrix != 1, arr.ind = TRUE)
+#high_cor_vars <- unique(c(high_cor_pairs[,1], high_cor_pairs[,2]))
+#high_cor_matrix <- cor_matrix[high_cor_vars, high_cor_vars]
+#high_cor_matrix
 #corrplot(high_cor_matrix, method = "number")
 
 ```
 
-Similary with categorical vars, try to find statistical clue by t-test.
-Test result shows significance. by target group (compare mean of x by target groups)
+There are some NAs but not much amount, so converted that with average value of each. 
 
-Result for Income_mean var.
-
-```{r}
-t0 = subset(model_1_clean,Target_Clearance_time_f=='0')
-t1 = subset(model_1_clean,Target_Clearance_time_f=='1')
-agettest <- t.test(t0$Income_mean, t1$Income_mean)
-agettest
+```{r, results='hide'}
+temp <- temp %>%
+               mutate_all(~ifelse(is.na(.), mean(., na.rm = TRUE), .))
+summary(temp)
 ```
 
-**Histgogram of Numeric Variable w Target variable ** 
 
-Following is histogram of `Earning_mean`(Census) by the target_Clearance_time groups (1: High, 0: Low)
+B-2. Chart 9 is histogram of `Income_mean`(Census) by the target_Clearance_time groups (1: High, 0: Low)
 
+  + Lower clearance time group (target =0) has a tendency of having relatively high income compared with Higher clearance time group. 
 
 ```{r}
 
-ggplot(model_1_clean, aes(Earning_mean, fill = Target_Clearance_time_f)) +  geom_histogram(alpha = 0.5, aes(y = ..density..), position = 'identity')
-ggplot(model_1_clean, aes(Earning_mean, fill = Target_Clearance_time_f)) + geom_density(alpha = 0.2)
+ggplot(model_1_clean, aes(Income_mean, fill = Target_Clearance_time_f)) +  geom_histogram(alpha = 0.5, aes(y = ..density..), position = 'identity')
+ggplot(model_1_clean, aes(Income_mean, fill = Target_Clearance_time_f)) + geom_density(alpha = 0.2) + labs(title="C9.Distribution of Income_mean by target groups")
 
 ```
 
-Following is histogram of `worked_from_home_pct`(Census) by the target_Clearance_time groups (1: High, 0: Low)
+B-3. Chart 10 is histogram of `worked_from_home_pct`(Census) by the target_Clearance_time groups (1: High, 0: Low)
 
+  + Lower clearance time group has a tendency of having relatively high portion of working at home.
 
 ```{r}
-
 ggplot(model_1_clean, aes(worked_from_home_pct, fill = Target_Clearance_time_f)) +  geom_histogram(alpha = 0.5, aes(y = ..density..), position = 'identity')
-ggplot(model_1_clean, aes(worked_from_home_pct, fill = Target_Clearance_time_f)) + geom_density(alpha = 0.2)
+ggplot(model_1_clean, aes(worked_from_home_pct, fill = Target_Clearance_time_f)) + geom_density(alpha = 0.2) + labs(title="C10.Distribution of worked_from_home_pct by target groups")
 
+```
+
+B-4. Chart 11 is histogram of `labor_forces_rate`(Census) by the target_Clearance_time groups (1: High, 0: Low)
+
+  + Interestingly, Higher clearance time robberies (target =1) are more concentrated on the boundary of proportion of working people below 60%, which reveals demographic environment affetct the robbery difficulty.
+
+```{r}
+ggplot(model_1_clean, aes(labor_forces_rate, fill = Target_Clearance_time_f)) +  geom_histogram(alpha = 0.5, aes(y = ..density..), position = 'identity')
+ggplot(model_1_clean, aes(labor_forces_rate, fill = Target_Clearance_time_f)) + geom_density(alpha = 0.2) + labs(title="C11.Distribution of labor_forces_rate by target groups")
+
+```
+
+
+2. Model 2 (`Target_robbery_method`)
+
+ A.(EDA) Since `Target_robbery_method` is **Binary Quantitative variable**, plots that showing percentage of Gun method(target =1) ware showed for a few categorical features.
+  
+ B.(EDA) Similarly with model 1, histograms split by the target groups were used for checking relationship between interval variables and target.
+ 
+ Also, **Correlation plots** were used for feature selection of model 2.
+ 
+
+```{r, results='hide'}
+plot <- ggplot(data=model_2_clean, aes(Clearance_rate)) + 
+  geom_histogram(col="darkgrey", 
+                 fill="lightgrey", 
+                 alpha = .7,bins = 30) + 
+  labs(x="Clearance_rate", y="Frequency") +
+  labs(title="Clearance_rate frequency") 
+plot
+```
+
+A-1. (EDA-categorical features) Chart 12 indicates `percentage of Gun method` per `DISTRICTS`. 
+
+  + District seems to have linear relationship with target.
+
+```{r}
+#TWO var Groupby(mean of target by X category groups)
+temp <-  model_2_clean %>% group_by(DISTRICT) %>%
+                   summarise(avg = mean(as.numeric(Target_robbery_method), na.rm = TRUE),.groups = 'drop')  #Targe(%): mean( as.numeric(Target_Clearance_time)
+
+arrange(temp, DISTRICT) 
+temp_gr <- data.frame(temp)
+
+#Make chart (scatter)
+plot <- ggplot(temp_gr, aes(DISTRICT, avg)) + geom_line() + labs(x="district", y="Pct.Gun method") +
+  labs(title="C12.Percentage of Gun method by district") + scale_x_discrete(limits=c("1","2","3","4","5","6","7")) + geom_point() #with 3-D: ggplot(temp_gr, aes(x, y, colour = Period_cat))  
+
+plot
+```
+
+A-2. Chart 13 indicates distribution of `percentage of Gun method` per `SHIFT`.
+
+  + We identified Gun robbery dramatically increased after the midnight.
+
+
+```{r}
+#TWO var Groupby(mean of target by X category groups)
+temp <-  model_2_clean %>% group_by(SHIFT) %>%
+                   summarise(avg = mean(as.numeric(Target_robbery_method), na.rm = TRUE),.groups = 'drop')  #Targe(%): mean( as.numeric(Target_Clearance_time)
+
+arrange(temp, SHIFT) 
+temp_gr <- data.frame(temp)
+
+#Make chart (scatter)
+plot <- ggplot(temp_gr, aes(x = SHIFT, y = avg)) + geom_line() + labs(x="SHIFT", y="Pct.Gun method") +
+  labs(title="C13.Percentage of Gun method by SHIFT") + geom_point() #with 3-D: ggplot(temp_gr, aes(x, y, colour = Period_cat))  
+
+plot
+```
+
+
+A-3. Chart 14 indicates distribution of `percentage of Gun method` per `Season`.
+
+  + Gun robbery has a tendency to increase since spring, high ratio in fall and winter.
+
+```{r}
+#TWO var Groupby(mean of target by X category groups)
+temp <-  model_2_clean %>% group_by(Season) %>%
+                   summarise(avg = mean(as.numeric(Target_robbery_method), na.rm = TRUE),.groups = 'drop')  #Targe(%): mean( as.numeric(Target_Clearance_time)
+
+arrange(temp, Season) 
+temp_gr <- data.frame(temp)
+
+#Make chart (scatter)
+plot <- ggplot(temp_gr, aes(x = Season, y = avg)) + geom_line() + labs(x="Season", y="Pct.Gun method") +
+  labs(title="C14.Percentage of Gun method by Season") + geom_point() + scale_x_discrete(limits=c("SPRING","SUMMER","AUTUMN","WINTER"))#with 3-D: ggplot(temp_gr, aes(x, y, colour = Period_cat))  
+
+plot
+```
+
+A-4. Chart 15 indicates distribution of `percentage of Gun method` per `Period_cat_num_2`.
+
+  + During Lockdown, Gun robberies are explicitly increased.
+
+```{r}
+#TWO var Groupby(mean of target by X category groups)
+temp <-  model_2_clean %>% group_by(Period_cat_num_2) %>%
+                   summarise(avg = mean(as.numeric(Target_robbery_method), na.rm = TRUE),.groups = 'drop')  #Targe(%): mean( as.numeric(Target_Clearance_time)
+
+arrange(temp, Period_cat_num_2) 
+temp_gr <- data.frame(temp)
+
+#Make chart (scatter)
+plot <- ggplot(temp_gr, aes(x = Period_cat_num_2, y = avg)) + geom_line() + labs(x="Period_cat_num_2", y="Pct.Gun method") +
+  labs(title="C14.Percentage of Gun method by Period") + geom_point() #with 3-D: ggplot(temp_gr, aes(x, y, colour = Period_cat))  
+
+plot
+```
+
+**A-5. Below is Correlation plots with original features and target (with out Census)**
+
+ + **The first row means the relationship between features and target.** 
+ + District, Period_cat_num_2, Hour, and SHIFT show relatively high correlation with `Target_robbery_method`.
+ + Day_cat,etc. are also have low correlation, but most origin variables will be initially used in the model 2.
+
+```{r, results='hide'}
+#str(model_2_clean)
+```
+
+```{r}
+pairs.panels(model_2_clean[,c(1,2:10)],   
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+
+
+**B-1. Below is Correlation plots with Census features and target **
+
+ + Similarly with model 1, Census features were initially picked up for model 2 by checking each unit of 10 Census features.
+ + Correlation with target and multicollinearity were considered for feature selection.
+
+This is the Correlation plot of the first unit 1 (10 features).  
+
+```{r, results='hide'}
+#str(model_2_clean)
+```
+```{r}
+pairs.panels(model_2_clean[,c(1,11:20)],   
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+
+This is the Correlation plot of the last unit.  
+
+```{r}
+pairs.panels(model_2_clean[,c(1,81:88)],   
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+
+This is the entire process of examining all census features (Code chunk has been inactive since it needs time to show). 
+
+```{r}
+
+#pairs.panels(model_2_clean[,c(1,21:30)],   
+#             method = "pearson", 
+#             hist.col = "#00AFBB",
+#             density = FALSE,  
+#             ellipses = FALSE 
+#             )
+
+#pairs.panels(model_2_clean[,c(1,31:40)],   
+#             method = "pearson", 
+#             hist.col = "#00AFBB",
+#             density = FALSE,  
+#             ellipses = FALSE 
+#             )
+
+#pairs.panels(model_2_clean[,c(1,41:50)],   
+#             method = "pearson", 
+#             hist.col = "#00AFBB",
+#             density = FALSE,  
+#             ellipses = FALSE 
+#             )
+
+#pairs.panels(model_2_clean[,c(1,51:60)],   
+#             method = "pearson", 
+#             hist.col = "#00AFBB",
+#             density = FALSE,  
+#             ellipses = FALSE 
+#             )
+
+#pairs.panels(model_2_clean[,c(1,61:70)],   
+#             method = "pearson", 
+#             hist.col = "#00AFBB",
+#             density = FALSE,  
+#             ellipses = FALSE 
+#             )
+
+#pairs.panels(model_2_clean[,c(1,71:80)],   
+#             method = "pearson", 
+#             hist.col = "#00AFBB",
+#             density = FALSE,  
+#             ellipses = FALSE 
+#             )
+
+
+#pairs.panels(model_2_clean[,c(1,81:88)],   
+#             method = "pearson", 
+#             hist.col = "#00AFBB",
+#             density = FALSE,  
+#             ellipses = FALSE 
+#             )
+```
+
+After going through entire process, 9 census features were picked. 
+ 
+
+```{r}
+
+feat_cen <- c("drove_alone_pct", "Earning_mean", "Income_mean", "labor_forces_rate",  "mean_travel_time", "unemployment_rate","walked_pct","Sales_and_office_occupations_pct","public_transportation_pct")
+
+temp <- select(model_2_clean,feat_cen)
+knitr::kable(summary(temp), format = "markdown", caption="T4.Summary statistics (picked Census)")
+
+
+```
+
+**Overall, final features were chosen as follows.**
+ + **Target_robbery_method ~ DISTRICT + Period_cat_num_2 + Season + Month +SHIFT + drove_alone_pct + Earning_mean + Income_mean + labor_forces_rate + mean_travel_time + unemployment_rate + walked_pct + Sales_and_office_occupations_pct + public_transportation_pct**
+
+
+**Finally checked the correlation between chosen features**
+
+```{r}
+pairs.panels(model_2_clean[,c("Target_robbery_method","DISTRICT","Period_cat_num_2","Season", "Month", "SHIFT", "drove_alone_pct", "Earning_mean", "Income_mean", "labor_forces_rate",  "mean_travel_time", "unemployment_rate","walked_pct","Sales_and_office_occupations_pct","public_transportation_pct")], 
+             method = "pearson", 
+             hist.col = "#00AFBB",
+             density = FALSE,  
+             ellipses = FALSE 
+             )
+```
+
+B-2. Chart 16 is histogram of `drove_alone_pct`(Census) by the Target_robbery_method groups (1: GUN, 0: Others)
+
+  + District that has high portion of driving alone workers to commute has a tendency of having relatively high occurrence of Gun robbery compared to others.
+
+```{r}
+
+ggplot(model_2_clean, aes(drove_alone_pct, fill = Target_robbery_method)) +  geom_histogram(alpha = 0.5, aes(y = ..density..), position = 'identity')
+ggplot(model_2_clean, aes(drove_alone_pct, fill = Target_robbery_method)) + geom_density(alpha = 0.2) + labs(title="C16.Distribution of drove_alone_pct by target groups")
+
+```
+
+B-3. Chart 17 is histogram of `unemployment_rate`(Census) by the Target_robbery_method groups (1: GUN, 0: Others)
+
+ + Higher unemployment_rate implies Higher occurrence of Gun robbery, which means more dangerous incident.
+
+```{r}
+
+ggplot(model_2_clean, aes(unemployment_rate, fill = Target_robbery_method)) +  geom_histogram(alpha = 0.5, aes(y = ..density..), position = 'identity')
+ggplot(model_2_clean, aes(unemployment_rate, fill = Target_robbery_method)) + geom_density(alpha = 0.2) + labs(title="C17.Distribution of unemployment_rate by target groups")
+
+```
+
+B-4. Chart 18 is histogram of `Sales_and_office_occupations_pct`(Census) by the Target_robbery_method groups (1: GUN, 0: Others)
+
+ + It is interesting that Lower population of sales,office workers implying the level of financial status of households has a tendency of lower occurrence of Gun robbery.
+
+```{r}
+
+ggplot(model_2_clean, aes(Sales_and_office_occupations_pct, fill = Target_robbery_method)) +  geom_histogram(alpha = 0.5, aes(y = ..density..), position = 'identity')
+ggplot(model_2_clean, aes(Sales_and_office_occupations_pct, fill = Target_robbery_method)) + geom_density(alpha = 0.2) + labs(title="C18.Distribution of Sales_and_office_occupations_pct by target groups")
+
+```
+
+
+## Ⅴ.Model building and Evaluation
+
+### 1. Model 1- Logistic regression(`Target_Clearance_time`)
+
+ + Data: model_1_clean
+ + Target: `Target_Clearance_time_f` (over 40 min)
+
+```{r, results='hide'}
+#model_1_clean <- 
+#  readr::read_rds("Robbery_clean_p2_model_1.Rds")
 ```
 
 **2. Build model **
 
-Define evaluation functions.
+First, we defined the evaluation functions for convenience.
 
 ```{r}
 
@@ -942,14 +1129,15 @@ proc_auc2 <- function(data, outcome_var, predictor_var) {
 }
 ```
 
-**A. The Train and Test data are: **
+**A. The Train and Test data are split into 80%,20%**
 
-```{r}
-model_1_clean <- 
-  readr::read_rds("Robbery_clean_p2_model_1.Rds")
+```{r, results='hide'}
+#Can load the dataset of this stage by letting active below code 
+#model_1_clean <- 
+#  readr::read_rds("Robbery_clean_p2_model_1.Rds")
 ```
 
-```{r}
+```{r, results='hide'}
 count(model_1_clean,Target_Clearance_time_f)
 ```
 
@@ -966,7 +1154,8 @@ model_1_clean <- model_1_clean %>%
   mutate_at(vars(-Target_Clearance_time_f), ~ifelse(is.na(.), mean(., na.rm = TRUE), .))
 ```
 
-```{r}
+
+```{r, results='hide'}
 #Use 70% of dataset as training set and remaining 30% as testing set
 set.seed(4321)
 sample <- sample(c(TRUE, FALSE), nrow(model_1_clean), replace=TRUE, prob=c(0.8,0.2))
@@ -974,18 +1163,13 @@ data_train_model_1  <- model_1_clean[sample, ]
 data_test_model_1   <- model_1_clean[!sample, ]
 
 nrow(data_train_model_1)
+ncol(data_train_model_1)
 nrow(data_test_model_1)
-
+ncol(data_test_model_1)
 ```
 
-```{r}
-count(data_train_model_1,Target_Clearance_time_f)
-```
-
-
-```{r}
-count(data_test_model_1,Target_Clearance_time_f)
-```
+The Train data has `r nrow(data_train_model_1)` and Test data has `r nrow(data_test_model_1)` observations.
+And `r nol(data_train_model_1)-1` features were used as predictors.
 
 
 **B. Train the model**
@@ -1024,7 +1208,7 @@ data_test_model_1$prediction  <- predict( Logit_model_1, newdata = data_test_mod
 
 ```
 
-** Quickly evaluate AUROC of the model
+We quickly evaluated AUROC of the fitted model.
 
 ```{r}
 h_train <- roc(Target_Clearance_time_f~prediction, data=data_train_model_1)
@@ -1183,185 +1367,16 @@ FPR
 FNR
 ```
 
-### 4. Model 2- Logistic regression (`Target_robbery_method`)
+
+
+### 2. Model 2- Logistic regression (`Target_robbery_method`)
 
 Data: model_2_clean
 Target: `Target_robbery_method` 
 
-```{r}
-model_2_clean <- 
-  readr::read_rds("Robbery_clean_p2_model_2.Rds")
-```
-
-```{r}
-count(model_2_clean,Target_robbery_method)
-```
-
-
-```{r}
-str(model_2_clean)
-```
-
-
-**1. Feature Selection **
-
-
-**A. Correlation- original variables (w.o Census)**
-
-```{r}
-library(psych)
-pairs.panels(model_2_clean[,c(1:10)], 
-             method = "pearson", 
-             hist.col = "#00AFBB",
-             density = FALSE,  
-             ellipses = FALSE 
-             )
-```
-
-**B. Correlation- Census variables **
-```{r}
-pairs.panels(model_2_clean[,c(1, 11:20)], 
-             method = "pearson", 
-             hist.col = "#00AFBB",
-             density = FALSE,  
-             ellipses = FALSE 
-             )
-```
-
-
-```{r}
-pairs.panels(model_2_clean[,c(1, 21:30)], 
-             method = "pearson", 
-             hist.col = "#00AFBB",
-             density = FALSE,  
-             ellipses = FALSE 
-             )
-```
-
-
-```{r}
-pairs.panels(model_2_clean[,c(1,31:40)], 
-             method = "pearson", 
-             hist.col = "#00AFBB",
-             density = FALSE,  
-             ellipses = FALSE 
-             )
-```
-
-
-```{r}
-pairs.panels(model_2_clean[,c(1,41:50)], 
-             method = "pearson", 
-             hist.col = "#00AFBB",
-             density = FALSE,  
-             ellipses = FALSE 
-             )
-```
-
-
-```{r}
-pairs.panels(model_2_clean[,c(1,51:60)], 
-             method = "pearson", 
-             hist.col = "#00AFBB",
-             density = FALSE,  
-             ellipses = FALSE 
-             )
-```
-
-
-
-```{r}
-pairs.panels(model_2_clean[,c(1,61:70)], 
-             method = "pearson", 
-             hist.col = "#00AFBB",
-             density = FALSE,  
-             ellipses = FALSE 
-             )
-```
-
-
-
-```{r}
-pairs.panels(model_2_clean[,c(1,71:80)], 
-             method = "pearson", 
-             hist.col = "#00AFBB",
-             density = FALSE,  
-             ellipses = FALSE 
-             )
-```
-
-
-
-```{r}
-pairs.panels(model_2_clean[,c(1,80:86)], 
-             method = "pearson", 
-             hist.col = "#00AFBB",
-             density = FALSE,  
-             ellipses = FALSE 
-             )
-```
-
-**Final variables chosen: DISTRICT + Period_cat_num_2 + Season + Month +SHIFT + drove_alone_pct + Earning_mean + Income_mean + labor_forces_rate + mean_travel_time + unemployment_rate **
-
-**Check the final version correlation **
-```{r}
-pairs.panels(model_2_clean[,c("Target_robbery_method","DISTRICT","Period_cat_num_2","Season", "Month", "SHIFT", "drove_alone_pct", "Earning_mean", "Income_mean", "labor_forces_rate",  "mean_travel_time", "unemployment_rate")], 
-             method = "pearson", 
-             hist.col = "#00AFBB",
-             density = FALSE,  
-             ellipses = FALSE 
-             )
-```
-
-**C. Mini EDA for candidate features**
-
-Features that are used in final model
- 1.Origin features
- 2. 
-DISTRICT + 
-Period_cat_num_2 + 
-Season + Month +SHIFT 
-+ drove_alone_pct
- + Earning_mean 
-+ Income_mean
- + labor_forces_rate 
-+ mean_travel_time 
-+ unemployment_rate 
-+ walked_pct + Sales_and_office_occupations_pct 
-+ public_transportation_pct
-
-
-
-**1. Categorical Variable w Target variable ** 
-
-DISTRICT.
-
-```{r}
-temp <-  model_2_clean %>% group_by(DISTRICT) %>%
-                   summarise(avg = mean(as.numeric(Target_robbery_method), na.rm = TRUE),.groups = 'drop') 
-
-arrange(temp, DISTRICT) 
-temp_gr <- data.frame(temp)
-
-plot <- ggplot(temp_gr, aes(DISTRICT, avg)) + geom_line() + labs(x="district", y="Target_robbery_method(% of GUN)") +
-  labs(title="Prop. of Gun method by district") + scale_x_discrete(limits=c("1","2","3","4","5","6","7")) + geom_point() 
-
-plot
-```
-
-
-**2. Numeric Variable w Target variable ** 
-
-Following is histogram of `Earning_mean`(Census) by the target_Clearance_time groups (1: High, 0: Low)
-
-
-```{r}
-
-ggplot(model_2_clean, aes(drove_alone_pct
-, fill = Target_robbery_method)) +  geom_histogram(alpha = 0.5, aes(y = ..density..), position = 'identity')
-ggplot(model_2_clean, aes(drove_alone_pct
-, fill = Target_robbery_method)) + geom_density(alpha = 0.2)
-
+```{r, results='hide'}
+#model_2_clean <- 
+#  readr::read_rds("Robbery_clean_p2_model_2.Rds")
 ```
 
 **2. Build model **
@@ -1513,7 +1528,9 @@ FPR
 FNR
 ```
 
-**3. Model 2-2 (Decision Tree with model_2_clean): Predict `Target_robbery_method`. **
+
+
+### 3. Model3- Decision Tree
 
 **Load cleaned data again  **
 
@@ -1687,10 +1704,16 @@ proc_auc2(data_train_model_1, 'Target_robbery_method', 'prediction')
 ```
 
 
-## Analysis 
 
-### 1. 
+## Ⅵ.Conclusion
 
-## Conclusion
+### 1. Key result: data limitation, relationship with target,
+       - Answer of Q1: inference. summary of coefficients, predictors.. 
+       - Answer of Q2:  compare performance of three models (Positive:1, Negative: 0)
+
+### 2. Social science things: vilolence, police operation, process, further resarch 
+
+
+
 
 ## References 
