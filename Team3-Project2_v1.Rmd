@@ -4,7 +4,7 @@ author: "Muhannad Alwhebie, Liang Gao, Nammin Woo"
 date: "`r Sys.Date()`"
 output:
   html_document:
-    code_folding: hide
+    code_folding: show
     number_sections: false
     toc: yes
     toc_depth: 3
@@ -43,10 +43,10 @@ knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
 options(scipen=9999, digits = 3) 
 ```
 
-## I.  Abstract
 
 
-## II. Introduction 
+
+## I. Introduction 
 
 This project aims to build upon the previous exploratory data analysis project that examined the impact of COVID-19 lockdown on robbery rates in Washington D.C. In this project, our objective is to identify factors that influence police efficiency and severity of robbery crime. To gain a more comprehensive understanding of the underlying factors affecting robbery rates, we plan to incorporate demographic and economic data from the Census Bureau, such as median household income, poverty rate, and education level, as predictor variables in our model.
 
@@ -65,7 +65,8 @@ The previous project found changes in robbery frequency during the pandemic, wit
 2. How accurately can we predict the clearance time and method based on these features?
 
 
-## III. Methodology
+## II. Methodology
+
 
 **Data Sourcing**:
 
@@ -76,10 +77,10 @@ The dataset used in this study was sourced from the Open Data DC repository, whi
 After obtaining the necessary data, we first aggregated the census bureau data to the original dataset to include economic characteristics. Next, we defined two target variables, Target_Clearance_time and Target_robbery_method, which represent whether the robbery took longer to clear and whether a gun was used or not, respectively. We then conducted exploratory data analysis (EDA) to gain insights into the data and performed pre-processing to prepare the data for predictive modeling.
 
 **Feature Selection:**
+
+
 We used correlation analysis to identify the features that have the strongest relationship with the target variables. We also performed EDA on the target variables to understand their distribution and behavior with respect to the candidate features.
 
-**Model Building and Evaluation:**
-We used a split/train method to build a predictive model using the selected features. We evaluated the model's performance using various metrics such as accuracy, precision, recall, and F1 score. We also interpreted the model to gain insights into the most important features that influence the target variables.
 
 
 Overall, the methodology used in this study involved data sourcing, preprocessing and feature selection. The inclusion of economic characteristics data and the use of machine learning techniques can help to provide insights into the underlying factors that influence robbery rates in Washington D.C.
@@ -1101,7 +1102,7 @@ ggplot(model_2_clean, aes(Sales_and_office_occupations_pct, fill = Target_robber
 ```
 
 
-## Ⅴ.Model building and Evaluation
+## III .Model building and Evaluation
 
 We used a split/train method to build a predictive model using the selected features. We evaluated the model's performance using various metrics such as accuracy, precision, recall, and F1 score. We also interpreted the model to gain insights into the most important features that influence the target variables.
 
@@ -1854,7 +1855,7 @@ proc_auc2(data_train_model_1, 'Target_robbery_method', 'prediction')
 The results show that the AUC for the test set is 0.602, while the AUC for the training set is slightly higher at 0.614. AUC is a measure of how well a model can distinguish between positive and negative instances, with a higher AUC indicating a better model performance. However, the fact that the AUC is higher for the training set compared to the test set suggests that the model may be overfitting to the training data and may not generalize well to new, unseen data.
 
 
-## Ⅵ.Conclusion
+## IV. Conclusion
 
 In conclusion, our project aimed to accurately predict clearance time and robbery severity by identifying the key features that influence these outcomes. Our exploratory data analysis uncovered several important insights, such as the impact of district, shift, day of the week, and time of day on clearance time, and the increase in gun robberies during lockdown. Using logistic regression models, we found that DISTRICT and Lockdown contribute to the longer clearance time, while SHIFT(MIDNIGHT) and drove_alone_pct have the most positive effect to the gun method. We achieved reasonable performance, with AUC values of 0.6424 and 0.664 for predicting clearance time and robbery method severity, respectively. While predicting criminal behavior is a complex task, our models provide a starting point for understanding the factors that influence it. Our SMART questions involved both inference and prediction, allowing us to interpret significant predictors and evaluate the models' performance.
 
