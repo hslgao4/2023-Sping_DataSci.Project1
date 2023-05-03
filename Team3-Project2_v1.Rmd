@@ -1177,9 +1177,8 @@ proc_auc2 <- function(data, outcome_var, predictor_var) {
 count(model_1_clean,Target_Clearance_time_f)
 ```
 
-This is final treatment before fitting. select features and convert NaN of Census.
-
 ```{r}
+#This is final treatment before fitting. select features and convert NaN of Census.
 feat <- c('DISTRICT','Date_cat','Day_cat_2','Period_cat_num_2','Season','SHIFT','METHOD','drove_alone_pct','females_employed_rate','hs_10000_to_14999_pct','hs_100000_to_149999_pct','hs_15000_to_24999_pct','hs_150000_to_194999_pct','hs_200000__pct','hs_25000_to_34999_pct','hs_Less_than_10000_pct','Income_mean','labor_forces_rate','management_business_science_arts_occupations_pct','mean_travel_time','service_occupations_pct','Social_Security_income_mean','Transportation_and_warehousing_and_utilities_pct','unemployment_rate','worked_from_home_pct','Target_Clearance_time_f')
 
 model_1 <- select(model_1_clean,feat)
@@ -1541,7 +1540,7 @@ ggtitle( "Test Set's Predicted Score" )
 ```
 
 
-```{r, results='hide'}
+```{r}
 h <- roc(Target_robbery_method~prediction, data=df_train)
 plot(h)
 auc(h)
@@ -1684,7 +1683,7 @@ Target: `Target_robbery_method`
 
 **A. The Train and Test data are: **
 
-```{r}
+```{r, results='hide'}
 #Use 70% of dataset as training set and remaining 30% as testing set
 set.seed(4321)
 sample <- sample(c(TRUE, FALSE), nrow(model_2_clean), replace=TRUE, prob=c(0.6,0.4))
@@ -1695,10 +1694,12 @@ nrow(data_train_model_1)
 nrow(data_test_model_1)
 
 ```
+The Train data has `r nrow(data_train_model_1)` and Test data has `r nrow(data_test_model_1)` observations.
+And `r ncol(data_train_model_1)-1` features were used as candidate predictors.
 
 **B. Train the model**
 
-We Will use the same variables with logistic regression.
+We used the same variables with logistic regression.
 
 ```{r}
 set.seed(4321)
@@ -1706,7 +1707,7 @@ set.seed(4321)
 Tree_model_gun <- rpart(Target_robbery_method ~ DISTRICT + + Period_cat_num_2 + Season + Month +SHIFT + drove_alone_pct + Earning_mean + Income_mean + labor_forces_rate + mean_travel_time + unemployment_rate + walked_pct + Sales_and_office_occupations_pct + public_transportation_pct, data=data_train_model_1, method="class", control = list(maxdepth = 30))
 ```
 
-Checked if tree is pruned.(Tree was normally generated) 
+We checked if tree is pruned.(Tree was normally generated) 
 
 ```{r}
 # check if rpart object is a tree
@@ -1718,6 +1719,7 @@ if (Tree_model_gun$frame$var[1] != "<leaf>") {
   print("The rpart object is not a tree.")
 }
 ```
+
 Below is the entire result of the fitted decision tree.
 
 ```{r}
@@ -1795,7 +1797,7 @@ scale_color_economist( name = "data", labels = c( "Lower time", "Higher time" ) 
 theme_economist()
 ```
 
-**B-2 Accuracy, Recall**
+**C-2 Accuracy, Recall**
 
 ```{r}
 # visualize .4 cutoff (lowest point of the previous plot)
@@ -1887,8 +1889,11 @@ In summary, our project demonstrates the potential of data-driven approaches and
 
  + Open Data DC (2023). Retrieved from https://opendata.dc.gov/search?collection=Dataset&q=crime
 
- + Boman, J. H., Gallupe, O. (2020). Has COVID-19 Changed Crime? Crime Rates in the United States during the Pandemic. American Journal of Criminal Justice, 45(4), 525–547. https://doi.org/10.1007/s12103-020-09551-3
+ + Economic Characteristics of DC Census Tracts. Retrieved from https://opendata.dc.gov/datasets/DCGIS::acs-economic-characteristics-dc-census-tract/explore?location=38.893677%2C-77.014562%2C12.07
 
+ + Census Tracts. Retrieved from https://www.census.gov/library/visualizations/2021/geo/demographicmapviewer.html
+
+ + Boman, J. H., Gallupe, O. (2020). Has COVID-19 Changed Crime? Crime Rates in the United States during the Pandemic. American Journal of Criminal Justice, 45(4), 525–547. https://doi.org/10.1007/s12103-020-09551-3
 
  +  Council of the District of Columbia (NA).. Retrieved from https://code.dccouncil.gov/us/dc/council/code/sections/22-2801
 
