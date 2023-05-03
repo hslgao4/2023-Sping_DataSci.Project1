@@ -70,7 +70,7 @@ The previous project found changes in robbery frequency during the pandemic, wit
 
 **Data Sourcing**:
 
-The dataset used in this study was sourced from the Open Data DC repository, which contains a collection of publicly available datasets related to various aspects of life in Washington D.C. Specifically, we used a dataset containing roughly 8000 observations of robbery incidents in the District of Columbia between January 2019 and December 2022. In addition, we obtained the Economic Characteristics of DC Census Tracts surveyed by the U.S. government using the CENSUS_TRACT variable.
+The dataset used in this study was sourced from the Open Data DC repository, which contains roughly 8000 observations of robbery incidents in the District of Columbia between January 2019 and December 2022. In addition, we obtained the Economic Characteristics of DC Census Tracts surveyed by the U.S. government using the CENSUS_TRACT variable.
 
 **Data Pre-processing:**
 
@@ -188,8 +188,6 @@ ncol(Robbery_clean_p2_add) #After aggregation(add Cesnsus)
 ```
 
 ### Ⅱ. Define target variables
-
-To define the target variables for our predictive modeling, we first need to understand what we are trying to predict. In this case, we are interested in predicting the clearance time and the method of robbery.
 
 The first target variable we will define is `Target_Clearance_time.` This variable will indicate whether a robbery took longer to clear or not. The clearance time will be defined as the time between the initial report of the robbery and the time when the case is closed. If the clearance time is longer than the median clearance time for all cases in the dataset, the value for `Target_Clearance_time` will be 1, indicating that the robbery took longer to clear. If the clearance time is shorter than the median, the value for `Target_Clearance_time` will be 0, indicating that the robbery did not take longer to clear.
 
@@ -1203,8 +1201,7 @@ And `r ncol(data_train_model_1)-1` features were used as predictors.
 
 **B. Train the model**
 
-Next, we move on to the training stage of the logistic regression model. We begin by training the initial model, which includes all the predictor variables. We then perform a significance test on each variable and exclude any variable that does not demonstrate a statistically significant impact on the target variable, as indicated by its P-value. Once we have removed these insignificant variables, we re-fit the model with the remaining predictor variables. After this process, we are left with a final set of five predictor variables that demonstrate a significant impact on the target variable. 
-
+Next, we move on to the training stage of the logistic regression model. We begin by training the initial model, which includes all the predictor variables. We deleted some variables which are not significant, and re-fit the model with the remaining predictor variables. 
 
 ```{r}
 #exclude vars that p-value is not significant 
@@ -1231,24 +1228,12 @@ Logit_model_sum <- summary(Logit_model_1)
 ```
 
 
-In this logistic regression model, we aim to predict Target_Clearance_time_f using a combination of categorical and continuous predictor variables, such as DISTRICT, Season, Income_mean, and mean_travel_time. The binary value of 0 or 1 represents whether the clearance time was longer or shorter than the median clearance time for a specific crime category.
+In this logistic regression model, we aim to predict Target_Clearance_time_f using a combination of categorical and continuous predictor variables, such as DISTRICT, Season, Income_mean, and mean_travel_time. 
 
 The negative intercept coefficient suggests that, when all other predictors are constant, the log odds of longer clearance time are negative. Some predictor variables have statistically significant coefficients, while others do not. For categorical variables, the coefficients indicate the difference in log odds of clearance time being longer when the variable is present versus when it is absent, holding other variables constant.
 
 The significant predictors of the target variable are DISTRICT, Day_cat_2, Period_cat_num_2, SHIFT, and METHOD. In contrast, Date_cat, Season, and Income_mean are not significant predictors. The model has some predictive power, as indicated by a lower residual deviance compared to the null deviance. However, the relatively high AIC value suggests that the model may not fit the data well. Moreover, the model tends to overestimate the probability of longer clearance times, as indicated by negative deviance residuals for most data points. Therefore, further model evaluation and improvement may be necessary before using this model for prediction or inference.
 
-*Overall, based on the GLM model, the most important features that influence the clearance time are:*
-1. `DISTRICT`: As the crime rate in the district increases, the clearance time increases (positive coefficient).
-
-2. `Period_cat_num_21`: The clearance time is higher during the 21st period compared to other periods (positive coefficient).
-
-3. `SHIFTEVENING` and `SHIFTMIDNIGHT`: The clearance time is higher during evening and midnight shifts compared to the morning shift (positive coefficients).
-
-4. `Hour`: With each additional hour, the clearance time increases (positive coefficient).
-
-5. `Day_cat_2Weekend`: The clearance time is higher during weekends compared to weekdays (positive coefficient).
-
-6. `worked_from_home_pct`: As the percentage of officers who worked from home increases, the clearance time decreases (negative coefficient).
 
 
 ```{r}
@@ -1269,7 +1254,7 @@ plot(h_train)
 plot(h_test)
 ```
 
-The results of Model 1 indicate that the area under the receiver operating characteristic (AUROC) curve is 0.642, regardless of the chosen cutoff level. This value is less than 0.8, which is generally considered to be an acceptable level of predictive power. Therefore, it can be inferred that the model does not seem to be very effective in accurately predicting outcomes. Further analysis and model improvements may be necessary to increase its predictive power. 
+The results of Model 1 indicate that the area under the receiver operating characteristic (AUROC) curve is 0.642. This value is less than 0.8, which is generally considered to be an acceptable level of predictive power. Therefore, it can be inferred that the model does not seem to be very effective in accurately predicting outcomes. Further analysis and model improvements may be necessary to increase its predictive power. 
 ```{r}
 proc_auc2(data_test_model_1, 'Target_Clearance_time_f', 'prediction')
 proc_auc2(data_train_model_1, 'Target_Clearance_time_f', 'prediction')
@@ -1286,11 +1271,9 @@ expcoeff
 ```
 
 
-The intercept coefficient is positive, indicating that when all other predictors are held constant, the log odds of high_diff_rob is positive.
+Several predictor variables have coefficients that are statistically significant, with p-values less than 0.05. For instance, the coefficients of Day_cat_2, Period_cat_num_2, SHIFT, DISTRICT, and drove_alone_pct are all positive and statistically significant.
 
-Several predictor variables have coefficients that are statistically significant, with p-values less than 0.05. For instance, the coefficients of Day_cat_2, Period_cat_num_2, SHIFT, DISTRICT, drove_alone_pct, hs_10000_to_14999_pct, management_business_science_arts_occupations_pct, mean_travel_time, and Transportation_and_warehousing_and_utilities_pct are all positive and statistically significant, suggesting that these variables are significant predictors of the high_diff_rob.
-
-On the other hand, some variables such as hs_100000_to_149999_pct, hs_15000_to_24999_pct, hs_150000_to_194999_pct, hs_200000__pct, hs_Less_than_10000_pct, Income_mean, service_occupations_pct, Social_Security_income_mean, unemployment_rate, and worked_from_home_pct have coefficients that are not statistically significant, suggesting that these variables are not significant predictors of the high_diff_rob.
+On the other hand, some variables such as hs_100000_to_149999_pct, hs_15000_to_24999_pct, and hs_150000_to_194999_pct are not significant predictors of the high_diff_rob.
 
 
 **C. Evaluate the model**
@@ -1368,17 +1351,7 @@ FPR
 FNR
 ```
 
-* The value of 1.590698 for accuracy is unusual as accuracy is typically between 0 and 1. It is possible that there is an error in the calculation or the code used to produce this output.
-
-* The value of 0.5830178 for precision indicates that out of all the predicted positive cases (true positive and false positive), only about 58% were actually positive.
-
-* The value of 0.6435821 for recall rate indicates that out of all the actual positive cases (true positive and false negative), about 64% were correctly identified by the model as positive.
-
-* The value of 0.6118048 for F1 score is the harmonic mean of precision and recall, and represents a balance between the two metrics.
-
-* The value of 0.4418338 for FPR (false positive rate) indicates the proportion of negative cases (true negative and false positive) that were incorrectly classified as positive by the model.
-
-* The value of 0.3564179 for FNR (false negative rate) indicates the proportion of positive cases (true positive and false negative) that were incorrectly classified as negative by the model.
+*The value of accuracy and precision is not very high. However, since crime is complex and difficult to predict, the results still make sense.
 
 
 ```{r}
@@ -1388,7 +1361,7 @@ count(temp,actual)
 
 C-4 Evaluate per target levels
 
-Now, we creates two data frames df_neg and df_pos by subsetting temp based on the actual target values. df_neg contains all the observations where the actual target value is 0 (negative class), and df_pos contains all the observations where the actual target value is 1 (positive class). This allows us to evaluate the model's performance separately for each target class.
+Now, we creates two data frames df_neg and df_pos by subsetting temp based on the actual target values. 
 
 
 ```{r}
@@ -1451,11 +1424,7 @@ FPR
 FNR
 ```
 
-Based on the evaluation results, it appears that the model performs better in predicting the negative class (target=0, Low time) compared to the positive class (target=1, High time). For the negative class, the model has an accuracy of 1.41, which is higher than the accuracy of 0.474 for the positive class. The precision for the negative class is 0, indicating that there were no false positives, while the precision for the positive class is 1, indicating that all positive predictions were correct.
-
-However, the recall rate and F1 score for the negative class are NaN (not a number), which means that these measures could not be calculated due to the absence of true positives. In contrast, the recall rate and F1 score for the positive class are 0.474 and 0.643, respectively.
-
-The false positive rate (FPR) for the negative class is 0.44, indicating that there were some false positive predictions. The false negative rate (FNR) for the positive class is 0.526, indicating that over half of the actual positive cases were not correctly identified by the model. Overall, these results suggest that the model is better at predicting the negative class than the postive. 
+Based on the evaluation results, it appears that the model performs better in predicting the negative class (target=0, Low time) compared to the positive class (target=1, High time). 
 
 
 ### 2. Model 2- Logistic regression (`Target_robbery_method`)
@@ -1497,7 +1466,7 @@ The results of the `Target_robbery_method` GLM:
 
 The intercept (-1.264) indicates the expected log odds of `Target_robbery_method` being true when all other independent variables are zero. The `DISTRICT` variable has a positive coefficient (0.052), indicating that the log odds of `Target_robbery_method` being true increase with the `district` number.`SHIFTMIDNIGHT`, `mean_travel_time`, `Sales_and_office_occupations_pct`, and `public_transportation_pct` are positively associated with the target variable. In contrast, `walked_pct` has a strong negative association (-2.189) with the dependent variable, indicating that as the percentage of people who walked to work increases, the log odds of `Target_robbery_method` being true decrease significantly.
 
-The residual deviance is 8087.9 on 6193 degrees of freedom, indicating that the model fits the data well. The AIC value is 8117.9, which is a measure of the model's quality compared to other models, with lower values indicating better fit. The null deviance is the deviance of a model with only an intercept, and the difference between the null and residual deviances represents the amount of deviance explained by the model's independent variables.
+The residual deviance is 8087.9 on 6193 degrees of freedom, compared to the null deviance 8597.7, which is good. 
 
 ```{r}
 expcoeff = exp(coef(Model))
@@ -1510,13 +1479,6 @@ Based on the coefficients and their corresponding exponentiated values (odds rat
 
 `walked_pct`: This variable has a negative coefficient and odds ratio less than 1, indicating that areas with a higher proportion of people walking are associated with lower likelihood and severity of robbery methods.
 
-`public_transportation_pct`: This variable also has a negative coefficient and odds ratio less than 1, indicating that areas with a higher proportion of people using public transportation are associated with lower likelihood and severity of robbery methods.
-
-`Sales_and_office_occupations_pct`: This variable has a positive coefficient and odds ratio greater than 1, indicating that areas with a higher proportion of people working in sales and office occupations are associated with higher likelihood and severity of robbery methods.
-
-`DISTRICT`: This variable has a small but positive coefficient and odds ratio greater than 1, indicating that some districts have a slightly higher likelihood and severity of robbery methods compared to others.
-
-`mean_travel_time`: This variable has a positive coefficient and odds ratio greater than 1, indicating that longer travel times are associated with higher likelihood and severity of robbery methods.
 
 Other variables, such as `Period_cat_num_21`, `Season`, `Month`, `drove_alone_pct`, and `unemployment_rate`, also appear to have some influence on the likelihood and severity of robbery methods, but to a lesser extent than the variables listed above.
 
@@ -1546,8 +1508,6 @@ plot(h)
 auc(h)
 ```
 
-The AUC 0.664, which suggests that the model has a moderate level of discrimination power in distinguishing between positive and negative cases. However, it is difficult to make a judgment about the quality of the model solely based on the AUC value without considering other factors.
-
 
 ```{r}
 h <- roc(Target_robbery_method~prediction, data=df_test)
@@ -1555,8 +1515,7 @@ plot(h)
 auc(h)
 ```
 
-
-The AUC 0.664, which suggests that the model has a moderate level of discrimination power in distinguishing between positive and negative cases. However, it is difficult to make a judgment about the quality of the model solely based on the AUC value without considering other factors.
+The AUC is 0.664 based on test data, which we think is good in this case.
 
 
 H1- Accurcy, Precision, Recall when cut-off 0.5
@@ -1592,15 +1551,11 @@ FPR
 FNR
 ```
 
-Based on the given metrics, it appears that the model for Target_robbery_method has an accuracy of 0.618, which means that 61.8% of the predictions made by the model are correct. The precision of the model is 0.616, which means that 61.6% of the instances that the model predicted as positive are actually positive. The recall rate is 0.593, which means that the model correctly identifies 59.3% of the positive instances. The F1 score is 0.604, which is the harmonic mean of precision and recall and provides a balance between the two metrics.
-
-The false positive rate (FPR) is 0.352, which means that 35.2% of the instances that are actually negative are incorrectly predicted as positive by the model. The false negative rate (FNR) is 0.407, which means that 40.7% of the instances that are actually positive are incorrectly predicted as negative by the model. These metrics provide a more detailed understanding of the model's performance.
-
+Based on the given metrics, it appears that the model for Target_robbery_method has an accuracy of 0.618, the precision of the model is 0.616. Again, these values are not high but make sense. The F1 score is over 0.5, which is not bad. The FPR are FNR are low, which is good since gun is very dangerous and has high risk. 
 
 H2- Evaluate per target levels
 
-Now, we will redo the same process which recreates two data frames df_neg and df_pos by subsetting temp based on the actual target values. df_neg contains all the observations where the actual target value is 0 (negative class), and df_pos contains all the observations where the actual target value is 1 (positive class). 
-
+Now, we will redo the same process which recreates two data frames df_neg and df_pos by subsetting temp based on the actual target values.
 ```{r}
 temp <- cm_info$data
 df_neg <- subset(temp,temp$actual == 0) 
