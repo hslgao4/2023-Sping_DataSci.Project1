@@ -4,7 +4,7 @@ author: "Muhannad Alwhebie, Liang Gao, Nammin Woo"
 date: "`r Sys.Date()`"
 output:
   html_document:
-    code_folding: show
+    code_folding: hide
     number_sections: false
     toc: yes
     toc_depth: 3
@@ -42,7 +42,6 @@ library(corrplot)
 knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
 options(scipen=9999, digits = 3) 
 ```
-
 
 
 
@@ -93,17 +92,17 @@ We initially used the latest data in project 1, Robbery_clean. The outliers of c
 ```{r}
 
 # the latest data of Project 1
-Robbery <- 
-  readr::read_rds("Robbery_230303.Rds")
+#Robbery <- 
+#  readr::read_rds("Robbery_230303.Rds")
 
 # the latest data of Project 1 (The outliers of clearance_rate have been removed (converted into NA))
-Robbery_clean <- 
-  readr::read_rds("Robbery_clean_230303.Rds")
+#Robbery_clean <- 
+#  readr::read_rds("Robbery_clean_230303.Rds")
 
 
 #Import data of project 2: started from Robbery_clean (added CENSUS_TRACT for aggregating census feature)
 Robbery_clean_p2 = data.frame(read.csv("Robbery_clean_p2.csv"))
-Robbery_p2 = data.frame(read.csv("Robbery_p2.csv"))
+#Robbery_p2 = data.frame(read.csv("Robbery_p2.csv"))  #Data before cleansing outliers
 Census_eco = data.frame(read.csv("ACS_Economic_Census_clean.csv"))
 
 ```
@@ -137,6 +136,7 @@ This is census Tracts data that we will add on to original dataset.
 xkabledply(Census_eco[1:4,], title = "First Four Rows of Census Tracts Dataframe")
 ```
 
+
 All robbery records in our dataset have its own location information that the robberies are occurred.
 We already used location variable `DISTRICT` in project 1 meaning Police Service Area, and additionally used location variable `CENSUS_TRACT` meaning statistical subdivisions of a county.(Population from 1,200 to 1,800)
 
@@ -150,12 +150,11 @@ All Census features were Wrangled through follows:  ​
   - Considering purpose of analysis, all features are re-scaled as proportion and dummified (ex. percentage of workers who are using carpool for commuting) or summarized (Mean, Median).
   
 
-```{r}
+```{r, results='hide'}
 #columns that are necessary to anaysis
 #ex_cols <- c('OBJECTID','STATEFP','COUNTYFP','CENSUS_TRACT','GEOID')
 #temp <- select(Census_eco,-OBJECTID,-STATEFP,-COUNTYFP,-CENSUS_TRACT,-GEOID)
 #knitr::kable(temp, format = "markdown", caption="Overall summary statistics of DC Census Tract(Economic Characteristics)")
-
 ```
 
 Census features were aggregated to initial main data by the key of `CENSUS_TRACT`.
@@ -223,7 +222,6 @@ plot
 ```
 
 
-
 ```{r}
 #TWO var Groupby(mean of target by X category groups)
 temp <-  Robbery_clean_p2_add %>% group_by(DISTRICT) %>%
@@ -239,9 +237,8 @@ plot <- ggplot(temp_gr, aes(DISTRICT, avg)) + geom_line() + labs(x="district", y
 plot
 ```
 
-Chart C1 shows `Clearance_rate` is highly right skewed, and Chart C2 displaying `avg.Clearance_time` per `DISTRICT` exhibits 
-clearance time of robbery visually distinguished by the threshold 40~50 min(similar to average). 
-So, We defined Long clearance time as over 40 min and short clearance time as less than 40 min.
+
+Chart C1 shows `Clearance_rate` is highly right skewed, and Chart C2 displaying `avg.Clearance_time` per `DISTRICT` exhibits clearance time of robbery visually distinguished by the threshold 40~50 min(similar to average). So, We defined Long clearance time as over 40 min and short clearance time as less than 40 min.
 
 ```{r}
 
@@ -262,9 +259,10 @@ count(Robbery_clean_p2_add,Target_Clearance_time_f, sort=FALSE)
 ```
 
 
-Our first modeling target, `Target_Clearance_time` has three levels as follows:  
-  + `Target_Clearance_time`=1 : Need more than 40 min (near to the average clearance time)
-  + `Target_Clearance_time`=0 : Need less than 40 min 
+Our first modeling target, `Target_Clearance_time` has three levels as follows:
+
+  + `Target_Clearance_time`=1 : Need long time, more than 40 min
+  + `Target_Clearance_time`=0 : Need short time, less than 40 min 
   +  NA: `Outliers` (Need extremely long time (avg 2.5 days).
 
 
@@ -278,6 +276,7 @@ count(Robbery_clean_p2_add,Target_robbery_method, sort=FALSE)
 ```
 
 Our second modeling target, `Target_robbery_method` has two levels as follows:  
+
   + `Target_robbery_method`=1 : Gun was used for robbery.
   + `Target_robbery_method`=0 : Knife or Other weapons were used,
 
@@ -302,7 +301,7 @@ Check data type of original variables (With or Without Census Track)
 
 **1. Revise/Add features**
 
-A. In terms of using `Period_cat_num` to precis target, we simplified the period into two categories (Lock-down=1, other=0).
+ (A) In terms of using `Period_cat_num` to precis target, we simplified the period into two categories (Lock-down=1, other=0).
 
 ```{r}
 attach(Robbery_clean_p2_add)
@@ -314,7 +313,7 @@ detach(Robbery_clean_p2_add)
 ```
 
 
-B. `Hour` Start time of police clearance was created.
+ (B) `Hour` Start time of police clearance was created.
 
 ```{r}
 #colnames(Robbery_clean_p2_model)
@@ -341,7 +340,7 @@ str(select(Robbery_clean_p2_add,col_org))
 
 **2. Change data types of features**
 
-A. So, a few categorical variables including targets were Changed into factor. 
+ (A) So, a few categorical variables including targets were Changed into factor. 
 
 ```{r}
 cols <- c('Date_cat','Day_cat_2','Season','SHIFT','METHOD','Period_cat_num_2','Target_Clearance_time_f','Target_robbery_method')  
@@ -394,6 +393,7 @@ model_2_clean <- select(Robbery_clean_p2_add,cols_m2)
 ```
 
 To finalize modeling data 2 for `Target_robbery_method`, 
+
  + The dataset has `r nrow(model_2_clean)` observations same as the initial dataset,
  + and `r ncol(model_2_clean)-1` features and 1 target variable after excluding needless columns for modeling. 
 
@@ -427,12 +427,10 @@ count(model_1_clean,Target_Clearance_time_f, sort=FALSE)
 ```
 
 To finalize modeling data 1 for `Target_Clearance_time_f`, 
- + The dataset has `r nrow(model_1_clean)` observations, excluded **Outliers of `Target_Clearance_time`** having value Na, 
-  (By unusual Observations test using `outlierKD2`in project 1, outliers of `Clearance_rate` that have extremely large value
-  were converted into Na).
+
+ + The dataset has `r nrow(model_1_clean)` observations, excluded **outliers of Clearance_rate** (having Target_Clearance_time_f =Na). In project 1, outliers that have extremely large value were converted into Na (By unusual Observations test using `outlierKD2`).
  
- + And, it has `r ncol(model_1_clean)-2` features and 1 target variable after excluding needless columns for modeling. 
-   (`METHOD` also could be used as predictor for model 1).
+ + And, it has `r ncol(model_1_clean)-2` features and 1 target variable after excluding needless columns for modeling. (`METHOD` also could be used as predictor for model 1).
 
 ```{r}
 #Dataframe Save and load
@@ -448,16 +446,19 @@ To finalize modeling data 1 for `Target_Clearance_time_f`,
 **From this section, candidate features were chosen for initial model by  examining relationship with target variables, `Target_Clearance_time_f` and `Target_robbery_method` by examining relationship with independent vars.**
 
 
-1. Model 1 (`Target_Clearance_time_f`)
+**1. Model 1 (`Target_Clearance_time_f`)**
 
- A.(EDA) Since `Target_Clearance_time_f` came from **Ratio variable, `Clearance_time` that refers duration**, 
+  + (A) Since `Target_Clearance_time_f` came from **Ratio variable, `Clearance_time` that refers duration**, 
   The Box Plots or summarized plots of `Clearance_time` were showed for a few categorical features.
   
- B.(EDA) In terms of interval variables such as Census, Histograms split by the target groups were used for checking relationship.
+  + (B) In terms of interval variables such as Census, Histograms split by the target groups were used for checking relationship.
  
- Finally, **Correlation plots** were used for feature selection.
+Finally, **Correlation plots** were used for feature selection.
+
  + For categorical features,  we used correlations only for relatively comparing the linear relationship with target.
+ 
  + Hypothesis tests (Chi-square) were additionally conducted for getting statistical clues.
+ 
  + For continuous features, correlations were used to filter highly correlated predictors to prevent a multicollinearity.  
 
 
@@ -473,7 +474,7 @@ plot
 
 A-1. (EDA-categorical features) Chart 3 indicates `avg.Clearance_time` per `DISTRICTS`. 
 
-  + It seems to have explicit relationship with target.
+  + DISTRICTS seems to have explicit relationship with clearance time
 
 ```{r}
 #TWO var Groupby(mean of target by X category groups)
@@ -523,41 +524,17 @@ chitest
 ```
 
 
-A-2. Chart 4 indicates `avg.Clearance_time` per `Hour`. 
+A-2. Chart 4 indicates distribution of `Clearance_time` per `Day_cat_2`.
 
-  + In the evening, after 7pm, clear time seems to slightly increase. 
-
-
-```{r}
-temp <-  model_1_clean %>% group_by(Hour) %>%
-                   summarise(avg = mean(Clearance_rate, na.rm = TRUE),.groups = 'drop')  #Targe(%): mean( as.numeric(Target_Clearance_time)
-
-arrange(temp, Hour) 
-temp_gr <- data.frame(temp)
-
-#Make chart (scatter)
-plot <- ggplot(temp_gr, aes(Hour, avg)) + geom_line() + labs(x="Hour", y="Avg.Clearance time(min)") +
-  labs(title="C4.Avg.Clearance time by Hour") + geom_point() 
-
-plot
-```
-
-
+  + We identified clear time seems to slightly increased on weekend.
 
 ```{r}
-contable = table(model_1_clean$Hour, model_1_clean$Target_Clearance_time_f)
-chitest = chisq.test(contable)
-chitest
+box <- ggplot(model_1_clean, aes(y=Clearance_rate, x=Day_cat_2)) + 
+  geom_boxplot() + 
+  geom_boxplot( colour="darkblue", outlier.colour="lightblue", outlier.shape=8, outlier.size=1) +
+  labs(title="C4.Clearance_rate by weekend",x="Day_cat_2", y = "Clearance_rate")
+box
 ```
-
-
-In Chi-squared test of independence between Hour and Target_Clearance_time_f, `Hour` is not statistically significant, but we will use it for prediction.
-
-  + $\chi^2$ value of the test is **`r chitest$statistic`**
-  + The p-value is **0.1**, which is > $\alpha$ (0.05), set to the significant level.
-  + **So, The data present it does not have enough evidence to reject H0.** 
-
-
 
 A-3. Chart 5 indicates distribution of `Clearance_time` per `SHIFT`.
 
@@ -616,23 +593,41 @@ box <- ggplot(model_1_clean, aes(y=Clearance_rate, x=Period_cat_num_2)) +
 box
 ```
 
+```{r}
+contable = table(model_1_clean$Day_cat_2, model_1_clean$Target_Clearance_time_f)
+chitest = chisq.test(contable)
+chitest
+```
+
+
+In Chi-squared test of independence between Hour and Target_Clearance_time_f, `Period_cat_num_2` is not statistically significant, but we will use it for prediction.
+
+  + $\chi^2$ value of the test is **`r chitest$statistic`**
+  + The p-value is < $\alpha$ (0.05), set to the significant level.
+  + **So, The data present it has enough evidence to reject H0, Lockdown and clearance time is not independent.** 
+  
 
 ```{r, results='hide'}
 
 #Reference- Not showing in the final report.
+#Hour
+temp <-  model_1_clean %>% group_by(Hour) %>%
+                   summarise(avg = mean(Clearance_rate, na.rm = TRUE),.groups = 'drop')  #Targe(%): mean( as.numeric(Target_Clearance_time)
+
+arrange(temp, Hour) 
+temp_gr <- data.frame(temp)
+
+#Make chart (scatter)
+plot <- ggplot(temp_gr, aes(Hour, avg)) + geom_line() + labs(x="Hour", y="Avg.Clearance time(min)") +
+  labs(title="C4.Avg.Clearance time by Hour") + geom_point() 
+
+plot
 
 #Date_cat
 box <- ggplot(model_1_clean, aes(y=Clearance_rate, x=Date_cat)) + 
   geom_boxplot() + 
   geom_boxplot( colour="darkblue", outlier.colour="lightblue", outlier.shape=8, outlier.size=1) +
   labs(title="Clearance_rate by Date_cat",x="Date_cat", y = "Clearance_rate")
-box
-
-#Day_cat_2
-box <- ggplot(model_1_clean, aes(y=Clearance_rate, x=Day_cat_2)) + 
-  geom_boxplot() + 
-  geom_boxplot( colour="darkblue", outlier.colour="lightblue", outlier.shape=8, outlier.size=1) +
-  labs(title="Clearance_rate by Day_cat_2",x="Day_cat_2", y = "Clearance_rate")
 box
 
 #Method.
@@ -681,12 +676,16 @@ pairs.panels(model_1_clean[,c(2,3:12)],
 **B-1. Below is Correlation plots with Census features and target **
 
 Since we have 78 features, it is impossible all the relationship in one plot. 
- + So we checked each unit of 10 features (sorted by feature names) considering correlation with target (over 0.1) and checking the multicollinearity
- + By above process, features were initially picked up for model.
+
+  + So we checked each unit of 10 features (sorted by feature names) considering correlation with target (over 0.1) and checking the multicollinearity
+ 
+  + By above process, features were initially picked up for model.
  
 This is the Correlation plot of the first unit 1 (10 features).  
- + Some features like `drove_alone_pct`,`Earning_mean`,`Earning_median_fmale_wk`appear to have relationship with target.
- + But `Earning_mean`and `Earning_median_fmale_wk` have strong relationship (Corr > 0.7), which suggest choosing one for model.
+
+  + Some features like `drove_alone_pct`,`Earning_mean`,`Earning_median_fmale_wk`appear to have relationship with target.
+ 
+  + But `Earning_mean`and `Earning_median_fmale_wk` have strong relationship (Corr > 0.7), which suggest choosing one for model.
 
 ```{r}
 pairs.panels(model_1_clean[,c(2,13:22)],   
@@ -804,43 +803,54 @@ summary(temp)
 
 B-2. Chart 9 is histogram of `Income_mean`(Census) by the target_Clearance_time groups (1: High, 0: Low)
 
-  + Lower clearance time group (target =0) has a tendency of having relatively high income compared with Higher clearance time group. 
+  + The short clearance time group (target =0) has a tendency of having a relatively high income compared with long clearance time group. 
 
 ```{r}
 
-ggplot(model_1_clean, aes(Income_mean, fill = Target_Clearance_time_f)) +  geom_histogram(alpha = 0.5, aes(y = ..density..), position = 'identity')
+#ggplot(model_1_clean, aes(Income_mean, fill = Target_Clearance_time_f)) +  geom_histogram(alpha = 0.5, aes(y = ..density..), position = 'identity')
+
 ggplot(model_1_clean, aes(Income_mean, fill = Target_Clearance_time_f)) + geom_density(alpha = 0.2) + labs(title="C9.Distribution of Income_mean by target groups")
 
 ```
 
-B-3. Chart 10 is histogram of `worked_from_home_pct`(Census) by the target_Clearance_time groups (1: High, 0: Low)
+B-3. Chart 10 is histogram of `management_business_science_arts_occupations_pct`(Census) by the target_Clearance_time groups (1: High, 0: Low)
 
-  + Lower clearance time group has a tendency of having relatively high portion of working at home.
+  + The short clearance time group has a tendency of having a relatively high portion of occupations which fields are management, business, and science.
 
 ```{r}
-ggplot(model_1_clean, aes(worked_from_home_pct, fill = Target_Clearance_time_f)) +  geom_histogram(alpha = 0.5, aes(y = ..density..), position = 'identity')
-ggplot(model_1_clean, aes(worked_from_home_pct, fill = Target_Clearance_time_f)) + geom_density(alpha = 0.2) + labs(title="C10.Distribution of worked_from_home_pct by target groups")
+#ggplot(model_1_clean, aes(management_business_science_arts_occupations_pct, fill = Target_Clearance_time_f)) +  geom_histogram(alpha = 0.5, aes(y = ..density..), position = 'identity')
+
+ggplot(model_1_clean, aes(management_business_science_arts_occupations_pct, fill = Target_Clearance_time_f)) + geom_density(alpha = 0.2) + labs(title="C10.Distribution of mgt_bz_sc_occupations_pct by target groups")
+
+# Occupation is highly related with income
+#temp_1 = model_1_clean[,c(41:45)]
+#temp_1 <- temp_1 %>%
+#               mutate_all(~ifelse(is.na(.), mean(., na.rm = TRUE), .))
+
+#cor_cs= cor(temp_1)
+#corrplot.mixed(cor_cs)
 
 ```
 
 B-4. Chart 11 is histogram of `labor_forces_rate`(Census) by the target_Clearance_time groups (1: High, 0: Low)
 
-  + Interestingly, Higher clearance time robberies (target =1) are more concentrated on the boundary of proportion of working people below 60%, which reveals demographic environment affect the robbery difficulty.
+  + Interestingly, long clearance time robberies (target =1) are more concentrated on the boundary of proportion of working people below 60%, which reveals demographic environment affect the robbery difficulty.
 
 ```{r}
-ggplot(model_1_clean, aes(labor_forces_rate, fill = Target_Clearance_time_f)) +  geom_histogram(alpha = 0.5, aes(y = ..density..), position = 'identity')
+#ggplot(model_1_clean, aes(labor_forces_rate, fill = Target_Clearance_time_f)) +  geom_histogram(alpha = 0.5, aes(y = ..density..), position = 'identity')
+
 ggplot(model_1_clean, aes(labor_forces_rate, fill = Target_Clearance_time_f)) + geom_density(alpha = 0.2) + labs(title="C11.Distribution of labor_forces_rate by target groups")
 ```
 
 
-2. Model 2 (`Target_robbery_method`)
+**2. Model 2 (`Target_robbery_method`)**
 
- A.(EDA) Since `Target_robbery_method` is **Binary Quantitative variable**, plots that showing percentage of Gun method(target =1) ware showed for a few categorical features.
+  + (A) Since `Target_robbery_method` is **Binary Quantitative variable**, plots that showing percentage of Gun method(target =1) ware showed for a few categorical features.
   
- B.(EDA) Similarly with model 1, histograms split by the target groups were used for checking relationship between interval variables and target.
+  + (B) Similarly with model 1, histograms split by the target groups were used for checking relationship between interval variables and target.
  
- Also, **Correlation plots** were used for feature selection of model 2.
- 
+ Also, **Correlation plots** were used for feature selection of model 2. 
+
 
 ```{r, results='hide'}
 
@@ -1052,7 +1062,8 @@ knitr::kable(summary(temp), format = "markdown", caption="T4.Summary statistics 
 ```
 
 **Overall, final features were chosen as follows.**
- + **Target_robbery_method ~ DISTRICT + Period_cat_num_2 + Season + Month +SHIFT + drove_alone_pct + Earning_mean + Income_mean + labor_forces_rate + mean_travel_time + unemployment_rate + walked_pct + Sales_and_office_occupations_pct + public_transportation_pct**
+
+  + Target_robbery_method ~ DISTRICT + Period_cat_num_2 + Season + Month +SHIFT + drove_alone_pct + Earning_mean + Income_mean + labor_forces_rate + mean_travel_time + unemployment_rate + walked_pct + Sales_and_office_occupations_pct + public_transportation_pct
 
 
 **Finally checked the correlation between chosen features**
@@ -1115,7 +1126,6 @@ We used a split/train method to build a predictive model using the selected feat
 #  readr::read_rds("Robbery_clean_p2_model_1.Rds")
 ```
 
-**2. Build model **
 
 *Setup:*
 Two evaluation functions are defined before building the model. The first function, "ConfusionMatrixInfo", calculates and visualizes the confusion matrix based on predicted and actual values using a specified cutoff. The second function, "proc_auc2", uses the pROC package to calculate the area under the curve (AUC) for a receiver operating characteristic (ROC) curve.
@@ -1167,16 +1177,16 @@ proc_auc2 <- function(data, outcome_var, predictor_var) {
 count(model_1_clean,Target_Clearance_time_f)
 ```
 
-Final treatment before fitting. select features and convert NaN of Census.
+This is final treatment before fitting. select features and convert NaN of Census.
 
 ```{r}
 feat <- c('DISTRICT','Date_cat','Day_cat_2','Period_cat_num_2','Season','SHIFT','METHOD','drove_alone_pct','females_employed_rate','hs_10000_to_14999_pct','hs_100000_to_149999_pct','hs_15000_to_24999_pct','hs_150000_to_194999_pct','hs_200000__pct','hs_25000_to_34999_pct','hs_Less_than_10000_pct','Income_mean','labor_forces_rate','management_business_science_arts_occupations_pct','mean_travel_time','service_occupations_pct','Social_Security_income_mean','Transportation_and_warehousing_and_utilities_pct','unemployment_rate','worked_from_home_pct','Target_Clearance_time_f')
 
-model_1_clean <- select(model_1_clean,feat)
+model_1 <- select(model_1_clean,feat)
 ```
 
 ```{r}
-model_1_clean <- model_1_clean %>%
+model_1 <- model_1 %>%
   mutate_at(vars(-Target_Clearance_time_f), ~ifelse(is.na(.), mean(., na.rm = TRUE), .))
 ```
 
@@ -1184,9 +1194,9 @@ model_1_clean <- model_1_clean %>%
 ```{r, results='hide'}
 #Use 70% of dataset as training set and remaining 30% as testing set
 set.seed(4321)
-sample <- sample(c(TRUE, FALSE), nrow(model_1_clean), replace=TRUE, prob=c(0.8,0.2))
-data_train_model_1  <- model_1_clean[sample, ]
-data_test_model_1   <- model_1_clean[!sample, ]
+sample <- sample(c(TRUE, FALSE), nrow(model_1), replace=TRUE, prob=c(0.8,0.2))
+data_train_model_1  <- model_1[sample, ]
+data_test_model_1   <- model_1[!sample, ]
 
 nrow(data_train_model_1)
 ncol(data_train_model_1)
@@ -1195,25 +1205,45 @@ ncol(data_test_model_1)
 ```
 
 The Train data has `r nrow(data_train_model_1)` and Test data has `r nrow(data_test_model_1)` observations.
-And `r ncol(data_train_model_1)-1` features were used as predictors.
-
+And `r ncol(data_train_model_1)-1` features were used as candidate predictors.
 
 
 **B. Train the model**
 
-Next, we move on to the training stage of the logistic regression model. We begin by training the initial model, which includes all the predictor variables. We deleted some variables which are not significant, and re-fit the model with the remaining predictor variables. 
+Next, we move on to the training stage of the logistic regression model. We begin by training the initial model, which includes all chosen predictors. By examining the initial model, We deleted some variables which are not significant, and re-fit the model with the remaining predictors. 
+
+This is the process of fitting the initial model.(skipped showing the specific result).
+
+```{r, results='hide'}
+#Decide whether exclude vars that p-value is not significant 
+
+#Logit_model_1 <- glm(Target_Clearance_time_f ~ Date_cat +Day_cat_2 +DISTRICT +Period_cat_num_2 +Season +SHIFT +METHOD +drove_alone_pct +females_employed_rate +hs_10000_to_14999_pct +hs_100000_to_149999_pct +hs_15000_to_24999_pct +hs_150000_to_194999_pct +hs_200000__pct +hs_25000_to_34999_pct +hs_Less_than_10000_pct +Income_mean +labor_forces_rate +management_business_science_arts_occupations_pct +mean_travel_time +service_occupations_pct +Social_Security_income_mean +Transportation_and_warehousing_and_utilities_pct +unemployment_rate +worked_from_home_pct, data = data_train_model_1, family = "binomial")
+
+#summary(Logit_model_1)
+#Logit_model_sum <- summary(Logit_model_1)
+
+```
+
+  + **Following is the finally chosen model, used 8 features.** 
+  
+  + All predictors are significant at the significant level of 0.1. 
 
 ```{r}
-#exclude vars that p-value is not significant 
+#Decide whether exclude vars that p-value is not significant 
 
-Logit_model_1 <- glm(Target_Clearance_time_f ~ Date_cat +Day_cat_2 +DISTRICT +Period_cat_num_2 +Season +SHIFT +METHOD +drove_alone_pct +females_employed_rate +hs_10000_to_14999_pct +hs_100000_to_149999_pct +hs_15000_to_24999_pct +hs_150000_to_194999_pct +hs_200000__pct +hs_25000_to_34999_pct +hs_Less_than_10000_pct +Income_mean +labor_forces_rate +management_business_science_arts_occupations_pct +mean_travel_time +service_occupations_pct +Social_Security_income_mean +Transportation_and_warehousing_and_utilities_pct +unemployment_rate +worked_from_home_pct, data = data_train_model_1, family = "binomial")
+Logit_model_1 <- glm(Target_Clearance_time_f ~ Day_cat_2 +DISTRICT +Period_cat_num_2 + SHIFT +METHOD + hs_10000_to_14999_pct +Income_mean + management_business_science_arts_occupations_pct, data = data_train_model_1, family = "binomial")
 
 #Target_clr_gun
 ```
 
-Changed the low p-value features and refit.(But not picked them as performance decreased)
-
 ```{r}
+summary(Logit_model_1)
+Logit_model_sum <- summary(Logit_model_1)
+
+```
+
+
+```{r, results='hide'}
 #exclude vars that p-value is not significant 
 
 #Logit_model_1 <- glm(Target_Clearance_time_f ~ Date_cat +DISTRICT +Period_cat_num_2 +SHIFT +METHOD +hs_10000_to_14999_pct +hs_100000_to_149999_pct +Income_mean +labor_forces_rate +management_business_science_arts_occupations_pct +mean_travel_time +Transportation_and_warehousing_and_utilities_pct +unemployment_rate +worked_from_home_pct, data = data_train_model_1, family = "binomial")
@@ -1222,19 +1252,7 @@ Changed the low p-value features and refit.(But not picked them as performance d
 ```
 
 
-```{r}
-summary(Logit_model_1)
-Logit_model_sum <- summary(Logit_model_1)
-```
-
-
-In this logistic regression model, we aim to predict Target_Clearance_time_f using a combination of categorical and continuous predictor variables, such as DISTRICT, Season, Income_mean, and mean_travel_time. 
-
-The negative intercept coefficient suggests that, when all other predictors are constant, the log odds of longer clearance time are negative. Some predictor variables have statistically significant coefficients, while others do not. For categorical variables, the coefficients indicate the difference in log odds of clearance time being longer when the variable is present versus when it is absent, holding other variables constant.
-
-The significant predictors of the target variable are DISTRICT, Day_cat_2, Period_cat_num_2, SHIFT, and METHOD. In contrast, Date_cat, Season, and Income_mean are not significant predictors. The model has some predictive power, as indicated by a lower residual deviance compared to the null deviance. However, the relatively high AIC value suggests that the model may not fit the data well. Moreover, the model tends to overestimate the probability of longer clearance times, as indicated by negative deviance residuals for most data points. Therefore, further model evaluation and improvement may be necessary before using this model for prediction or inference.
-
-
+We quickly evaluated the fitted model by checking AUROC. (Test data)
 
 ```{r}
 # prediction of p
@@ -1244,25 +1262,35 @@ data_test_model_1$prediction  <- predict( Logit_model_1, newdata = data_test_mod
 ```
 
 
-We quickly evaluated AUROC of the fitted model.
-
-```{r}
+```{r, results='hide'}
 h_train <- roc(Target_Clearance_time_f~prediction, data=data_train_model_1)
-h_test <- roc(Target_Clearance_time_f~prediction, data=data_test_model_1)
 
 plot(h_train)
+```
+
+```{r}
+h_test <- roc(Target_Clearance_time_f~prediction, data=data_test_model_1)
+
 plot(h_test)
 ```
 
-The results of Model 1 indicate that the area under the receiver operating characteristic (AUROC) curve is 0.642. This value is less than 0.8, which is generally considered to be an acceptable level of predictive power. Therefore, it can be inferred that the model does not seem to be very effective in accurately predicting outcomes. Further analysis and model improvements may be necessary to increase its predictive power. 
 ```{r}
 proc_auc2(data_test_model_1, 'Target_Clearance_time_f', 'prediction')
-proc_auc2(data_train_model_1, 'Target_Clearance_time_f', 'prediction')
+#proc_auc2(data_train_model_1, 'Target_Clearance_time_f', 'prediction')
 
 ```
 
-**Interpret** 
-Lockdown make the robbery difficult (long time to clear), Over>1, Lock(1) increase prob. high_diff_rob
+In this logistic regression model, we aimed to predict Target_Clearance_time_f using a combination of categorical and continuous predictors, such as DISTRICT, Period, Income_mean, and Proportion of specific occupations,etc. 
+
+The negative intercept coefficient suggests that, when all other predictors are constant, the log odds of longer clearance time are negative. Some predictor variables have statistically significant coefficients, while others do not. For categorical variables, the coefficients indicate the difference in log odds of clearance time being longer when the variable is present versus when it is absent, holding other variables constant.
+
+The model has some predictive power, as indicated by a lower residual deviance compared to the null deviance. However, the relatively high AIC value suggests that the model may not fit the data well. Moreover, the model tends to overestimate the probability of longer clearance times, as indicated by negative deviance residuals for most data points. 
+
+When examining ROC curve of the final model 1, the Area Under the Receiver Operating Characteristic (AUROC) is **0.641**. This value is less than 0.8, which is generally considered to be an acceptable level of predictive power. However, considering predicting social science behavior is hard, this result might not be thought negative.
+Further analysis like adding more sample and features could improve the predict power of the model.
+
+
+**Interpretation of the model** 
 
 ```{r}
 expcoeff = exp(coef(Logit_model_1))
@@ -1270,16 +1298,20 @@ expcoeff
 #xkabledply( as.table(expcoeff), title = "Exponential of coefficients in model_1" )
 ```
 
+Based on the coefficients and their corresponding exponentiated values, the following features appear to have an influence on the likelihood of long time to clear robbery (odds ratio), difficult incidents.:
 
-Several predictor variables have coefficients that are statistically significant, with p-values less than 0.05. For instance, the coefficients of Day_cat_2, Period_cat_num_2, SHIFT, DISTRICT, and drove_alone_pct are all positive and statistically significant.
-
-On the other hand, some variables such as hs_100000_to_149999_pct, hs_15000_to_24999_pct, and hs_150000_to_194999_pct are not significant predictors of the high_diff_rob.
-
+  + When Lockdown period (Period_cat_num_2=1), the odds-ratio(possibility of difficult robbery) might increase by a factor of 1.31.
+  + The odds-ratio may increase by a factor of 1.22 on weekend.(Day_cat_2=1)
+  + DISTRICT may also influence on whether the incidents would need long time to clear.
+  + The increase of poverty(portion of low income households below $15000) of 1 percent would increase robbery difficulty by a factor of 1.02.
+  + SHIFT, METHOD, portion of mangement, science occupation, etc. also showed relationship with cleartime.
+  
 
 **C. Evaluate the model**
 
-C-1. Determining the cut-off
-After analyzing the probability distribution charts for each target group, a cut-off value of 0.2 was selected as the criterion for predicting the target variable as 1.
+**C-1. Determining the cut-off**
+
+After analyzing the probability distribution charts for each target group, a cut-off value of 0.5 was selected as the criterion for predicting the target variable as 1.
 
 ```{r}
 # distribution of the prediction score grouped by known outcome
@@ -1301,7 +1333,7 @@ theme_economist()
 
 
 
-C-2. Accuracy and Recall at cutoff of 0.5
+**C-2. Accuracy and Recall at cutoff of 0.5**
 
 The accuracy and recall of the model were calculated at a cutoff of 0.5. The accuracy is the proportion of correct predictions, and the recall is the proportion of actual positives that were correctly identified by the model.
 
@@ -1319,9 +1351,6 @@ cm_info$plot
 
 ```
 
-
-C3- Calculate True Positives, True Negatives, False Positives, and False Negatives.
-
 ```{r}
 temp <- cm_info$data
 TP <- nrow(subset(temp,subset = temp$type == 'TP'))
@@ -1334,7 +1363,7 @@ Total <-nrow(data_test_model_1)
 ```
 
 
-```{r}
+```{r, results='hide'}
 Accuracy <-  (TP + TN) / Total
 Precision  <- TP / (TP + FP)
 Recall_rate <- TP / (TP + FN)
@@ -1351,17 +1380,21 @@ FPR
 FNR
 ```
 
+Performance of the model 1 is as below: 
+
+  + Accuracy: `r Accuracy`
+  + Precision: `r Precision`
+  + Recall_rate: `r Recall_rate`
+  + F1: `r F1`
+  + FPR: `r FPR`
+  + FNR: `r FNR`
+
 *The value of accuracy and precision is not very high. However, since crime is complex and difficult to predict, the results still make sense.
 
 
-```{r}
-count(temp,actual)
-```
+**C-3. Evaluate per target levels**
 
-
-C-4 Evaluate per target levels
-
-Now, we creates two data frames df_neg and df_pos by subsetting temp based on the actual target values. 
+Now, we created two data frames df_neg and df_pos by subsetting based on the actual target values. 
 
 
 ```{r}
@@ -1371,9 +1404,7 @@ df_pos <- subset(temp,temp$actual == 1)
 ```
 
 
-Performance of Negtive (target=0, Low time)
-
-```{r}
+```{r, results='hide'}
 TP <- nrow(subset(df_neg,subset = df_neg$type == 'TP'))
 TN <- nrow(subset(df_neg,subset = df_neg$type == 'TN'))
 FP <- nrow(subset(df_neg,subset = df_neg$type == 'FP'))
@@ -1396,11 +1427,10 @@ F1
 FPR
 FNR
 ```
+Accuracy of the Negative group (target=0, short time) is `r Accuracy`, which reveals `r FPR*100`% of miss prediction. 
 
 
-Performance of Positive (target=1, High time)
-
-```{r}
+```{r, results='hide'}
 TP <- nrow(subset(df_pos,subset = df_pos$type == 'TP'))
 TN <- nrow(subset(df_pos,subset = df_pos$type == 'TN'))
 FP <- nrow(subset(df_pos,subset = df_pos$type == 'FP'))
@@ -1424,7 +1454,9 @@ FPR
 FNR
 ```
 
-Based on the evaluation results, it appears that the model performs better in predicting the negative class (target=0, Low time) compared to the positive class (target=1, High time). 
+On the other hand, accuracy of the Positive group (target=1, Long time to clear) is `r Accuracy`, which reveals `r FNR*100`% of miss prediction. 
+
+**Overall, this model showed better performance to predict negative group, which need relatively short time to clear robbery.**
 
 
 ### 2. Model 2- Logistic regression (`Target_robbery_method`)
@@ -1437,11 +1469,11 @@ Target: `Target_robbery_method`
 #  readr::read_rds("Robbery_clean_p2_model_2.Rds")
 ```
 
-**2. Build model **
+The overall process is similar with model 1. so briefly demonstrated foccused on the final results. 
 
 **A. The Train and Test data are: **
 
-```{r}
+```{r, results='hide'}
 set.seed(8343)
 sample <- sample(c(TRUE, FALSE), nrow(model_2_clean), replace=TRUE, prob=c(0.75,0.25))
 df_train <- model_2_clean[sample, ]
@@ -1450,8 +1482,12 @@ df_test  <- model_2_clean[!sample, ]
 nrow(df_train)
 nrow(df_test )
 ```
+The Train data has `r nrow(df_train)` and Test data has `r nrow(df_test)` observations.
+And `r ncol(df_train)-1` features were used as candidate predictors.
+
 
 **B. Train the model**
+
 ```{r}
 Model <- glm(Target_robbery_method ~ DISTRICT + +Period_cat_num_2 + 
     Season + Month + SHIFT + drove_alone_pct + mean_travel_time + 
@@ -1468,6 +1504,8 @@ The intercept (-1.264) indicates the expected log odds of `Target_robbery_method
 
 The residual deviance is 8087.9 on 6193 degrees of freedom, compared to the null deviance 8597.7, which is good. 
 
+**Interpretation of the model** 
+
 ```{r}
 expcoeff = exp(coef(Model))
 expcoeff
@@ -1483,6 +1521,7 @@ Based on the coefficients and their corresponding exponentiated values (odds rat
 Other variables, such as `Period_cat_num_21`, `Season`, `Month`, `drove_alone_pct`, and `unemployment_rate`, also appear to have some influence on the likelihood and severity of robbery methods, but to a lesser extent than the variables listed above.
 
 **C. Evaluate the model**
+
 ```{r}
 df_train$prediction <- predict( Model, newdata = df_train, type = "response" )
 df_test$prediction  <- predict( Model, newdata = df_test , type = "response" )
@@ -1502,7 +1541,7 @@ ggtitle( "Test Set's Predicted Score" )
 ```
 
 
-```{r}
+```{r, results='hide'}
 h <- roc(Target_robbery_method~prediction, data=df_train)
 plot(h)
 auc(h)
@@ -1517,8 +1556,7 @@ auc(h)
 
 The AUC is 0.664 based on test data, which we think is good in this case.
 
-
-H1- Accurcy, Precision, Recall when cut-off 0.5
+**C-1. Accuracy, Precision and Recall at cutoff of 0.5**
 
 ```{r}
 cm_info <- ConfusionMatrixInfo( data = df_test, predict = "prediction", 
@@ -1527,7 +1565,7 @@ cm_info <- ConfusionMatrixInfo( data = df_test, predict = "prediction",
 cm_info$plot
 ```
 
-```{r}
+```{r, results='hide'}
 temp <- cm_info$data
 TP <- nrow(subset(temp,subset = temp$type == 'TP'))
 TN <- nrow(subset(temp,subset = temp$type == 'TN'))
@@ -1551,19 +1589,30 @@ FPR
 FNR
 ```
 
+Performance of the model 2 is as below: 
+
+  + Accuracy: `r Accuracy`
+  + Precision: `r Precision`
+  + Recall_rate: `r Recall_rate`
+  + F1: `r F1`
+  + FPR: `r FPR`
+  + FNR: `r FNR`
+
+
 Based on the given metrics, it appears that the model for Target_robbery_method has an accuracy of 0.618, the precision of the model is 0.616. Again, these values are not high but make sense. The F1 score is over 0.5, which is not bad. The FPR are FNR are low, which is good since gun is very dangerous and has high risk. 
 
-H2- Evaluate per target levels
+**C-2. Evaluate per target levels**
 
 Now, we will redo the same process which recreates two data frames df_neg and df_pos by subsetting temp based on the actual target values.
+
 ```{r}
 temp <- cm_info$data
 df_neg <- subset(temp,temp$actual == 0) 
 df_pos <- subset(temp,temp$actual == 1) 
 ```
 
-Performance of Negtive (target=0, Low time)
-```{r}
+
+```{r, results='hide'}
 TP <- nrow(subset(df_neg,subset = df_neg$type == 'TP'))
 TN <- nrow(subset(df_neg,subset = df_neg$type == 'TN'))
 FP <- nrow(subset(df_neg,subset = df_neg$type == 'FP'))
@@ -1587,8 +1636,10 @@ FPR
 FNR
 ```
 
-Performance of Positive (target=1, High time)
-```{r}
+Accuracy of the Negative group (target=0, using Other weapon except GUN) is `r Accuracy`, which reveals `r FPR*100`% of miss prediction. 
+
+
+```{r, results='hide'}
 TP <- nrow(subset(df_pos,subset = df_pos$type == 'TP'))
 TN <- nrow(subset(df_pos,subset = df_pos$type == 'TN'))
 FP <- nrow(subset(df_pos,subset = df_pos$type == 'FP'))
@@ -1611,6 +1662,7 @@ F1
 FPR
 FNR
 ```
+On the other hand, accuracy of the Positive group (target=1, using GUN) is `r Accuracy`, which reveals `r FNR*100`% of miss prediction. 
 
 Based on the evaluation metrics, it appears that the Performance of Negative (target=0, other) has a higher overall accuracy (0.644) compared to the Performance of Positive (target=1, gun) with an accuracy of (0.59).
 
@@ -1618,19 +1670,17 @@ Based on the evaluation metrics, it appears that the Performance of Negative (ta
 
 ### 3. Model3- Decision Tree
 
-This section covers the building of a decision tree model to predict the target robbery method using various predictors such as district, period category, season, month, shift, mode of transportation, income, labor force rate, and other factors. The train and test data are split into a 70:30 ratio, and the model is trained on the training data using the rpart function. The tree is checked for pruning, and if it's  pruned or not, it's plotted to visualize the decision tree.
+This section covers the building of a decision tree model to predict the target robbery method using various predictors such as district, period category, season, month, shift, mode of transportation, income, labor force rate, and other factors. The train and test data are split into a 70:30 ratio, and the model is trained on the training data using the rpart function. The tree is checked for pruning, and if it's pruned or not, it's plotted to visualize the decision tree.
 
-**Load cleaned data again  **
+Data: model_2_clean
+Target: `Target_robbery_method` 
 
-```{r}
-
-model_2_clean <- 
-  readr::read_rds("Robbery_clean_p2_model_2.Rds")
-
+```{r, results='hide'}
+#Load cleaned data again#
+#model_2_clean <- 
+#  readr::read_rds("Robbery_clean_p2_model_2.Rds")
 ```
 
-
-**2. Build model **
 
 **A. The Train and Test data are: **
 
@@ -1656,7 +1706,7 @@ set.seed(4321)
 Tree_model_gun <- rpart(Target_robbery_method ~ DISTRICT + + Period_cat_num_2 + Season + Month +SHIFT + drove_alone_pct + Earning_mean + Income_mean + labor_forces_rate + mean_travel_time + unemployment_rate + walked_pct + Sales_and_office_occupations_pct + public_transportation_pct, data=data_train_model_1, method="class", control = list(maxdepth = 30))
 ```
 
-Check if tree is pruned.
+Checked if tree is pruned.(Tree was normally generated) 
 
 ```{r}
 # check if rpart object is a tree
@@ -1668,7 +1718,7 @@ if (Tree_model_gun$frame$var[1] != "<leaf>") {
   print("The rpart object is not a tree.")
 }
 ```
-
+Below is the entire result of the fitted decision tree.
 
 ```{r}
 
@@ -1681,7 +1731,7 @@ plot(Tree_model_gun, uniform=TRUE, main="Classification Tree for Target_robbery_
 text(Tree_model_gun, use.n=TRUE, all=TRUE, cex=.8)
 ```
 
-**B. Visualize the tree model**
+**c. Visualize and Evaluate the tree model**
 
 Next, we can try two other ways to plot the tree, with library `rpart.plot` and a "fancy" plot using the library `rattle`.
 
@@ -1696,7 +1746,7 @@ fancyRpartPlot(Tree_model_gun)
 
 ```
 
-This is the prediction of the model, probability `p`.
+This is the prediction of the model, probability `p`of the Gun robbery.
 
 The given output  from a Classification Tree model trained on a dataset consisting of variables related to robbery incidents in different districts. The model aims to predict the method used for the robbery, given the available predictor variables.
 
@@ -1723,8 +1773,9 @@ data_train_model_1$prediction <- predictions[, 2]
 ```
 
 
-C-1. Cut-off
-By seeing probability distribution charts by target groups, cut-off (Criterion to preict=1) was set to 0.2.
+**c-1. Cut-off**
+
+By seeing probability distribution charts by target groups, cut-off (Criterion to predict=1) was set to 0.5.
 
 
 ```{r}
@@ -1744,9 +1795,7 @@ scale_color_economist( name = "data", labels = c( "Lower time", "Higher time" ) 
 theme_economist()
 ```
 
-
-
-C-2 Accuracy, Recall
+**B-2 Accuracy, Recall**
 
 ```{r}
 # visualize .4 cutoff (lowest point of the previous plot)
@@ -1771,7 +1820,8 @@ FN <- nrow(subset(temp,subset = temp$type == 'FN'))
 Total <-nrow(data_test_model_1)
 ```
 
-```{r}
+
+```{r, results='hide'}
 Accuracy <-  (TP + TN) / Total
 Precision  <- TP / (TP + FP)
 Recall_rate <- TP / (TP + FN)
@@ -1788,10 +1838,19 @@ FPR
 FNR
 ```
 
+Performance of the model 3 is as below: 
+
+  + Accuracy: `r Accuracy`
+  + Precision: `r Precision`
+  + Recall_rate: `r Recall_rate`
+  + F1: `r F1`
+  + FPR: `r FPR`
+  + FNR: `r FNR`
+
 The model seems to have a reasonable balance between precision and recall, as indicated by the F1 score. However, the FPR and FNR suggest that there is still room for improvement in correctly classifying negative and positive instances, respectively.
 
 
-C-3. AUROC
+**C-3. AUROC**
 
 ```{r}
 h <- roc(Target_robbery_method~prediction, data=data_test_model_1)
@@ -1799,25 +1858,40 @@ h <- roc(Target_robbery_method~prediction, data=data_test_model_1)
 plot(h)
 ```
 
-The output the area under the curve (AUC) of the ROC curve, which is a measure of the model's performance. An AUC of 0.5 indicates a model with random performance, while an AUC of 1.0 represents a perfect model. In this case, the AUC is 0.602, which suggests that the model has only slightly better than random performance in predicting the outcome of the "Target_robbery_method" variable.
-
 ```{r}
 proc_auc2(data_test_model_1, 'Target_robbery_method', 'prediction')
 proc_auc2(data_train_model_1, 'Target_robbery_method', 'prediction')
 
 ```
 
-The results show that the AUC for the test set is 0.602, while the AUC for the training set is slightly higher at 0.614. AUC is a measure of how well a model can distinguish between positive and negative instances, with a higher AUC indicating a better model performance. However, the fact that the AUC is higher for the training set compared to the test set suggests that the model may be overfitting to the training data and may not generalize well to new, unseen data.
+The output the area under the curve (AUC) of the ROC curve, which is a measure of the model's performance. An AUC of 0.5 indicates a model with random performance, while an AUC of 1.0 represents a perfect model. In this case, the AUC is 0.602, which suggests that the model has only slightly better than random performance in predicting the outcome of the "Target_robbery_method" variable. However, considering the difficulty of forecasting these social science factors, this performance might be thought positive. 
+
+The results show that the AUC for the test set is 0.602, while the AUC for the training set is slightly higher at 0.614. AUC is a measure of how well a model can distinguish between positive and negative instances, with a higher AUC indicating a better model performance. 
 
 
 ## IV. Conclusion
 
-In conclusion, our project aimed to accurately predict clearance time and robbery severity by identifying the key features that influence these outcomes. Our exploratory data analysis uncovered several important insights, such as the impact of district, shift, day of the week, and time of day on clearance time, and the increase in gun robberies during lockdown. Using logistic regression models, we found that DISTRICT and Lockdown contribute to the longer clearance time, while SHIFT(MIDNIGHT) and drove_alone_pct have the most positive effect to the gun method. We achieved reasonable performance, with AUC values of 0.6424 and 0.664 for predicting clearance time and robbery method severity, respectively. While predicting criminal behavior is a complex task, our models provide a starting point for understanding the factors that influence it. Our SMART questions involved both inference and prediction, allowing us to interpret significant predictors and evaluate the models' performance.
+In conclusion, our project aimed to accurately predict clearance time and robbery severity by identifying the key features that influence these outcomes. Our exploratory data analysis uncovered several important insights, such as the impact of district, lock-down, timezone(SHIFT) of the robbery,etc. on the probability of long clearance time or dangerous gun robberies. 
 
-Furthermore, our project highlights the broader implications for social science research related to violence and policing. Understanding the factors that influence criminal behavior and the effectiveness of police operations is crucial for addressing issues of public safety and crime prevention. Continued research in this area can identify best practices for policing and provide insights into the social, economic, and cultural factors that contribute to criminal activity.
+Our SMART questions involved both inference and prediction, allowing us to interpret significant predictors and evaluate the models’ performance.
 
-It is essential to recognize the ethical implications of using data and models to make decisions related to law enforcement and ensure that these tools are used in a fair and unbiased manner. As new data becomes available, it is crucial to continue research and analysis in this area to develop more effective strategies for crime prevention and public safety.
+Using logistic regression models, we found that DISTRICT, Weekend and Lockdown mainly contribute to the longer clearance time but some economic characteristics of the district like poverty,occupation mix might also have relationship with clearance time(model 1). While SHIFT(MIDNIGHT) and drove_alone_pct(workers who drive alone to commute) have the most positive effect on the gun method(model 2). For both models, lockdown showed significant influence on target variables, which means robbery incidents tends to be difficult and dangerous during pendemic period. In terms of prediction, We achieved reasonable performance, with AUC values of 0.641 and 0.664 for predicting clearance time and robbery method severity, respectively. While predicting criminal behavior is a complex task, our models provide a starting point for understanding the factors that influence it. 
+
+Furthermore, our project highlights the broader implications for social science research related to violence and policing. Understanding the factors that influence criminal behavior and the effectiveness of police operations is crucial for addressing issues of public safety and crime prevention. Continued research in this area such as using additional samples and features can identify best practices for policing and provide insights into the social, economic, and cultural factors that contribute to criminal activity.
+
+On the other hand, It is essential to recognize the ethical implications of using data and models to make decisions related to law enforcement and ensure that these tools are used in a fair and unbiased manner. As new data becomes available, it is crucial to continue research and analysis in this area to develop more effective strategies for crime prevention and public safety.
 
 In summary, our project demonstrates the potential of data-driven approaches and SMART questions to address complex social science issues related to violence and policing. By leveraging data and statistical modeling techniques, we can gain critical insights into the factors that influence criminal behavior and develop more effective strategies for crime prevention and public safety.
 
+## References 
+
+ + Open Data DC (2023). Retrieved from https://opendata.dc.gov/search?collection=Dataset&q=crime
+
+ + Boman, J. H., Gallupe, O. (2020). Has COVID-19 Changed Crime? Crime Rates in the United States during the Pandemic. American Journal of Criminal Justice, 45(4), 525–547. https://doi.org/10.1007/s12103-020-09551-3
+
+
+ +  Council of the District of Columbia (NA).. Retrieved from https://code.dccouncil.gov/us/dc/council/code/sections/22-2801
+
+
+ +  Metropolitan Police Department. (2022). Crime statistics. Retrieved from https://mpdc.dc.gov/page/crime-statistics§ 22–2801. Robbery. 
 
